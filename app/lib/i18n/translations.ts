@@ -44,6 +44,19 @@ export interface Translations {
   misc: {
     wifiConnected: string;
   };
+  // Menu Page
+  menu: {
+    search: string;
+    all: string;
+    chefRecommendations: string;
+    soldOut: string;
+    customizable: string;
+    viewCart: string;
+    noResults: string;
+    noResultsDescription: string;
+    clearSearch: string;
+    items: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -94,6 +107,19 @@ export const translations: Record<Language, Translations> = {
     misc: {
       wifiConnected: 'Đã kết nối Wi-Fi nhà hàng',
     },
+    // Menu
+    menu: {
+      search: 'Tìm món...',
+      all: 'Tất cả',
+      chefRecommendations: 'Gợi ý của đầu bếp',
+      soldOut: 'Hết món',
+      customizable: 'Có tuỳ chọn',
+      viewCart: 'Xem giỏ',
+      noResults: 'Không tìm thấy món',
+      noResultsDescription: 'Thử tìm kiếm với từ khóa khác',
+      clearSearch: 'Xoá tìm kiếm',
+      items: 'món',
+    },
   },
   en: {
     // Header
@@ -141,6 +167,19 @@ export const translations: Record<Language, Translations> = {
     // Misc
     misc: {
       wifiConnected: 'Connected to restaurant Wi-Fi',
+    },
+    // Menu
+    menu: {
+      search: 'Search menu...',
+      all: 'All',
+      chefRecommendations: 'Chef Recommendations',
+      soldOut: 'Sold Out',
+      customizable: 'Customizable',
+      viewCart: 'View Order',
+      noResults: 'No items found',
+      noResultsDescription: 'Try a different search term',
+      clearSearch: 'Clear search',
+      items: 'items',
     },
   },
 };
