@@ -1,6 +1,6 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { menuApi } from '@/lib/api/menu'
-import type { MenuItemDTO, CategoryDTO, GetMenuParams, MenuListResponseDTO } from '@/lib/types/menu'
+import type { MenuItemDetailDTO, CategoryDTO, GetMenuParams, MenuListResponseDTO } from '@/lib/types/menu'
 
 // Query keys factory
 export const menuQueryKeys = {
@@ -81,7 +81,7 @@ export function useCategoriesQuery(
 }
 
 /**
- * Hook to fetch a single menu item
+ * Hook to fetch a single menu item with full details including modifiers
  */
 export function useMenuItemQuery(
   id: string | null,
@@ -89,7 +89,7 @@ export function useMenuItemQuery(
 ) {
   const { enabled = true } = options
 
-  return useQuery<MenuItemDTO>({
+  return useQuery<MenuItemDetailDTO>({
     queryKey: menuQueryKeys.detail(id!),
     queryFn: () => menuApi.getMenuItem(id!),
     enabled: enabled && Boolean(id),

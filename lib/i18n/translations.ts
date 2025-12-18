@@ -56,6 +56,12 @@ export interface Translations {
     noResultsDescription: string;
     clearSearch: string;
     items: string;
+    // Item Detail
+    itemDetail: string;
+    subtotal: string;
+    addToCart: string;
+    noteForKitchen: string;
+    notePlaceholder: string;
   };
 }
 
@@ -119,6 +125,11 @@ export const translations: Record<Language, Translations> = {
       noResultsDescription: 'Thử tìm kiếm với từ khóa khác',
       clearSearch: 'Xoá tìm kiếm',
       items: 'món',
+      itemDetail: 'Chi tiết món',
+      subtotal: 'Tạm tính',
+      addToCart: 'Thêm vào giỏ hàng',
+      noteForKitchen: 'Ghi chú cho bếp',
+      notePlaceholder: 'Ví dụ: Không hành, ít nước bọng...',
     },
   },
   en: {
@@ -180,6 +191,11 @@ export const translations: Record<Language, Translations> = {
       noResultsDescription: 'Try a different search term',
       clearSearch: 'Clear search',
       items: 'items',
+      itemDetail: 'Item Detail',
+      subtotal: 'Subtotal',
+      addToCart: 'Add to Cart',
+      noteForKitchen: 'Note for Kitchen',
+      notePlaceholder: 'e.g., No onions, less spicy...',
     },
   },
 };

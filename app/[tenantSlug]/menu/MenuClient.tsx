@@ -91,19 +91,22 @@ function CategoryChips({
 // Menu item card component
 function MenuItemCard({ 
   item, 
-  onQuickAdd 
+  onQuickAdd,
+  href,
 }: { 
   item: MenuItemDTO;
   onQuickAdd: (item: MenuItemDTO) => void;
+  href: string;
 }) {
   const isInactive = item.status === 'inactive';
   const imageUrl = item.images?.[0] || 'https://via.placeholder.com/150';
 
   return (
-    <div 
+    <Link
+      href={isInactive ? '#' : href}
       className={`
         relative flex h-32 overflow-hidden rounded-xl transition-shadow
-        ${isInactive ? 'opacity-70' : 'hover:shadow-md cursor-pointer'}
+        ${isInactive ? 'opacity-70 pointer-events-none' : 'hover:shadow-md cursor-pointer'}
         bg-slate-800
       `}
     >
@@ -146,7 +149,11 @@ function MenuItemCard({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => onQuickAdd(item)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onQuickAdd(item);
+              }}
               className="size-8 rounded-full bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30"
             >
               <span className="text-lg">+</span>
@@ -154,7 +161,7 @@ function MenuItemCard({
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -372,6 +379,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
                     key={item.id}
                     item={item}
                     onQuickAdd={handleQuickAdd}
+                    href={`/${tenantSlug}/menu/${item.id}?table=${tableId}&token=${token}`}
                   />
                 ))}
               </div>

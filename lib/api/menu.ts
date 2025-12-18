@@ -1,5 +1,12 @@
 import { apiClient } from './client'
-import type { MenuItemDTO, MenuListResponseDTO, GetMenuParams, CategoryDTO } from '@/lib/types/menu'
+import type { 
+  MenuItemDTO, 
+  MenuItemDetailDTO,
+  MenuListResponseDTO, 
+  MenuItemDetailResponseDTO,
+  GetMenuParams, 
+  CategoryDTO 
+} from '@/lib/types/menu'
 
 // API response wrapper type
 interface ApiResponse<T> {
@@ -26,10 +33,10 @@ export const menuApi = {
     const { data } = await apiClient.get<MenuListResponseDTO>('/menu', {
       params: {
         page: params.page || 1,
-        limit: params.limit || 20, // Default 20 items per page
+        limit: params.limit || 20,
         search: params.search,
         category_id: params.category_id,
-        status: params.status || 'active', // Only show active items
+        status: params.status || 'active',
         sort_by: params.sort_by || 'display_order',
         sort_order: params.sort_order || 'asc',
       },
@@ -44,7 +51,7 @@ export const menuApi = {
   getCategories: async (): Promise<CategoryDTO[]> => {
     const { data } = await apiClient.get<ApiResponse<CategoriesResponse>>('/categories', {
       params: {
-        limit: 100, // Get all categories
+        limit: 100,
         is_active: true,
       },
     })
@@ -52,11 +59,11 @@ export const menuApi = {
   },
 
   /**
-   * Get a single menu item by ID
+   * Get a single menu item by ID with full details including modifiers
    * GET /menu/:id
    */
-  getMenuItem: async (id: string): Promise<MenuItemDTO> => {
-    const { data } = await apiClient.get<ApiResponse<{ menu_item: MenuItemDTO }>>(`/menu/${id}`)
-    return data.data.menu_item
+  getMenuItem: async (id: string): Promise<MenuItemDetailDTO> => {
+    const { data } = await apiClient.get<MenuItemDetailResponseDTO>(`/menu/${id}`)
+    return data.data
   },
 }
