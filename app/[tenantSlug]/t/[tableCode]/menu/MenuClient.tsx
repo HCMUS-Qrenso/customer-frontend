@@ -210,10 +210,7 @@ function MenuContent({ tenantSlug, tableCode, tenantName, tableNumber }: MenuCli
 
             {/* Menu Items by Category */}
             {groupedItems.map(({ category, items }) => (
-              <section key={category.id} className="px-4 pt-6 md:px-6">
-                <h3 className="sticky top-[168px] z-10 mb-4 bg-slate-900 py-2 text-lg font-bold leading-tight tracking-tight">
-                  {lang === 'en' && category.nameEn ? category.nameEn : category.name}
-                </h3>
+              <section key={category.id} className="px-4 pt-4 md:px-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {items.map((item) => (
                     <MenuItemCard
