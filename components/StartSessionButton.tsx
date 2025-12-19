@@ -47,10 +47,10 @@ export function StartSessionButton({
       onClick={handleStartSession}
       disabled={disabled}
       className={cn(
-        "group relative h-16 w-full overflow-hidden rounded-full px-8",
+        "group relative h-16 w-full overflow-hidden rounded-full px-8 transition-colors",
         disabled
-          ? "cursor-not-allowed bg-slate-100 ring-1 ring-slate-200"
-          : "bg-emerald-500 shadow-lg shadow-emerald-500/30 active:scale-[0.98] active:bg-emerald-600"
+          ? "cursor-not-allowed bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700"
+          : "bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-500 dark:hover:bg-emerald-400 shadow-lg shadow-emerald-500/30 active:scale-[0.98]"
       )}
     >
       <div className={cn(
