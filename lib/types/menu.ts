@@ -65,11 +65,23 @@ export interface MenuItemDTO {
   badges?: string[];
 }
 
+// Nutritional info from API
+export interface NutritionalInfoDTO {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
+
 // Menu item detail (GET /menu/:id) - includes modifier_groups
 export interface MenuItemDetailDTO extends MenuItemDTO {
   modifier_groups?: ModifierGroupDTO[];
-  prep_time?: string;
-  calories?: string;
+  preparation_time?: number;     // in minutes
+  nutritional_info?: NutritionalInfoDTO;
+  popularity_score?: number;     // 0-100
+  allergen_info?: string;        // free text allergen info
+  order_count?: number;
+  review_count?: number;
 }
 
 // ============================================

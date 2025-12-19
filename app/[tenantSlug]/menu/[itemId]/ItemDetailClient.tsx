@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { Minus, Plus, Clock, Flame, AlertTriangle } from 'lucide-react';
+import { Minus, Plus, Clock, Flame, AlertTriangle, ChevronLeft, ChevronRight, ImageIcon, Info, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CustomerHeader } from '@/components/CustomerHeader';
@@ -12,6 +12,156 @@ import { formatVND } from '@/lib/format';
 import { customerHref } from '@/lib/customer/context';
 import { useMenuItemQuery } from '@/hooks/use-menu-query';
 import type { ModifierGroupDTO, CartSummaryDTO } from '@/lib/types/menu';
+
+// Image Carousel Component with fallback
+interface ImageCarouselProps {
+  images: string[];
+  alt: string;
+  badges?: string[];
+}
+
+function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const hasImages = images && images.length > 0;
+  const showControls = hasImages && images.length > 1;
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [images.length]);
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [images.length]);
+
+  return (
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square">
+      {/* Image or Placeholder */}
+      {hasImages ? (
+        <div
+          className="size-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: `url('${images[currentIndex]}')` }}
+        />
+      ) : (
+        <div className="flex size-full flex-col items-center justify-center gap-3 text-gray-300 dark:text-slate-600">
+          <ImageIcon className="size-20" strokeWidth={1} />
+          <span className="text-sm font-medium text-gray-400 dark:text-slate-500">Không có hình ảnh</span>
+        </div>
+      )}
+
+      {/* Navigation Arrows */}
+      {showControls && (
+        <>
+          <button
+            onClick={goToPrevious}
+            className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 shadow-lg backdrop-blur-sm transition-all hover:bg-white dark:hover:bg-slate-800 hover:scale-110"
+          >
+            <ChevronLeft className="size-6" />
+          </button>
+          <button
+            onClick={goToNext}
+            className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 shadow-lg backdrop-blur-sm transition-all hover:bg-white dark:hover:bg-slate-800 hover:scale-110"
+          >
+            <ChevronRight className="size-6" />
+          </button>
+        </>
+      )}
+
+      {/* Dot Indicators */}
+      {showControls && (
+        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`size-2.5 rounded-full transition-all ${
+                index === currentIndex
+                  ? 'bg-white scale-125 shadow-lg'
+                  : 'bg-white/50 hover:bg-white/70'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Badges */}
+      {badges?.map((badge) => (
+        <div key={badge} className="absolute left-4 top-4">
+          <span className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+            {badge}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Nutritional Info Accordion Component
+interface NutritionalInfoAccordionProps {
+  nutritionalInfo?: {
+    calories?: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+  };
+}
+
+function NutritionalInfoAccordion({ nutritionalInfo }: NutritionalInfoAccordionProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Don't render if no nutritional info
+  if (!nutritionalInfo) return null;
+  
+  const hasAnyInfo = nutritionalInfo.calories || nutritionalInfo.protein || 
+                     nutritionalInfo.carbs || nutritionalInfo.fat;
+  
+  if (!hasAnyInfo) return null;
+
+  return (
+    <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-slate-700"
+      >
+        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+          <Info className="size-4" />
+          <span className="text-sm font-medium">Thông tin dinh dưỡng</span>
+        </div>
+        <ChevronDown className={`size-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {/* Content */}
+      <div className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'}`}>
+        <div className="flex flex-wrap gap-2 p-3 pt-0">
+          {nutritionalInfo.calories && (
+            <div className="flex h-7 items-center gap-1.5 rounded-full bg-orange-500/10 px-3 text-orange-600 dark:text-orange-400">
+              <span className="text-xs font-bold">{nutritionalInfo.calories}</span>
+              <span className="text-xs">kcal</span>
+            </div>
+          )}
+          {nutritionalInfo.protein && (
+            <div className="flex h-7 items-center gap-1.5 rounded-full bg-red-500/10 px-3 text-red-600 dark:text-red-400">
+              <span className="text-xs font-bold">{nutritionalInfo.protein}g</span>
+              <span className="text-xs">protein</span>
+            </div>
+          )}
+          {nutritionalInfo.carbs && (
+            <div className="flex h-7 items-center gap-1.5 rounded-full bg-blue-500/10 px-3 text-blue-600 dark:text-blue-400">
+              <span className="text-xs font-bold">{nutritionalInfo.carbs}g</span>
+              <span className="text-xs">carbs</span>
+            </div>
+          )}
+          {nutritionalInfo.fat && (
+            <div className="flex h-7 items-center gap-1.5 rounded-full bg-yellow-500/10 px-3 text-yellow-600 dark:text-yellow-400">
+              <span className="text-xs font-bold">{nutritionalInfo.fat}g</span>
+              <span className="text-xs">fat</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface ItemDetailClientProps {
   tenantSlug: string;
@@ -108,7 +258,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
       />
 
       {/* Main Content */}
-      <main className="mx-auto w-full max-w-7xl p-4 pb-32 lg:p-8">
+      <main className="mx-auto w-full max-w-7xl p-4 pb-32 lg:p-8 lg:pb-40">
         {isLoading ? (
           // Loading skeleton
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-12">
@@ -125,21 +275,13 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
         ) : item ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-12">
             {/* Left: Image & Info */}
-            <div className="flex flex-col gap-6 md:sticky md:top-[84px] md:h-[calc(100vh-100px)] md:overflow-y-auto">
-              {/* Hero Image */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-200 dark:bg-slate-800 shadow-lg md:aspect-square">
-                <div
-                  className="size-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
-                  style={{ backgroundImage: `url('${item.images[0] || '/placeholder-food.jpg'}')` }}
-                />
-                {item.badges?.map((badge) => (
-                  <div key={badge} className="absolute left-4 top-4">
-                    <span className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
-                      {badge}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            <div className="flex flex-col gap-6 pb-8 lg:pb-16">
+              {/* Hero Image Carousel */}
+              <ImageCarousel 
+                images={item.images} 
+                alt={item.name}
+                badges={item.badges}
+              />
 
               {/* Basic Info */}
               <div className="flex flex-col gap-4">
@@ -164,29 +306,41 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                 )}
 
                 {/* Meta Chips */}
-                <div className="flex flex-wrap gap-3">
-                  {item.prep_time && (
+                <div className="flex flex-wrap gap-2">
+                  {/* Prep Time */}
+                  {item.preparation_time && (
                     <div className="flex h-8 items-center gap-2 rounded-full bg-gray-100 dark:bg-slate-800 px-3 text-slate-700 dark:text-slate-300">
                       <Clock className="size-4" />
-                      <span className="text-xs font-medium">{item.prep_time}</span>
+                      <span className="text-xs font-medium">{item.preparation_time} phút</span>
                     </div>
                   )}
-                  {item.calories && (
-                    <div className="flex h-8 items-center gap-2 rounded-full bg-gray-100 dark:bg-slate-800 px-3 text-slate-700 dark:text-slate-300">
+                  
+                  {/* Category */}
+                  {item.category?.name && (
+                    <div className="flex h-8 items-center gap-2 rounded-full bg-purple-500/10 px-3 text-purple-600 dark:text-purple-400">
+                      <span className="text-xs font-medium">{item.category.name}</span>
+                    </div>
+                  )}
+                  
+                  {/* Popularity Score */}
+                  {item.popularity_score && item.popularity_score > 0 && (
+                    <div className="flex h-8 items-center gap-2 rounded-full bg-amber-500/10 px-3 text-amber-600 dark:text-amber-400">
                       <Flame className="size-4" />
-                      <span className="text-xs font-medium">{item.calories}</span>
+                      <span className="text-xs font-medium">{item.popularity_score}% yêu thích</span>
                     </div>
                   )}
-                  {item.allergens?.map((allergen) => (
-                    <div
-                      key={allergen}
-                      className="flex h-8 items-center gap-2 rounded-full bg-amber-500/10 px-3 text-amber-600 dark:text-amber-400"
-                    >
-                      <AlertTriangle className="size-4" />
-                      <span className="text-xs font-medium">{allergen}</span>
-                    </div>
-                  ))}
                 </div>
+
+                {/* Allergen Info - Always visible */}
+                {item.allergen_info && (
+                  <div className="flex items-start gap-2 rounded-lg bg-amber-500/10 p-3 text-amber-700 dark:text-amber-400">
+                    <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+                    <span className="text-xs font-medium">{item.allergen_info}</span>
+                  </div>
+                )}
+
+                {/* Nutritional Info - Collapsible */}
+                <NutritionalInfoAccordion nutritionalInfo={item.nutritional_info} />
               </div>
             </div>
 
