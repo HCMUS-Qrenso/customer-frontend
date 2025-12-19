@@ -34,7 +34,9 @@ export function ChefPicksCarousel({
       <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar snap-x snap-mandatory md:px-6">
         {items.map((item) => {
           const hasImage = item.images && item.images.length > 0;
-          const imageUrl = item.images?.[0];
+          // Get primary image (display_order = 0) or first image
+          const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
+          const imageUrl = primaryImage?.image_url;
           
           return (
             <Link
@@ -60,7 +62,7 @@ export function ChefPicksCarousel({
                 
                 {/* Badge - Top Left */}
                 {item.badges?.[0] && (
-                  <Badge className="absolute left-2 top-2 border-0 bg-emerald-500 px-2 py-1 text-xs font-bold uppercase tracking-wider text-emerald-950">
+                  <Badge className="absolute left-2 top-2 border-0 bg-emerald-500 px-2 py-1 text-xs font-bold uppercase tracking-wider text-white">
                     {item.badges[0]}
                   </Badge>
                 )}
@@ -68,7 +70,7 @@ export function ChefPicksCarousel({
                 {/* Price - Top Right */}
                 <div className="absolute right-2 top-2">
                   <div className="rounded-lg bg-emerald-500 px-2.5 py-1 shadow-md">
-                    <span className="text-sm font-bold text-emerald-950">
+                    <span className="text-sm font-bold text-white">
                       {formatUSD(item.base_price)}
                     </span>
                   </div>

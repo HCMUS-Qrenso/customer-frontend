@@ -96,7 +96,7 @@ function MenuSearchBar({
             onClick={() => setIsOpen(!isOpen)}
             className={`flex h-12 items-center gap-2 rounded-xl px-3 transition-colors border ${
               isOpen || !isDefaultSort
-                ? 'bg-emerald-500 text-emerald-950 border-emerald-500'
+                ? 'bg-emerald-500 text-white border-emerald-500'
                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-gray-100 dark:border-transparent shadow-sm'
             }`}
           >
@@ -154,7 +154,7 @@ function CategoryChips({
         onClick={() => onSelect(null)}
         className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
           selectedCategory === null
-            ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
+            ? 'bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
             : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-transparent'
         }`}
       >
@@ -169,7 +169,7 @@ function CategoryChips({
           onClick={() => onSelect(category.id)}
           className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
             selectedCategory === category.id
-              ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
+              ? 'bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
               : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-transparent'
           }`}
         >
@@ -465,7 +465,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
         <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[480px] -translate-x-1/2 px-4 pb-[calc(env(safe-area-inset-bottom,16px)+16px)] lg:max-w-2xl">
           <Link href={`/${tenantSlug}/cart`}>
             <Button 
-              className="flex h-14 w-full items-center justify-between rounded-full bg-emerald-500 px-5 text-emerald-950 shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 active:scale-[0.98]"
+              className="flex h-14 w-full items-center justify-between rounded-full bg-emerald-500 px-5 text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 active:scale-[0.98]"
             >
               <div className="flex items-center gap-3">
                 <span className="flex size-7 items-center justify-center rounded-full bg-emerald-950/20 text-sm font-bold">

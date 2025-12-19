@@ -21,7 +21,7 @@ export type ModifierGroupType = 'single_choice' | 'multiple_choice';
 export interface ModifierDTO {
   id: string;
   name: string;
-  price: number;
+  price_adjustment: string; // API returns string like "-10000", "0", "15000"
   display_order: number;
   is_available?: boolean;
 }
@@ -48,6 +48,13 @@ export interface MenuItemCategoryDTO {
   name: string;
 }
 
+// Image object from API response
+export interface MenuItemImageDTO {
+  id: string;
+  image_url: string;
+  display_order: number;
+}
+
 // Menu item from list (GET /menu)
 export interface MenuItemDTO {
   id: string;
@@ -57,7 +64,7 @@ export interface MenuItemDTO {
   status: MenuItemStatus;
   allergens?: string[];
   category: MenuItemCategoryDTO;
-  images: string[];
+  images: MenuItemImageDTO[];
   created_at: string;
   updated_at: string;
   // Display fields
@@ -65,11 +72,23 @@ export interface MenuItemDTO {
   badges?: string[];
 }
 
+// Nutritional info from API
+export interface NutritionalInfoDTO {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
+
 // Menu item detail (GET /menu/:id) - includes modifier_groups
 export interface MenuItemDetailDTO extends MenuItemDTO {
   modifier_groups?: ModifierGroupDTO[];
-  prep_time?: string;
-  calories?: string;
+  preparation_time?: number;     // in minutes
+  nutritional_info?: NutritionalInfoDTO;
+  popularity_score?: number;     // 0-100
+  allergen_info?: string;        // free text allergen info
+  order_count?: number;
+  review_count?: number;
 }
 
 // ============================================

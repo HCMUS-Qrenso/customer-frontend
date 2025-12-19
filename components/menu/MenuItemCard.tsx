@@ -15,7 +15,9 @@ interface MenuItemCardProps {
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
   const isUnavailable = item.status === 'unavailable';
   const hasImage = item.images && item.images.length > 0;
-  const imageUrl = item.images?.[0];
+  // Get primary image (display_order = 0) or first image
+  const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
+  const imageUrl = primaryImage?.image_url;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
       >
         {/* Chef's Pick Badge */}
         {item.isChefRecommendation && !isUnavailable && (
-          <div className="absolute right-0 top-0 z-10 rounded-bl-lg bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-950">
+          <div className="absolute right-0 top-0 z-10 rounded-bl-lg bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Chef's Pick
           </div>
         )}
