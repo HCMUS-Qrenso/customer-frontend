@@ -132,7 +132,7 @@ function NutritionalInfoAccordion({ nutritionalInfo }: NutritionalInfoAccordionP
 
       {/* Content */}
       <div className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'}`}>
-        <div className="flex flex-wrap gap-2 p-3 pt-0">
+        <div className="flex flex-wrap gap-2 p-3">
           {nutritionalInfo.calories && (
             <div className="flex h-7 items-center gap-1.5 rounded-full bg-orange-500/10 px-3 text-orange-600 dark:text-orange-400">
               <span className="text-xs font-bold">{nutritionalInfo.calories}</span>
@@ -258,7 +258,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
       />
 
       {/* Main Content */}
-      <main className="mx-auto w-full max-w-7xl p-4 pb-32 lg:p-8 lg:pb-40">
+      <main className="mx-auto w-full max-w-7xl p-4 pb-40 lg:p-8 lg:pb-40">
         {isLoading ? (
           // Loading skeleton
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-12">

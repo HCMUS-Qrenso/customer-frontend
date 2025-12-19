@@ -137,7 +137,7 @@ function TableLandingContent({
   };
 
   return (
-    <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[480px] flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen lg:max-w-xl transition-colors">
+    <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
       {/* Background Pattern */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" 
            style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
@@ -161,7 +161,7 @@ function TableLandingContent({
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 flex flex-1 flex-col gap-6 px-5 pb-32 pt-2 sm:px-6">
+      <main className="relative z-10 flex flex-1 flex-col gap-6 px-5 pb-40 pt-2 sm:px-6">
         <TableHeroCard
           tableNumber={table.tableNumber}
           capacity={table.capacity}
@@ -174,7 +174,7 @@ function TableLandingContent({
       </main>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 lg:max-w-xl">
+      <div className="fixed bottom-0 left-1/2 z-40 w-full -translate-x-1/2 lg:px-40">
         {/* Gradient Overlay */}
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white dark:from-slate-900 via-white/95 dark:via-slate-900/95 to-transparent" />
 
