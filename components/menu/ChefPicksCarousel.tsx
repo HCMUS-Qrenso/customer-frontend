@@ -60,7 +60,7 @@ export function ChefPicksCarousel({
                 
                 {/* Badge - Top Left */}
                 {item.badges?.[0] && (
-                  <Badge className="absolute left-2 top-2 border-0 bg-emerald-500 px-2 py-1 text-xs font-bold uppercase tracking-wider text-emerald-950">
+                  <Badge className="absolute left-2 top-2 border-0 bg-emerald-500 px-2 py-1 text-xs font-bold uppercase tracking-wider text-white">
                     {item.badges[0]}
                   </Badge>
                 )}
@@ -68,7 +68,7 @@ export function ChefPicksCarousel({
                 {/* Price - Top Right */}
                 <div className="absolute right-2 top-2">
                   <div className="rounded-lg bg-emerald-500 px-2.5 py-1 shadow-md">
-                    <span className="text-sm font-bold text-emerald-950">
+                    <span className="text-sm font-bold text-white">
                       {formatUSD(item.base_price)}
                     </span>
                   </div>

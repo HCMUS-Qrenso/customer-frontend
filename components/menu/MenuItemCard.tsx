@@ -37,7 +37,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
       >
         {/* Chef's Pick Badge */}
         {item.isChefRecommendation && !isUnavailable && (
-          <div className="absolute right-0 top-0 z-10 rounded-bl-lg bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-950">
+          <div className="absolute right-0 top-0 z-10 rounded-bl-lg bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Chef's Pick
           </div>
         )}

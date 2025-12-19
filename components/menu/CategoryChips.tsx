@@ -27,7 +27,7 @@ export function CategoryChips({
         onClick={() => onSelect(null)}
         className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
           selectedCategory === null
-            ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md hover:bg-emerald-600'
+            ? 'bg-emerald-500 text-white font-bold shadow-md hover:bg-emerald-600'
             : 'bg-slate-800 text-slate-200 font-medium hover:bg-slate-700'
         }`}
       >
@@ -42,7 +42,7 @@ export function CategoryChips({
           onClick={() => onSelect(category.id)}
           className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
             selectedCategory === category.id
-              ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md hover:bg-emerald-600'
+              ? 'bg-emerald-500 text-white font-bold shadow-md hover:bg-emerald-600'
               : 'bg-slate-800 text-slate-200 font-medium hover:bg-slate-700'
           }`}
         >

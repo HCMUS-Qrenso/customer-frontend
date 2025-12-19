@@ -79,7 +79,7 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
             onClick={() => updateCount(count + 1)}
             disabled={count >= MAX_GUESTS}
             className={cn(
-              "size-10 rounded-full bg-emerald-500 text-emerald-950 shadow-md shadow-emerald-500/30 active:scale-95 disabled:opacity-50 disabled:shadow-none disabled:bg-slate-200 dark:disabled:bg-slate-600 disabled:text-slate-400 dark:disabled:text-slate-500",
+              "size-10 rounded-full bg-emerald-500 text-white shadow-md shadow-emerald-500/30 active:scale-95 disabled:opacity-50 disabled:shadow-none disabled:bg-slate-200 dark:disabled:bg-slate-600 disabled:text-slate-400 dark:disabled:text-slate-500",
             )}
           >
             <Plus className="size-5" />

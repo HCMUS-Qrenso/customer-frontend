@@ -55,7 +55,7 @@ export function StartSessionButton({
     >
       <div className={cn(
         "relative flex w-full items-center justify-between",
-        disabled ? "text-slate-400" : "text-emerald-950"
+        disabled ? "text-slate-400" : "text-white"
       )}>
         <span className="flex items-center gap-2 text-lg font-bold tracking-tight">
           {disabled ? (
@@ -72,7 +72,7 @@ export function StartSessionButton({
           "flex size-10 items-center justify-center rounded-full",
           disabled ? "bg-slate-200" : "bg-white/20"
         )}>
-          <ArrowRight className={cn("size-5", disabled ? "text-slate-400" : "text-emerald-950")} />
+          <ArrowRight className={cn("size-5", disabled ? "text-slate-400" : "text-white")} />
         </div>
       </div>
     </Button>

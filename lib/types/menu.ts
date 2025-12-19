@@ -21,7 +21,7 @@ export type ModifierGroupType = 'single_choice' | 'multiple_choice';
 export interface ModifierDTO {
   id: string;
   name: string;
-  price: number;
+  price_adjustment: string; // API returns string like "-10000", "0", "15000"
   display_order: number;
   is_available?: boolean;
 }
