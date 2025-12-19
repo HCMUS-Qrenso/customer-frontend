@@ -34,7 +34,9 @@ export function ChefPicksCarousel({
       <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar snap-x snap-mandatory md:px-6">
         {items.map((item) => {
           const hasImage = item.images && item.images.length > 0;
-          const imageUrl = item.images?.[0];
+          // Get primary image (display_order = 0) or first image
+          const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
+          const imageUrl = primaryImage?.image_url;
           
           return (
             <Link

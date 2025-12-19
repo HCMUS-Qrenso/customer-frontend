@@ -48,6 +48,13 @@ export interface MenuItemCategoryDTO {
   name: string;
 }
 
+// Image object from API response
+export interface MenuItemImageDTO {
+  id: string;
+  image_url: string;
+  display_order: number;
+}
+
 // Menu item from list (GET /menu)
 export interface MenuItemDTO {
   id: string;
@@ -57,7 +64,7 @@ export interface MenuItemDTO {
   status: MenuItemStatus;
   allergens?: string[];
   category: MenuItemCategoryDTO;
-  images: string[];
+  images: MenuItemImageDTO[];
   created_at: string;
   updated_at: string;
   // Display fields

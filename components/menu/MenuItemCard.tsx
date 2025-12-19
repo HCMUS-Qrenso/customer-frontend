@@ -15,7 +15,9 @@ interface MenuItemCardProps {
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
   const isUnavailable = item.status === 'unavailable';
   const hasImage = item.images && item.images.length > 0;
-  const imageUrl = item.images?.[0];
+  // Get primary image (display_order = 0) or first image
+  const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
+  const imageUrl = primaryImage?.image_url;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();

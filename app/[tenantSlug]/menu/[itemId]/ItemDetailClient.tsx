@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { Minus, Plus, Clock, Flame, AlertTriangle, ChevronLeft, ChevronRight, ImageIcon, Info, ChevronDown } from 'lucide-react';
+import { Minus, Plus, Clock, Flame, AlertTriangle, ImageIcon, Info, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CustomerHeader } from '@/components/CustomerHeader';
@@ -13,34 +13,130 @@ import { customerHref } from '@/lib/customer/context';
 import { useMenuItemQuery } from '@/hooks/use-menu-query';
 import type { ModifierGroupDTO, CartSummaryDTO } from '@/lib/types/menu';
 
-// Image Carousel Component with fallback
+// Image Carousel Component with swipe support and slide animation
 interface ImageCarouselProps {
-  images: string[];
+  images: Array<{ id: string; image_url: string; display_order: number }>;
   alt: string;
   badges?: string[];
 }
 
 function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const hasImages = images && images.length > 0;
-  const showControls = hasImages && images.length > 1;
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Sort by display_order and extract URLs
+  const sortedImages = useMemo(() => 
+    [...(images || [])].sort((a, b) => a.display_order - b.display_order),
+    [images]
+  );
+  const imageUrls = sortedImages.map(img => img.image_url);
+  const hasImages = imageUrls.length > 0;
+  const showDots = hasImages && imageUrls.length > 1;
 
-  const goToPrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  }, [images.length]);
+  const goToIndex = useCallback((index: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentIndex(index);
+    setTimeout(() => setIsAnimating(false), 300);
+  }, [isAnimating]);
 
-  const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  }, [images.length]);
+  // Swipe handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isAnimating) return;
+    touchStartX.current = e.touches[0].clientX;
+  }, [isAnimating]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = e.touches[0].clientX - touchStartX.current;
+    setSwipeOffset(diff);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStartX.current === null) return;
+    
+    const minSwipeDistance = 50;
+
+    if (Math.abs(swipeOffset) > minSwipeDistance) {
+      if (swipeOffset < 0) {
+        // Swipe left - go to next
+        goToIndex(currentIndex === imageUrls.length - 1 ? 0 : currentIndex + 1);
+      } else {
+        // Swipe right - go to previous
+        goToIndex(currentIndex === 0 ? imageUrls.length - 1 : currentIndex - 1);
+      }
+    }
+
+    touchStartX.current = null;
+    setSwipeOffset(0);
+  }, [swipeOffset, currentIndex, imageUrls.length, goToIndex]);
+
+  // Mouse drag support for desktop
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (isAnimating) return;
+    touchStartX.current = e.clientX;
+  }, [isAnimating]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = e.clientX - touchStartX.current;
+    setSwipeOffset(diff);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    if (touchStartX.current === null) return;
+    
+    const minSwipeDistance = 50;
+
+    if (Math.abs(swipeOffset) > minSwipeDistance) {
+      if (swipeOffset < 0) {
+        goToIndex(currentIndex === imageUrls.length - 1 ? 0 : currentIndex + 1);
+      } else {
+        goToIndex(currentIndex === 0 ? imageUrls.length - 1 : currentIndex - 1);
+      }
+    }
+
+    touchStartX.current = null;
+    setSwipeOffset(0);
+  }, [swipeOffset, currentIndex, imageUrls.length, goToIndex]);
+
+  const handleMouseLeave = useCallback(() => {
+    touchStartX.current = null;
+    setSwipeOffset(0);
+  }, []);
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square">
-      {/* Image or Placeholder */}
+    <div 
+      ref={containerRef}
+      className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square select-none cursor-grab active:cursor-grabbing"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Image Slider */}
       {hasImages ? (
-        <div
-          className="size-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
-          style={{ backgroundImage: `url('${images[currentIndex]}')` }}
-        />
+        <div 
+          className="flex size-full transition-transform duration-300 ease-out"
+          style={{ 
+            transform: `translateX(calc(-${currentIndex * 100}% + ${swipeOffset}px))`,
+            transitionDuration: swipeOffset !== 0 ? '0ms' : '300ms'
+          }}
+        >
+          {imageUrls.map((url, index) => (
+            <div
+              key={index}
+              className="size-full shrink-0 bg-cover bg-center pointer-events-none"
+              style={{ backgroundImage: `url('${url}')` }}
+            />
+          ))}
+        </div>
       ) : (
         <div className="flex size-full flex-col items-center justify-center gap-3 text-gray-300 dark:text-slate-600">
           <ImageIcon className="size-20" strokeWidth={1} />
@@ -48,32 +144,14 @@ function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
         </div>
       )}
 
-      {/* Navigation Arrows */}
-      {showControls && (
-        <>
-          <button
-            onClick={goToPrevious}
-            className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 shadow-lg backdrop-blur-sm transition-all hover:bg-white dark:hover:bg-slate-800 hover:scale-110"
-          >
-            <ChevronLeft className="size-6" />
-          </button>
-          <button
-            onClick={goToNext}
-            className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 shadow-lg backdrop-blur-sm transition-all hover:bg-white dark:hover:bg-slate-800 hover:scale-110"
-          >
-            <ChevronRight className="size-6" />
-          </button>
-        </>
-      )}
-
-      {/* Dot Indicators */}
-      {showControls && (
+      {/* Dot Indicators - Clickable */}
+      {showDots && (
         <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-          {images.map((_, index) => (
+          {imageUrls.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`size-2.5 rounded-full transition-all ${
+              onClick={() => goToIndex(index)}
+              className={`size-2.5 rounded-full transition-all duration-200 ${
                 index === currentIndex
                   ? 'bg-white scale-125 shadow-lg'
                   : 'bg-white/50 hover:bg-white/70'
@@ -85,7 +163,7 @@ function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
 
       {/* Badges */}
       {badges?.map((badge) => (
-        <div key={badge} className="absolute left-4 top-4">
+        <div key={badge} className="absolute left-4 top-4 pointer-events-none">
           <span className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
             {badge}
           </span>
