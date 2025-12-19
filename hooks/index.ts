@@ -14,6 +14,3 @@ export {
   useMenuItemQuery,
   menuQueryKeys,
 } from './use-menu-query'
-
-export { useVerifyTokenMutation } from './use-verify-token-mutation'
-

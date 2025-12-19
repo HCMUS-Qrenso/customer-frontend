@@ -9,6 +9,7 @@ import { MenuItemDTO, CartSummaryDTO } from '@/lib/types/menu';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useInfiniteMenuQuery, useCategoriesQuery } from '@/hooks/use-menu-query';
+import { setQrToken } from '@/lib/stores/qr-token-store';
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -98,7 +99,7 @@ function MenuItemCard({
   onQuickAdd: (item: MenuItemDTO) => void;
   href: string;
 }) {
-  const isInactive = item.status === 'inactive';
+  const isInactive = item.status === 'unavailable';
   const imageUrl = item.images?.[0] || 'https://via.placeholder.com/150';
 
   return (
@@ -195,6 +196,13 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Store QR token for API requests
+  useEffect(() => {
+    if (token) {
+      setQrToken(token);
+    }
+  }, [token]);
+
   // Fetch categories
   const { 
     data: categories, 
@@ -212,7 +220,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   } = useInfiniteMenuQuery({
     category_id: selectedCategory || undefined,
     search: debouncedSearch || undefined,
-    status: 'active',
+    status: 'available',
     limit: 20,
   });
 

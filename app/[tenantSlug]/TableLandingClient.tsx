@@ -1,21 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { useVerifyTokenMutation } from "@/hooks/use-verify-token-mutation";
+import { setQrToken } from "@/lib/stores/qr-token-store";
+import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { TableHeroCard } from "@/components/TableHeroCard";
 import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
-import { LoadingSkeleton } from "@/components/LoadingSkeleton";
-import {
-  InvalidQRError,
-  NetworkError,
-} from "@/components/ErrorStates";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, AlertTriangle, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin, AlertTriangle } from "lucide-react";
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -23,38 +16,17 @@ interface TableLandingClientProps {
   token?: string;
 }
 
-// Loading component
-function VerifyingLoading() {
-  return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50">
-      <div className="mb-4 size-12 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-500" />
-      <p className="text-slate-500">Đang xác thực mã QR...</p>
-    </div>
-  );
-}
-
-// Error component for token verification failure
-function TokenVerificationError({ 
-  message, 
-  onRetry 
-}: { 
-  message: string; 
-  onRetry: () => void;
-}) {
+// Error component for invalid QR token
+function InvalidTokenError() {
   return (
     <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 px-6 text-center">
       <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-red-100">
         <AlertTriangle className="size-10 text-red-500" />
       </div>
       <h1 className="mb-2 text-2xl font-bold text-slate-900">Mã QR không hợp lệ</h1>
-      <p className="mb-8 max-w-sm text-slate-500">{message}</p>
-      <Button
-        onClick={onRetry}
-        className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600"
-      >
-        <RefreshCw className="size-4" />
-        Thử lại
-      </Button>
+      <p className="max-w-sm text-slate-500">
+        Mã QR bạn quét không đúng định dạng. Vui lòng quét lại mã QR tại bàn.
+      </p>
     </div>
   );
 }
@@ -80,69 +52,37 @@ function TableLandingContent({
   token,
 }: TableLandingClientProps) {
   const { t } = useLanguage();
-  const router = useRouter();
 
-  // Use verify token mutation
-  const {
-    mutate: verifyToken,
-    data: verifyResult,
-    isPending: isVerifying,
-    error: verifyError,
-    isSuccess,
-    reset,
-  } = useVerifyTokenMutation();
+  // Decode the QR token to get table info
+  const tokenPayload = useMemo(() => {
+    if (!token) return null;
+    return decodeQrToken(token);
+  }, [token]);
 
-  // Verify token on mount
+  // Store the QR token for API requests
   useEffect(() => {
-    if (token) {
-      verifyToken(token);
+    if (token && tokenPayload) {
+      setQrToken(token);
     }
-  }, [token, verifyToken]);
-
-  const handleRetry = () => {
-    if (token) {
-      reset();
-      verifyToken(token);
-    }
-  };
+  }, [token, tokenPayload]);
 
   // No token provided
   if (!token) {
     return <MissingTokenError />;
   }
 
-  // Verifying token
-  if (isVerifying) {
-    return <VerifyingLoading />;
+  // Token invalid (can't decode)
+  if (!tokenPayload) {
+    return <InvalidTokenError />;
   }
 
-  // Token verification error
-  if (verifyError) {
-    return (
-      <TokenVerificationError 
-        message={(verifyError as Error).message || "Không thể xác thực mã QR"} 
-        onRetry={handleRetry}
-      />
-    );
-  }
-
-  // Token invalid
-  if (isSuccess && !verifyResult?.valid) {
-    return (
-      <TokenVerificationError 
-        message={verifyResult?.message || "Mã QR không hợp lệ hoặc đã hết hạn"} 
-        onRetry={handleRetry}
-      />
-    );
-  }
-
-  // Token not verified yet
-  if (!verifyResult?.valid || !verifyResult?.table) {
-    return <VerifyingLoading />;
-  }
-
-  // Token verified successfully - show table landing page
-  const table = verifyResult.table;
+  // Token decoded successfully - show table landing page
+  const table = {
+    id: tokenPayload.tableId,
+    tableNumber: tokenPayload.tableNumber,
+    capacity: 4, // Default capacity, will be fetched from API later if needed
+    status: "available" as const, // Assume available, server will validate on API calls
+  };
 
   return (
     <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[480px] flex-col bg-slate-50 shadow-2xl sm:min-h-screen lg:max-w-2xl">
@@ -166,7 +106,7 @@ function TableLandingContent({
           tableNumber={table.tableNumber}
           capacity={table.capacity}
           isActive={table.status === "available"}
-          zoneName={table.zoneId}
+          zoneName={undefined}
         />
 
         <GuestCountStepper />

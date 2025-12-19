@@ -41,7 +41,7 @@ export interface ModifierGroupDTO {
 // Menu Item DTOs (from GET /menu response)
 // ============================================
 
-export type MenuItemStatus = 'active' | 'inactive';
+export type MenuItemStatus = 'available' | 'unavailable';
 
 export interface MenuItemCategoryDTO {
   id: string;
@@ -142,7 +142,8 @@ export interface GetMenuParams {
   search?: string;
   category_id?: string;
   status?: MenuItemStatus;
-  sort_by?: 'name' | 'base_price' | 'created_at' | 'display_order';
+  is_chef_recommendation?: boolean;
+  sort_by?: 'createdAt' | 'name' | 'basePrice' | 'popularityScore';
   sort_order?: 'asc' | 'desc';
 }
 

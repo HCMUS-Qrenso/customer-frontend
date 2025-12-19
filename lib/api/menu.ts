@@ -36,9 +36,10 @@ export const menuApi = {
         limit: params.limit || 20,
         search: params.search,
         category_id: params.category_id,
-        status: params.status || 'active',
-        sort_by: params.sort_by || 'display_order',
-        sort_order: params.sort_order || 'asc',
+        status: params.status || 'available',
+        is_chef_recommendation: params.is_chef_recommendation,
+        sort_by: params.sort_by || 'popularityScore',
+        sort_order: params.sort_order || 'desc',
       },
     })
     return data
@@ -51,8 +52,8 @@ export const menuApi = {
   getCategories: async (): Promise<CategoryDTO[]> => {
     const { data } = await apiClient.get<ApiResponse<CategoriesResponse>>('/categories', {
       params: {
-        limit: 100,
-        is_active: true,
+        limit: 50,
+        status: 'active',
       },
     })
     return data.data.categories
