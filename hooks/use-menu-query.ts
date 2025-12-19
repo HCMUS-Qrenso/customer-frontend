@@ -11,6 +11,7 @@ export const menuQueryKeys = {
     [...menuQueryKeys.all, 'infinite', params] as const,
   detail: (id: string) => [...menuQueryKeys.all, 'detail', id] as const,
   categories: () => [...menuQueryKeys.all, 'categories'] as const,
+  chefPicks: () => [...menuQueryKeys.all, 'chefPicks'] as const,
 }
 
 interface UseMenuQueryOptions {
@@ -96,3 +97,27 @@ export function useMenuItemQuery(
     staleTime: 60 * 1000, // 1 minute
   })
 }
+
+/**
+ * Hook to fetch chef recommendations (chef picks)
+ * Returns items marked as chef recommendations, sorted by popularity
+ */
+export function useChefPicksQuery(
+  options: UseMenuQueryOptions = {}
+) {
+  const { enabled = true } = options
+
+  return useQuery<MenuListResponseDTO>({
+    queryKey: menuQueryKeys.chefPicks(),
+    queryFn: () => menuApi.getMenu({
+      is_chef_recommendation: true,
+      status: 'available',
+      limit: 10, // Limit to top 10 chef picks
+      sort_by: 'popularityScore',
+      sort_order: 'desc',
+    }),
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes - chef picks change rarely
+  })
+}
+

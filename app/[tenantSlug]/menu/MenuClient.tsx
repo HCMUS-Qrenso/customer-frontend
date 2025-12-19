@@ -8,8 +8,12 @@ import { ArrowLeft, ShoppingCart, Search, AlertTriangle, Loader2 } from 'lucide-
 import { MenuItemDTO, CartSummaryDTO } from '@/lib/types/menu';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { LanguageToggle } from '@/components/LanguageToggle';
-import { useInfiniteMenuQuery, useCategoriesQuery } from '@/hooks/use-menu-query';
+import { useInfiniteMenuQuery, useCategoriesQuery, useChefPicksQuery } from '@/hooks/use-menu-query';
 import { setQrToken } from '@/lib/stores/qr-token-store';
+import { decodeQrToken } from '@/lib/utils/jwt-decode';
+import { formatVND } from '@/lib/format';
+import { ChefPicksCarousel } from '@/components/menu/ChefPicksCarousel';
+import { MenuItemCard } from '@/components/menu/MenuItemCard';
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -89,83 +93,6 @@ function CategoryChips({
   );
 }
 
-// Menu item card component
-function MenuItemCard({ 
-  item, 
-  onQuickAdd,
-  href,
-}: { 
-  item: MenuItemDTO;
-  onQuickAdd: (item: MenuItemDTO) => void;
-  href: string;
-}) {
-  const isInactive = item.status === 'unavailable';
-  const imageUrl = item.images?.[0] || 'https://via.placeholder.com/150';
-
-  return (
-    <Link
-      href={isInactive ? '#' : href}
-      className={`
-        relative flex h-32 overflow-hidden rounded-xl transition-shadow
-        ${isInactive ? 'opacity-70 pointer-events-none' : 'hover:shadow-md cursor-pointer'}
-        bg-slate-800
-      `}
-    >
-      {/* Image */}
-      <div className="relative h-full w-32 shrink-0">
-        <div
-          className={`h-full w-full bg-cover bg-center ${isInactive ? 'grayscale' : ''}`}
-          style={{ backgroundImage: `url('${imageUrl}')` }}
-        />
-        {isInactive && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <span className="rounded border border-white px-2 py-0.5 text-xs font-bold uppercase text-white">
-              Hết món
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col justify-between p-3 min-w-0">
-        <div className="min-w-0">
-          <h4 className="font-bold leading-tight text-white truncate">
-            {item.name}
-          </h4>
-          {item.description && (
-            <p className="mt-1 line-clamp-2 text-xs text-slate-400">
-              {item.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-end justify-between mt-auto">
-          <div className="flex flex-col">
-            <span className={`font-bold text-emerald-400 ${isInactive ? 'text-slate-500' : ''}`}>
-              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.base_price)}
-            </span>
-          </div>
-
-          {!isInactive && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onQuickAdd(item);
-              }}
-              className="size-8 rounded-full bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30"
-            >
-              <span className="text-lg">+</span>
-            </Button>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 // Loading more spinner component
 function LoadingMore() {
   return (
@@ -188,6 +115,13 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   // Ref for infinite scroll trigger
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  // Decode token to get table number
+  const tableNumber = useMemo(() => {
+    if (!token) return null;
+    const payload = decodeQrToken(token);
+    return payload?.tableNumber || null;
+  }, [token]);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -208,6 +142,17 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
     data: categories, 
     isLoading: categoriesLoading 
   } = useCategoriesQuery();
+
+  // Fetch chef picks separately
+  const {
+    data: chefPicksData,
+    isLoading: chefPicksLoading,
+  } = useChefPicksQuery();
+
+  const chefPicks = useMemo(() => {
+    if (!chefPicksData?.data?.menu_items) return [];
+    return chefPicksData.data.menu_items;
+  }, [chefPicksData]);
 
   // Fetch menu items with infinite scroll
   const { 
@@ -296,7 +241,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
             <div className="flex flex-col">
               <h2 className="text-lg font-bold leading-tight tracking-tight">{tenantSlug}</h2>
               <span className="text-xs font-medium text-slate-400">
-                {tableId ? `Bàn ${tableId.slice(0, 8)}...` : 'Menu'}
+                {tableNumber ? `Bàn ${tableNumber}` : 'Menu'}
               </span>
             </div>
           </div>
@@ -345,6 +290,14 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto pb-24">
+        {/* Chef Picks Carousel - Only show when not searching and no category selected */}
+        {!searchQuery && !selectedCategory && chefPicks.length > 0 && (
+          <ChefPicksCarousel
+            items={chefPicks}
+            tenantSlug={tenantSlug}
+            tableCode={tableId || ''}
+          />
+        )}
         {menuLoading && items.length === 0 ? (
           // Initial loading skeleton
           <div className="space-y-6 px-4 py-6 md:px-6">
@@ -421,7 +374,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
                   {cart.count}
                 </span>
                 <span className="font-bold">
-                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cart.subtotal)}
+                  {formatVND(cart.subtotal)}
                 </span>
               </div>
               

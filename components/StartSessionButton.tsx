@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
 // import { useStartSessionMutation } from "@/hooks/use-table-session-mutation";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // const SESSION_TOKEN_STORAGE_KEY = "qrenso_session_token";
 // const GUEST_COUNT_STORAGE_KEY = "qrenso_guest_count";
@@ -38,27 +39,6 @@ export function StartSessionButton({
       : `/${tenantSlug}/menu?table=${tableCode}`;
     
     router.push(menuUrl);
-
-    /* Session logic - temporarily commented out
-    try {
-      const storedPartySize = localStorage.getItem(GUEST_COUNT_STORAGE_KEY);
-      const partySize = storedPartySize
-        ? parseInt(storedPartySize, 10)
-        : undefined;
-
-      const result = await startSession({
-        tenantSlug,
-        tableCode,
-        preferredLanguage: lang,
-        partySize,
-      });
-
-      localStorage.setItem(SESSION_TOKEN_STORAGE_KEY, result.sessionToken);
-      router.push(`/${tenantSlug}/t/${tableCode}/menu`);
-    } catch (error) {
-      console.error("Failed to start session:", error);
-    }
-    */
   }, [tenantSlug, tableCode, token, router, disabled]);
 
   return (
@@ -66,21 +46,37 @@ export function StartSessionButton({
       type="button"
       onClick={handleStartSession}
       disabled={disabled}
-      className={`
-        group relative h-14 w-full rounded-full text-[17px] font-bold tracking-tight shadow-lg transition-all
-        ${
-          disabled
-            ? "cursor-not-allowed bg-slate-300"
-            : "bg-emerald-500 text-emerald-900 shadow-emerald-500/30 hover:bg-emerald-600 active:scale-[0.98]"
-        }
-      `}
+      className={cn(
+        "group relative h-16 w-full overflow-hidden rounded-full px-8",
+        disabled
+          ? "cursor-not-allowed bg-slate-100 ring-1 ring-slate-200"
+          : "bg-emerald-500 shadow-lg shadow-emerald-500/30 active:scale-[0.98] active:bg-emerald-600"
+      )}
     >
-      <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
-
-      <div className="flex items-center gap-2">
-        <span>{t.cta.startOrdering}</span>
-        <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+      <div className={cn(
+        "relative flex w-full items-center justify-between",
+        disabled ? "text-slate-400" : "text-emerald-950"
+      )}>
+        <span className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          {disabled ? (
+            "Vui lòng đợi..."
+          ) : (
+            <>
+              <Sparkles className="size-5 text-emerald-900/40" />
+              {t.cta.startOrdering}
+            </>
+          )}
+        </span>
+        
+        <div className={cn(
+          "flex size-10 items-center justify-center rounded-full",
+          disabled ? "bg-slate-200" : "bg-white/20"
+        )}>
+          <ArrowRight className={cn("size-5", disabled ? "text-slate-400" : "text-emerald-950")} />
+        </div>
       </div>
     </Button>
   );
 }
+
+
