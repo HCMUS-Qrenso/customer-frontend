@@ -394,6 +394,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
             items={chefPicks}
             tenantSlug={tenantSlug}
             tableCode={tableId || ''}
+            token={token || ''}
           />
         )}
         {menuLoading && items.length === 0 ? (
