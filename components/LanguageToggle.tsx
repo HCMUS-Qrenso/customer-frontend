@@ -1,56 +1,46 @@
 'use client';
 
+import Image from 'next/image';
 import { useLanguage } from '@/lib/i18n/context';
-import { Language } from '@/lib/i18n/translations';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-export function LanguageToggle() {
+export function LanguageToggle({ className }: { className?: string }) {
   const { lang, setLang } = useLanguage();
 
-  const handleChange = (newLang: Language) => {
-    setLang(newLang);
+  // Cycle through languages: vi → en → vi
+  const cycleLanguage = () => {
+    setLang(lang === 'vi' ? 'en' : 'vi');
+  };
+
+  const getFlag = () => {
+    return lang === 'vi' ? '/vietnam.png' : '/united-kingdom.png';
+  };
+
+  const getLabel = () => {
+    return lang === 'vi' ? 'Tiếng Việt' : 'English';
   };
 
   return (
-    <div 
-      className="flex h-10 items-center rounded-full bg-white p-1 shadow-sm ring-1 ring-slate-200"
-      role="radiogroup"
-      aria-label="Language selection"
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={cycleLanguage}
+      className={cn(
+        'size-10 rounded-full transition-colors',
+        'hover:bg-slate-100 dark:hover:bg-slate-800',
+        className
+      )}
+      title={getLabel()}
     >
-      <button
-        type="button"
-        role="radio"
-        aria-checked={lang === 'vi'}
-        onClick={() => handleChange('vi')}
-        className={`
-          relative flex h-full min-w-[44px] cursor-pointer items-center justify-center 
-          rounded-full px-3 transition-all duration-200
-          ${lang === 'vi' 
-            ? 'bg-slate-100 text-slate-900' 
-            : 'text-slate-400 hover:text-slate-600'
-          }
-        `}
-      >
-        <span className="text-xs font-bold">VI</span>
-      </button>
-      
-      <div className="h-4 w-px bg-slate-200" aria-hidden="true" />
-      
-      <button
-        type="button"
-        role="radio"
-        aria-checked={lang === 'en'}
-        onClick={() => handleChange('en')}
-        className={`
-          relative flex h-full min-w-[44px] cursor-pointer items-center justify-center 
-          rounded-full px-3 transition-all duration-200
-          ${lang === 'en' 
-            ? 'bg-slate-100 text-slate-900' 
-            : 'text-slate-400 hover:text-slate-600'
-          }
-        `}
-      >
-        <span className="text-xs font-bold">EN</span>
-      </button>
-    </div>
+      <Image
+        src={getFlag()}
+        alt={getLabel()}
+        width={24}
+        height={24}
+        className="size-6 rounded-sm object-cover"
+      />
+      <span className="sr-only">{getLabel()}</span>
+    </Button>
   );
 }

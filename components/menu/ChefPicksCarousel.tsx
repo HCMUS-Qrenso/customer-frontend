@@ -25,7 +25,7 @@ export function ChefPicksCarousel({
   return (
     <section className="pb-2 pt-6">
       <div className="mb-3 flex items-center justify-between px-4 md:px-6">
-        <h3 className="flex items-center gap-2 text-lg font-bold leading-tight tracking-tight text-white">
+        <h3 className="flex items-center gap-2 text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
           <Sparkles className="size-5 text-emerald-500" />
           {t.menu.chefRecommendations}
         </h3>
@@ -40,7 +40,7 @@ export function ChefPicksCarousel({
             <Link
               key={item.id}
               href={`/${tenantSlug}/menu/${item.id}?table=${tableCode}`}
-              className="group flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-slate-800 shadow-sm md:w-72 active:opacity-90"
+              className="group flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
             >
               <div className="relative h-40 w-full overflow-hidden">
                 {hasImage ? (
@@ -49,8 +49,8 @@ export function ChefPicksCarousel({
                     style={{ backgroundImage: `url('${imageUrl}')` }}
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-slate-700">
-                    <svg className="size-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-slate-700">
+                    <svg className="size-16 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -83,7 +83,7 @@ export function ChefPicksCarousel({
               </div>
 
               <div className="p-4">
-                <p className="line-clamp-2 text-sm text-slate-400">
+                <p className="line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                   {item.description}
                 </p>
               </div>
@@ -94,5 +94,3 @@ export function ChefPicksCarousel({
     </section>
   );
 }
-
-

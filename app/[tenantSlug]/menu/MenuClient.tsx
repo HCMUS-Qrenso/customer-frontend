@@ -8,6 +8,7 @@ import { ArrowLeft, ShoppingCart, Search, AlertTriangle, Loader2, ArrowUpDown, X
 import { MenuItemDTO, CartSummaryDTO } from '@/lib/types/menu';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { LanguageToggle } from '@/components/LanguageToggle';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useInfiniteMenuQuery, useCategoriesQuery, useChefPicksQuery } from '@/hooks/use-menu-query';
 import { setQrToken } from '@/lib/stores/qr-token-store';
 import { decodeQrToken } from '@/lib/utils/jwt-decode';
@@ -68,7 +69,7 @@ function MenuSearchBar({
     <div className="px-4 pb-3 md:px-6">
       <div className="flex h-12 w-full items-stretch gap-2">
         {/* Search Input */}
-        <div className="flex flex-1 items-stretch rounded-xl bg-slate-800">
+        <div className="flex flex-1 items-stretch rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-transparent shadow-sm">
           <div className="flex items-center justify-center pl-4 text-slate-400">
             <Search className="size-5" />
           </div>
@@ -77,12 +78,12 @@ function MenuSearchBar({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="flex h-full w-full min-w-0 flex-1 border-none bg-transparent px-3 text-base text-white placeholder:text-slate-500 focus:outline-none"
+            className="flex h-full w-full min-w-0 flex-1 border-none bg-transparent px-3 text-base text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
           />
           {value && (
             <button
               onClick={() => onChange('')}
-              className="mr-2 flex items-center justify-center rounded-full p-1.5 text-slate-400 hover:bg-slate-700 hover:text-white"
+              className="mr-2 flex items-center justify-center rounded-full p-1.5 text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-white"
             >
               <X className="size-4" />
             </button>
@@ -93,10 +94,10 @@ function MenuSearchBar({
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`flex h-12 items-center gap-2 rounded-xl px-3 transition-colors ${
+            className={`flex h-12 items-center gap-2 rounded-xl px-3 transition-colors border ${
               isOpen || !isDefaultSort
-                ? 'bg-emerald-500 text-emerald-950'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                ? 'bg-emerald-500 text-emerald-950 border-emerald-500'
+                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-gray-100 dark:border-transparent shadow-sm'
             }`}
           >
             <ArrowUpDown className="size-5" />
@@ -105,7 +106,7 @@ function MenuSearchBar({
 
           {/* Dropdown Menu */}
           {isOpen && (
-            <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-slate-700 bg-slate-800 shadow-xl">
+            <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
               <div className="p-1.5">
                 {SORT_OPTIONS.map((option) => (
                   <button
@@ -116,8 +117,8 @@ function MenuSearchBar({
                     }}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                       currentSort === option.value
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'text-slate-200 hover:bg-slate-700'
+                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                        : 'text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700'
                     }`}
                   >
                     <span>{option.label}</span>
@@ -153,8 +154,8 @@ function CategoryChips({
         onClick={() => onSelect(null)}
         className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
           selectedCategory === null
-            ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md hover:bg-emerald-600'
-            : 'bg-slate-800 text-slate-200 font-medium hover:bg-slate-700'
+            ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
+            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-transparent'
         }`}
       >
         Tất cả
@@ -168,8 +169,8 @@ function CategoryChips({
           onClick={() => onSelect(category.id)}
           className={`h-9 shrink-0 rounded-full px-5 transition-transform active:scale-95 ${
             selectedCategory === category.id
-              ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md hover:bg-emerald-600'
-              : 'bg-slate-800 text-slate-200 font-medium hover:bg-slate-700'
+              ? 'bg-emerald-500 text-emerald-950 font-bold shadow-md shadow-emerald-500/20 hover:bg-emerald-600'
+              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-transparent'
           }`}
         >
           {category.name}
@@ -305,41 +306,42 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   // Error state
   if (menuError) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-900 px-6 text-center text-white">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 px-6 text-center text-slate-900 dark:text-white">
         <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-red-500/10">
           <AlertTriangle className="size-10 text-red-500" />
         </div>
         <h1 className="mb-2 text-2xl font-bold">Không thể tải menu</h1>
-        <p className="mb-8 max-w-sm text-slate-400">Vui lòng thử lại sau</p>
+        <p className="mb-8 max-w-sm text-slate-500 dark:text-slate-400">Vui lòng thử lại sau</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-40 border-b border-slate-700/50 bg-slate-900/95 backdrop-blur-md">
+      <div className="sticky top-0 z-40 border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
         {/* Top Bar */}
         <header className="flex items-center justify-between px-4 py-3 md:px-6">
           <div className="flex items-center gap-3">
             <Link
               href={`/${tenantSlug}?table=${tableId}&token=${token}`}
-              className="flex size-10 items-center justify-center rounded-full bg-slate-800 transition-colors hover:bg-slate-700"
+              className="flex size-10 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
             >
               <ArrowLeft className="size-5" />
             </Link>
             <div className="flex flex-col">
               <h2 className="text-lg font-bold leading-tight tracking-tight">{tenantSlug}</h2>
-              <span className="text-xs font-medium text-slate-400">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 {tableNumber ? `Bàn ${tableNumber}` : 'Menu'}
               </span>
             </div>
           </div>
           <div className="flex gap-2">
+            <ThemeToggle />
             <LanguageToggle />
             <Link
               href={`/${tenantSlug}/cart`}
-              className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-slate-800"
+              className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
             >
               <ShoppingCart className="size-5" />
               {cart.count > 0 && (
@@ -378,7 +380,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
         {isLoading && !categories && (
           <div className="flex gap-3 overflow-hidden px-4 pb-3 md:px-6">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className="h-9 w-20 shrink-0 rounded-full bg-slate-800" />
+              <Skeleton key={i} className="h-9 w-20 shrink-0 rounded-full bg-gray-200 dark:bg-slate-800" />
             ))}
           </div>
         )}
@@ -399,10 +401,10 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
           <div className="space-y-6 px-4 py-6 md:px-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="space-y-3">
-                <Skeleton className="h-6 w-32 bg-slate-800" />
+                <Skeleton className="h-6 w-32 bg-gray-200 dark:bg-slate-800" />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Skeleton className="h-32 rounded-xl bg-slate-800" />
-                  <Skeleton className="h-32 rounded-xl bg-slate-800" />
+                  <Skeleton className="h-32 rounded-xl bg-gray-200 dark:bg-slate-800" />
+                  <Skeleton className="h-32 rounded-xl bg-gray-200 dark:bg-slate-800" />
                 </div>
               </div>
             ))}
@@ -410,18 +412,18 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
         ) : items.length === 0 ? (
           // Empty state
           <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-slate-800">
-              <Search className="size-8 text-slate-500" />
+            <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800">
+              <Search className="size-8 text-slate-400 dark:text-slate-500" />
             </div>
             <h3 className="mb-2 text-lg font-bold">{t.menu.noResults}</h3>
-            <p className="mb-6 text-sm text-slate-400">{t.menu.noResultsDescription}</p>
+            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">{t.menu.noResultsDescription}</p>
             <Button
               variant="outline"
               onClick={() => {
                 setSearchQuery('');
                 setSelectedCategory(null);
               }}
-              className="border-slate-700 bg-transparent text-white hover:bg-slate-800"
+              className="border-gray-300 dark:border-slate-700 bg-transparent hover:bg-gray-100 dark:hover:bg-slate-800"
             >
               {t.menu.clearSearch}
             </Button>

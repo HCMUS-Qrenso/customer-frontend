@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Qrenso Customer Frontend
+
+A modern, mobile-first customer-facing application for restaurant QR code ordering system. Built with **Next.js 16**, **React 19**, and **Tailwind CSS 4**.
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat-square&logo=tailwind-css)
+
+## Features
+
+- 🍽️ **QR Code Table Session** - Scan QR to access your table
+- 📱 **Mobile-First Design** - Optimized for smartphone experience
+- 🌙 **Dark/Light Mode** - Theme toggle with system preference support
+- 🌐 **Multi-language** - Vietnamese & English (i18n)
+- 🛒 **Menu Browsing** - Categories, search, infinite scroll
+- ⭐ **Chef Recommendations** - Featured items carousel
+- 🛍️ **Cart Management** - Add items, view order summary
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| UI Library | React 19 |
+| Styling | Tailwind CSS 4 |
+| State Management | Zustand, React Query |
+| UI Components | shadcn/ui, Radix UI |
+| Icons | Lucide React |
+| Theming | next-themes |
+
+## Project Structure
+
+```
+customer-frontend/
+├── app/                    # Next.js App Router
+│   ├── [tenantSlug]/       # Dynamic tenant routes
+│   │   ├── page.tsx        # Table landing page
+│   │   ├── menu/           # Menu browsing
+│   │   └── cart/           # Shopping cart
+│   ├── layout.tsx          # Root layout
+│   └── globals.css         # Global styles & theme
+├── components/
+│   ├── ui/                 # shadcn/ui components
+│   ├── menu/               # Menu-specific components
+│   ├── TableHeroCard.tsx   # Table info display
+│   ├── GuestCountStepper.tsx
+│   ├── LanguageToggle.tsx
+│   └── ThemeToggle.tsx
+├── hooks/                  # Custom React hooks
+├── lib/
+│   ├── api/                # API client functions
+│   ├── i18n/               # Internationalization
+│   ├── stores/             # Zustand stores
+│   ├── types/              # TypeScript types
+│   └── utils/              # Utility functions
+└── providers/              # React context providers
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- npm or pnpm
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <repository-url>
+cd customer-frontend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Development
 
-## Learn More
+```bash
+# Start development server
+npm run dev
 
-To learn more about Next.js, take a look at the following resources:
+# Open http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Production build
+npm run build
 
-## Deploy on Vercel
+# Start production server
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app connects to the Qrenso Backend API for:
+
+- **Menu Data** - Categories, items, modifiers
+- **Session Management** - Table sessions, guest count
+- **Cart Operations** - Add/remove items, checkout
+
+Authentication is handled via JWT tokens encoded in QR codes.
+
+## Theming
+
+The app supports light and dark themes using `next-themes`:
+
+- Light mode: Clean white backgrounds
+- Dark mode: Slate-900 dark backgrounds
+- System preference detection
+- Persistent theme selection
+
+CSS variables are defined in `globals.css` for consistent theming.
+
+## Internationalization
+
+Supported languages:
+- 🇻🇳 Vietnamese (vi) - Default
+- 🇺🇸 English (en)
+
+Translations are managed in `lib/i18n/translations.ts`.
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Create production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+
+## License
+
+Private - All rights reserved.

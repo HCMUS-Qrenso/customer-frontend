@@ -24,6 +24,7 @@ export interface Translations {
     startOrdering: string;
     loading: string;
     viewOrder: string;
+    termsAgreement: string;
   };
   errors: {
     invalidQr: {
@@ -91,6 +92,7 @@ export const translations: Record<Language, Translations> = {
       startOrdering: 'Bắt đầu xem menu',
       loading: 'Đang tạo phiên...',
       viewOrder: 'Đã có đơn? Xem trạng thái',
+      termsAgreement: 'Bằng cách bắt đầu, bạn đồng ý với điều khoản sử dụng của nhà hàng.',
     },
     // Errors
     errors: {
@@ -157,6 +159,7 @@ export const translations: Record<Language, Translations> = {
       startOrdering: 'Start ordering',
       loading: 'Creating session...',
       viewOrder: 'Have an order? View status',
+      termsAgreement: 'By starting, you agree to the restaurant\'s terms of service.',
     },
     // Errors
     errors: {
