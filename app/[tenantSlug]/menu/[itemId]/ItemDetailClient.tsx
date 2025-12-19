@@ -167,7 +167,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                     <span className="text-xl font-bold text-emerald-400 md:text-2xl">
                       {formatVND(item.base_price)}
                     </span>
-                    {item.status === 'active' && (
+                    {item.status === 'available' && (
                       <span className="mt-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500">
                         Còn hàng
                       </span>
@@ -274,10 +274,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
 
             {/* Add to Cart Button */}
             <Button
-              disabled={!isValid || item.status === 'inactive'}
+              disabled={!isValid || item.status === 'unavailable'}
               className={`
                 flex h-12 w-full items-center justify-between rounded-full px-6 font-bold shadow-lg transition-transform active:scale-[0.98] md:h-14 md:min-w-[320px] md:w-auto
-                ${!isValid || item.status === 'inactive'
+                ${!isValid || item.status === 'unavailable'
                   ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                   : 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20'
                 }

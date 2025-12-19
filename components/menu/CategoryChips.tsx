@@ -46,7 +46,7 @@ export function CategoryChips({
               : 'bg-slate-800 text-slate-200 font-medium hover:bg-slate-700'
           }`}
         >
-          {language === 'en' && category.nameEn ? category.nameEn : category.name}
+          {category.name}
         </Button>
       ))}
     </div>
