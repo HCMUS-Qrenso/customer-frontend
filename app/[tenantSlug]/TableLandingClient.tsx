@@ -79,7 +79,7 @@ function TableLandingContent({
   const table = {
     id: tokenPayload.tableId,
     tableNumber: tokenPayload.tableNumber,
-    capacity: 4, // Default capacity, will be fetched from API later if needed
+    capacity: tokenPayload.tableCapacity || 4,
     status: "available" as const, // Assume available, server will validate on API calls
   };
 
@@ -98,7 +98,7 @@ function TableLandingContent({
           </div>
           <div className="flex flex-col">
             <h1 className="font-display text-lg font-bold leading-tight text-slate-900">
-              {tenantSlug}
+              {tokenPayload.tenantName || tenantSlug}
             </h1>
             <div className="flex items-center gap-1 text-xs font-medium text-slate-500">
               <MapPin className="size-3" />
@@ -115,7 +115,8 @@ function TableLandingContent({
           tableNumber={table.tableNumber}
           capacity={table.capacity}
           isActive={table.status === "available"}
-          zoneName={undefined}
+          zoneName={tokenPayload.zoneName}
+          coverImageUrl={tokenPayload.tenantImage}
         />
 
         <GuestCountStepper />

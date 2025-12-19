@@ -9,6 +9,10 @@ export interface QrTokenPayload {
   tenantId: string;
   tableId: string;
   tableNumber: string;
+  tableCapacity: number;
+  tenantName: string;
+  tenantImage?: string;
+  zoneName?: string;
   iat: number;
 }
 
