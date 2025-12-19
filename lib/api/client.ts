@@ -2,7 +2,7 @@ import axios, { type AxiosInstance, type AxiosError } from 'axios'
 import { ApiError } from '@/lib/utils/error-handler'
 import { getQrToken } from '@/lib/stores/qr-token-store'
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
 /**
  * Axios client for customer-frontend
