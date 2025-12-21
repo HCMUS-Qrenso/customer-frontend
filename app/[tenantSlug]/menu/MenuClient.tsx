@@ -8,7 +8,7 @@ import { ShoppingCart, Search, AlertTriangle, Loader2 } from 'lucide-react';
 import { MenuItemDTO, CartSummaryDTO } from '@/lib/types/menu';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { useInfiniteMenuQuery, useCategoriesQuery, useChefPicksQuery } from '@/hooks/use-menu-query';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useQrToken } from '@/hooks/use-qr-token';
 import { decodeQrToken } from '@/lib/utils/jwt-decode';
 import { formatVND } from '@/lib/format';
 import { ChefPicksCarousel } from '@/components/menu/ChefPicksCarousel';
@@ -63,11 +63,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   }, [searchQuery]);
 
   // Store QR token for API requests
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   // Fetch categories
   const { 

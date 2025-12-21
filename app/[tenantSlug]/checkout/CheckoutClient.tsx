@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Receipt, Lock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { formatVND } from '@/lib/format';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useQrToken } from '@/hooks/use-qr-token';
 import type { BillDTO, PaymentMethod } from '@/lib/types/checkout';
 import { MethodPicker } from '@/components/checkout/MethodPicker';
 import { CardPanel } from '@/components/checkout/CardPanel';
@@ -44,11 +44,7 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Store QR token
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   const cartHref = `/${tenantSlug}/cart?table=${tableId}&token=${token}`;
   const resultHref = `/${tenantSlug}/checkout/result?table=${tableId}&token=${token}`;

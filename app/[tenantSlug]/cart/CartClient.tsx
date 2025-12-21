@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Plus, Trash2, ArrowLeft } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { CartItemDTO, MenuItemDTO } from '@/lib/types/menu';
 import { formatVND } from '@/lib/format';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useQrToken } from '@/hooks/use-qr-token';
 import { CartItemCard } from '@/components/cart/CartItemCard';
 import { PricingSummaryCard } from '@/components/cart/PricingSummaryCard';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -99,11 +99,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const [cartItems, setCartItems] = useState<CartItemDTO[]>(mockCartItems);
 
   // Store QR token for API requests
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
   const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;

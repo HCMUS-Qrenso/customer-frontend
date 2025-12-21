@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { X, Check, AlertTriangle, Receipt, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { formatVND } from '@/lib/format';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useQrToken } from '@/hooks/use-qr-token';
 import type { CheckoutResultDTO } from '@/lib/types/checkout';
 
 interface CheckoutResultClientProps {
@@ -40,11 +40,7 @@ function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultCli
   const [result] = useState<CheckoutResultDTO>(mockResult);
 
   // Store QR token
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
   const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;

@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Receipt, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useQrToken } from '@/hooks/use-qr-token';
 import { OrderStatusStepper } from '@/components/track/OrderStatusStepper';
 import { BatchItemsList } from '@/components/track/BatchItemsList';
 import { OrderTimeline } from '@/components/track/OrderTimeline';
@@ -89,11 +88,7 @@ function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClien
   const { t } = useLanguage();
 
   // Store QR token
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
   const billHref = `/${tenantSlug}/bill?table=${tableId}&token=${token}`;

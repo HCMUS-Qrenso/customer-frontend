@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Receipt, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { formatTime } from '@/lib/format';
+import { useQrToken } from '@/hooks/use-qr-token';
 import type { OrderDTO, OrderItemDTO } from '@/lib/types/order';
 import { OrderItemGroupList } from '@/components/order/OrderItemGroupList';
 import { OrderSummaryCard } from '@/components/order/OrderSummaryCard';
@@ -69,14 +70,6 @@ const mockOrder: OrderDTO = {
   createdAt: new Date().toISOString(),
 };
 
-function formatTime(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-}
-
 function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
@@ -84,11 +77,7 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
   // Store QR token
-  useEffect(() => {
-    if (token) {
-      setQrToken(token);
-    }
-  }, [token]);
+  useQrToken(token);
 
   // Polling for real-time updates
   useEffect(() => {

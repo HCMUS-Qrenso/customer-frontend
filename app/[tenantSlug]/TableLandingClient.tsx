@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { setQrToken } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { TableHeroCard } from "@/components/TableHeroCard";
@@ -121,11 +120,7 @@ function TableLandingContent({
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
   // Store the QR token for API requests
-  useEffect(() => {
-    if (token && tableContext) {
-      setQrToken(token);
-    }
-  }, [token, tableContext]);
+  useQrToken(tableContext ? token : undefined);
 
   // No token provided
   if (!token) {

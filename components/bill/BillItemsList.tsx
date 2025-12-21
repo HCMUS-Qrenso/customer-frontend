@@ -2,19 +2,11 @@
 
 import { Clock } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
+import { formatVND, formatTime } from '@/lib/format';
 import type { BillItemDTO } from '@/lib/types/checkout';
 
 interface BillItemsListProps {
   items: (BillItemDTO & { image?: string; note?: string; addedAt: string })[];
-}
-
-function formatTime(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
 }
 
 export function BillItemsList({ items }: BillItemsListProps) {
