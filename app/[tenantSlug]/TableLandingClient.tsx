@@ -8,8 +8,9 @@ import { TableHeroCard } from "@/components/TableHeroCard";
 import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, AlertTriangle, Clock } from "lucide-react";
+import { ExpiredTokenError, InvalidTokenError, MissingTokenError } from "@/components/ErrorStates";
+import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
+import { MapPin } from "lucide-react";
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -17,97 +18,6 @@ interface TableLandingClientProps {
   token?: string;
 }
 
-// Error component for expired/invalid QR token
-function ExpiredTokenError() {
-  const { t } = useLanguage();
-  return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
-      <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 shadow-sm ring-1 ring-amber-100 dark:ring-amber-500/20">
-        <Clock className="size-10" />
-      </div>
-      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">
-        Mã QR hết hạn
-      </h1>
-      <p className="max-w-sm text-slate-500 dark:text-slate-400">
-        Mã QR này đã hết hạn hoặc không còn hợp lệ. Vui lòng quét lại mã QR tại bàn.
-      </p>
-    </div>
-  );
-}
-
-// Error component for invalid QR token
-function InvalidTokenError() {
-  return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
-      <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 shadow-sm ring-1 ring-red-100 dark:ring-red-500/20">
-        <AlertTriangle className="size-10" />
-      </div>
-      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">Mã QR không hợp lệ</h1>
-      <p className="max-w-sm text-slate-500 dark:text-slate-400">
-        Mã QR bạn quét không đúng định dạng. Vui lòng quét lại mã QR tại bàn.
-      </p>
-    </div>
-  );
-}
-
-// Missing token component
-function MissingTokenError() {
-  return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
-      <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 shadow-sm ring-1 ring-amber-100 dark:ring-amber-500/20">
-        <AlertTriangle className="size-10" />
-      </div>
-      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">Không tìm thấy mã QR</h1>
-      <p className="max-w-sm text-slate-500 dark:text-slate-400">
-        Vui lòng quét mã QR tại bàn để truy cập menu.
-      </p>
-    </div>
-  );
-}
-
-// Loading skeleton component
-function LoadingSkeleton() {
-  return (
-    <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
-      {/* Background Pattern */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" 
-           style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
-      />
-
-      {/* Header skeleton */}
-      <header className="sticky top-0 z-30 flex items-start justify-between bg-slate-50/95 dark:bg-slate-900/95 px-6 pb-2 pt-6 backdrop-blur-sm">
-        <div className="flex flex-col gap-0.5">
-          <Skeleton className="h-7 w-48 bg-slate-200 dark:bg-slate-700" />
-          <div className="flex items-center gap-1">
-            <Skeleton className="size-4 bg-slate-200 dark:bg-slate-700" />
-            <Skeleton className="h-4 w-32 bg-slate-200 dark:bg-slate-700" />
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="size-10 rounded-full bg-slate-200 dark:bg-slate-700" />
-          <Skeleton className="size-10 rounded-full bg-slate-200 dark:bg-slate-700" />
-        </div>
-      </header>
-
-      {/* Main content skeleton */}
-      <main className="relative z-10 flex flex-1 flex-col gap-6 px-5 pb-40 pt-2 sm:px-6">
-        <Skeleton className="h-72 w-full rounded-3xl bg-slate-200 dark:bg-slate-700" />
-        <Skeleton className="h-24 w-full rounded-2xl bg-slate-200 dark:bg-slate-700" />
-      </main>
-
-      {/* Sticky Bottom CTA skeleton */}
-      <div className="fixed bottom-0 left-1/2 z-40 w-full -translate-x-1/2 lg:px-40">
-        {/* Gradient Overlay */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-white dark:from-slate-900 via-white/95 dark:via-slate-900/95 to-transparent" />
-
-        <div className="relative flex flex-col items-center gap-3 px-6 pb-[calc(env(safe-area-inset-bottom,20px)+20px)] pt-4">
-          <Skeleton className="h-12 w-full max-w-xs rounded-full bg-slate-200 dark:bg-slate-700" />
-          <Skeleton className="h-3 w-48 bg-slate-200 dark:bg-slate-700" />
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function TableLandingContent({
   tenantSlug,
@@ -129,7 +39,7 @@ function TableLandingContent({
 
   // Loading state
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <PageLoadingSkeleton />;
   }
 
   // Token expired or invalid (API returned error)
