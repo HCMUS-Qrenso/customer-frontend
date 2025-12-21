@@ -3,16 +3,16 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ShoppingCart, Plus, Trash2 } from 'lucide-react';
+import { ShoppingCart, Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { LanguageToggle } from '@/components/LanguageToggle';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { CartItemDTO, MenuItemDTO } from '@/lib/types/menu';
 import { formatVND } from '@/lib/format';
 import { setQrToken } from '@/lib/stores/qr-token-store';
 import { CartItemCard } from '@/components/cart/CartItemCard';
 import { PricingSummaryCard } from '@/components/cart/PricingSummaryCard';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
 
 interface CartClientProps {
   tenantSlug: string;
@@ -146,24 +146,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col transition-colors">
-        {/* Header */}
-        <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
-          <div className="flex items-center justify-between px-4 py-3 md:px-6">
-            <div className="flex items-center gap-3">
-              <Link
-                href={menuHref}
-                className="flex size-10 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
-              >
-                <ArrowLeft className="size-5" />
-              </Link>
-              <h1 className="text-lg font-bold tracking-tight">{t.cart.title}</h1>
-            </div>
-            <div className="flex gap-2">
-              <ThemeToggle />
-              <LanguageToggle />
-            </div>
-          </div>
-        </header>
+        <PageHeader title={t.cart.title} backHref={menuHref} />
 
         {/* Empty State */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -187,31 +170,20 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col transition-colors">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href={menuHref}
-              className="flex size-10 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
-            >
-              <ArrowLeft className="size-5" />
-            </Link>
-            <h1 className="text-lg font-bold tracking-tight">{t.cart.title}</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
-            <button
-              onClick={clearCart}
-              className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
-            >
-              <Trash2 className="size-4" />
-              <span className="hidden sm:inline">{t.cart.clearAll}</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title={t.cart.title}
+        backHref={menuHref}
+        maxWidth="6xl"
+        rightContent={
+          <button
+            onClick={clearCart}
+            className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
+          >
+            <Trash2 className="size-4" />
+            <span className="hidden sm:inline">{t.cart.clearAll}</span>
+          </button>
+        }
+      />
 
       {/* Main Content */}
       <main className="flex-grow w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32 lg:pb-6">
@@ -276,8 +248,8 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       </main>
 
       {/* Mobile Sticky Bottom Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700/50 p-4 pb-[calc(env(safe-area-inset-bottom,16px)+16px)] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <div className="max-w-6xl mx-auto flex gap-4 items-center">
+      <MobileStickyBar maxWidth="6xl">
+        <div className="flex gap-4 items-center">
           <div className="flex flex-col flex-1">
             <span className="text-xs text-slate-500 dark:text-slate-400">{t.cart.total}</span>
             <span className="text-xl font-bold text-emerald-500">
@@ -291,7 +263,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             <span>{t.cart.placeOrder}</span>
           </Button>
         </div>
-      </div>
+      </MobileStickyBar>
     </div>
   );
 }

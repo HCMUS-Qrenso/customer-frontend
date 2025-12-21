@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, Bell } from 'lucide-react';
+import { CreditCard, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { LanguageToggle } from '@/components/LanguageToggle';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { setQrToken } from '@/lib/stores/qr-token-store';
 import type { BillDTO } from '@/lib/types/checkout';
 import { BillItemsList } from '@/components/bill/BillItemsList';
 import { BillSummaryCard } from '@/components/bill/BillSummaryCard';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
 
 interface BillClientProps {
   tenantSlug: string;
@@ -85,29 +85,11 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
-      {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <button
-              onClick={() => router.back()}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-transparent transition hover:bg-gray-100 dark:hover:bg-slate-700"
-            >
-              <ArrowLeft className="size-5" />
-            </button>
-            <div className="flex flex-col min-w-0">
-              <h1 className="truncate text-lg font-bold leading-tight">{t.bill.title}</h1>
-              <p className="truncate text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                {tenantSlug} • {t.checkout.table} {tableId}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title={t.bill.title}
+        subtitle={`${tenantSlug} • ${t.checkout.table} ${tableId}`}
+        onBack={() => router.back()}
+      />
 
       {/* Main Content */}
       <main className="flex-1 pb-40 lg:pb-12">
@@ -151,8 +133,8 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
       </main>
 
       {/* Mobile Sticky Action Bar */}
-      <div className="fixed bottom-0 left-0 z-40 w-full border-t border-gray-200 dark:border-slate-700/50 bg-white dark:bg-slate-900 px-4 py-4 pb-[calc(env(safe-area-inset-bottom,16px)+16px)] lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div className="mx-auto flex max-w-lg flex-col gap-3">
+      <MobileStickyBar>
+        <div className="flex flex-col gap-3">
           <div className="flex gap-3">
             <Link href={checkoutHref} className="flex-1">
               <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2 shadow-sm">
@@ -171,7 +153,7 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
             {t.cart.backToMenu}
           </Link>
         </div>
-      </div>
+      </MobileStickyBar>
     </div>
   );
 }

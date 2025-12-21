@@ -4,17 +4,16 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, ShoppingCart, Search, AlertTriangle, Loader2, ArrowUpDown, X, Check } from 'lucide-react';
+import { ShoppingCart, Search, AlertTriangle, Loader2, ArrowUpDown, X, Check } from 'lucide-react';
 import { MenuItemDTO, CartSummaryDTO } from '@/lib/types/menu';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { LanguageToggle } from '@/components/LanguageToggle';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useInfiniteMenuQuery, useCategoriesQuery, useChefPicksQuery } from '@/hooks/use-menu-query';
 import { setQrToken } from '@/lib/stores/qr-token-store';
 import { decodeQrToken } from '@/lib/utils/jwt-decode';
 import { formatVND } from '@/lib/format';
 import { ChefPicksCarousel } from '@/components/menu/ChefPicksCarousel';
 import { MenuItemCard } from '@/components/menu/MenuItemCard';
+import { PageHeader } from '@/components/shared/PageHeader';
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -318,42 +317,29 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-40 border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
-        {/* Top Bar */}
-        <header className="flex items-center justify-between px-4 py-3 md:px-6">
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/${tenantSlug}?table=${tableId}&token=${token}`}
-              className="flex size-10 items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
-            >
-              <ArrowLeft className="size-5" />
-            </Link>
-            <div className="flex flex-col">
-              <h2 className="text-lg font-bold leading-tight tracking-tight">{tenantSlug}</h2>
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                {tableNumber ? `Bàn ${tableNumber}` : 'Menu'}
+      {/* Header */}
+      <PageHeader
+        title={tenantSlug}
+        subtitle={tableNumber ? `Bàn ${tableNumber}` : 'Menu'}
+        backHref={`/${tenantSlug}?table=${tableId}&token=${token}`}
+        rightContent={
+          <Link
+            href={`/${tenantSlug}/cart`}
+            className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+          >
+            <ShoppingCart className="size-5" />
+            {cart.count > 0 && (
+              <span className="absolute right-1 top-1 flex size-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
               </span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
-            <Link
-              href={`/${tenantSlug}/cart`}
-              className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
-            >
-              <ShoppingCart className="size-5" />
-              {cart.count > 0 && (
-                <span className="absolute right-1 top-1 flex size-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-                  <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
-                </span>
-              )}
-            </Link>
-          </div>
-        </header>
+            )}
+          </Link>
+        }
+      />
 
+      {/* Sticky Search & Categories */}
+      <div className="sticky top-16 z-30 border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
         {/* Search */}
         <MenuSearchBar
           value={searchQuery}
