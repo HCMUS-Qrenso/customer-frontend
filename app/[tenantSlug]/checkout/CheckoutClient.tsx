@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { formatVND } from '@/lib/format';
 import { useQrToken } from '@/hooks/use-qr-token';
+import { mockCheckoutBill as mockBill } from '@/lib/mocks';
 import type { BillDTO, PaymentMethod } from '@/lib/types/checkout';
 import { MethodPicker } from '@/components/checkout/MethodPicker';
 import { CardPanel } from '@/components/checkout/CardPanel';
@@ -20,22 +21,6 @@ interface CheckoutClientProps {
   token?: string;
 }
 
-// Mock bill data
-const mockBill: BillDTO = {
-  id: 'bill-1',
-  orderId: 'ord-1',
-  orderNumber: 'A123',
-  items: [
-    { id: '1', name: 'Phở Bò Tái', price: 75000, quantity: 2, modifiers: 'Size Lớn' },
-    { id: '2', name: 'Bánh Mì Thịt Nướng', price: 35000, quantity: 1 },
-    { id: '3', name: 'Trà Đá', price: 10000, quantity: 3 },
-  ],
-  subtotal: 215000,
-  serviceCharge: 10750,
-  tax: 21500,
-  total: 247250,
-  status: 'unpaid',
-};
 
 function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
   const router = useRouter();

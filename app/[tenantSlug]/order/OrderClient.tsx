@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { formatTime } from '@/lib/format';
 import { useQrToken } from '@/hooks/use-qr-token';
+import { mockOrder, ORDER_POLLING_CONFIG } from '@/lib/mocks';
 import type { OrderDTO, OrderItemDTO } from '@/lib/types/order';
 import { OrderItemGroupList } from '@/components/order/OrderItemGroupList';
 import { OrderSummaryCard } from '@/components/order/OrderSummaryCard';
@@ -21,55 +22,6 @@ interface OrderClientProps {
   token?: string;
 }
 
-// Polling toggle
-const ENABLE_POLLING = true;
-const POLL_INTERVAL = 10000; // 10 seconds
-
-// Mock order data
-const mockOrder: OrderDTO = {
-  id: 'ord-1',
-  orderNumber: 'A123',
-  tableId: 'table-1',
-  status: 'preparing',
-  items: [
-    {
-      id: '1',
-      name: 'Phở Bò Tái',
-      nameEn: 'Rare Beef Pho',
-      price: 75000,
-      quantity: 2,
-      modifiers: 'Size Lớn, Thêm thịt',
-      image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400',
-      status: 'preparing',
-      addedAt: new Date(Date.now() - 30 * 60000).toISOString(),
-    },
-    {
-      id: '2',
-      name: 'Bánh Mì Thịt Nướng',
-      nameEn: 'Grilled Pork Banh Mi',
-      price: 35000,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1600688640154-9619e002df30?w=400',
-      status: 'ready',
-      addedAt: new Date(Date.now() - 30 * 60000).toISOString(),
-    },
-    {
-      id: '3',
-      name: 'Trà Đá',
-      nameEn: 'Iced Tea',
-      price: 10000,
-      quantity: 3,
-      note: 'Ít đường',
-      status: 'served',
-      addedAt: new Date(Date.now() - 15 * 60000).toISOString(),
-    },
-  ] as OrderItemDTO[],
-  subtotal: 215000,
-  serviceCharge: 10750,
-  tax: 0,
-  total: 225750,
-  createdAt: new Date().toISOString(),
-};
 
 function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
   const router = useRouter();
@@ -82,12 +34,12 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
 
   // Polling for real-time updates
   useEffect(() => {
-    if (!ENABLE_POLLING) return;
+    if (!ORDER_POLLING_CONFIG.enabled) return;
 
     const interval = setInterval(() => {
       // In real implementation, fetch order updates
       setLastUpdated(new Date());
-    }, POLL_INTERVAL);
+    }, ORDER_POLLING_CONFIG.interval);
 
     return () => clearInterval(interval);
   }, []);

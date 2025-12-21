@@ -6,6 +6,7 @@ import { Receipt, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { useQrToken } from '@/hooks/use-qr-token';
+import { mockOrderTracking } from '@/lib/mocks';
 import { OrderStatusStepper } from '@/components/track/OrderStatusStepper';
 import { BatchItemsList } from '@/components/track/BatchItemsList';
 import { OrderTimeline } from '@/components/track/OrderTimeline';
@@ -19,70 +20,6 @@ interface OrderTrackingClientProps {
   token?: string;
 }
 
-// Mock order tracking data
-const mockOrderTracking = {
-  id: 'order-001',
-  orderNumber: '#8821',
-  status: 'preparing' as const,
-  createdAt: '12:30 PM',
-  updatedAt: 'Just now',
-  batches: [
-    {
-      id: 'batch-2',
-      batchNumber: 2,
-      createdAt: '12:45 PM',
-      itemCount: 3,
-      status: 'preparing' as const,
-      items: [
-        {
-          id: 'item-1',
-          name: 'Phở Bò',
-          nameEn: 'Pho Bo',
-          quantity: 2,
-          price: 150000,
-          image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400',
-          modifiers: 'Size L, No onions',
-          status: 'preparing' as const,
-        },
-        {
-          id: 'item-2',
-          name: 'Gỏi Cuốn',
-          nameEn: 'Spring Rolls',
-          quantity: 1,
-          price: 50000,
-          image: 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=400',
-          modifiers: 'Peanut sauce',
-          status: 'ready' as const,
-        },
-      ],
-    },
-    {
-      id: 'batch-1',
-      batchNumber: 1,
-      createdAt: '12:30 PM',
-      itemCount: 1,
-      status: 'served' as const,
-      items: [
-        {
-          id: 'item-3',
-          name: 'Bánh Mì Đặc Biệt',
-          nameEn: 'Banh Mi Special',
-          quantity: 1,
-          price: 45000,
-          image: 'https://images.unsplash.com/photo-1600688640154-9619e002df30?w=400',
-          modifiers: 'Less spicy',
-          status: 'served' as const,
-        },
-      ],
-    },
-  ],
-  timeline: [
-    { time: '12:50 PM', message: 'Kitchen started preparing Batch 2' },
-    { time: '12:45 PM', message: 'Batch 2 added (3 items)' },
-    { time: '12:40 PM', message: 'Batch 1 Served' },
-    { time: '12:30 PM', message: 'Order Created' },
-  ],
-};
 
 function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClientProps) {
   const router = useRouter();

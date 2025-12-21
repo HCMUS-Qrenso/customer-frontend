@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { formatVND } from '@/lib/format';
 import { useQrToken } from '@/hooks/use-qr-token';
+import { mockCheckoutResult as mockResult } from '@/lib/mocks';
 import type { CheckoutResultDTO } from '@/lib/types/checkout';
 
 interface CheckoutResultClientProps {
@@ -15,14 +16,6 @@ interface CheckoutResultClientProps {
   token?: string;
 }
 
-// Mock checkout result
-const mockResult: CheckoutResultDTO = {
-  success: true,
-  transactionId: 'TXN-1234567890',
-  paymentMethod: 'card',
-  amountPaid: 252195,
-  timestamp: new Date().toISOString(),
-};
 
 function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
