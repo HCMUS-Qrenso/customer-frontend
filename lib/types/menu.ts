@@ -138,8 +138,10 @@ export interface CartSummaryDTO {
 export interface CartItemDTO {
   menuItemId: string;
   menuItemName: string;
+  menuItemNameEn?: string;
   quantity: number;
   basePrice: number;
+  image?: string;
   selectedModifiers: {
     groupId: string;
     groupName: string;
