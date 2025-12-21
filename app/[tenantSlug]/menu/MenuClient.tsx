@@ -16,6 +16,7 @@ import { MenuItemCard } from '@/components/menu/MenuItemCard';
 import { MenuSearchBar } from '@/components/menu/MenuSearchBar';
 import { CategoryChips } from '@/components/menu/CategoryChips';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { LiveIndicator } from '@/components/shared/LiveIndicator';
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -168,12 +169,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
             className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
           >
             <ShoppingCart className="size-5" />
-            {cart.count > 0 && (
-              <span className="absolute right-1 top-1 flex size-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
-              </span>
-            )}
+            {cart.count > 0 && <LiveIndicator size="sm" className="absolute right-1 top-1" />}
           </Link>
         }
       />

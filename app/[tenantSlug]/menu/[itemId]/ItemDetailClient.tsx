@@ -1,246 +1,20 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Minus, Plus, Clock, Flame, AlertTriangle, ImageIcon, Info, ChevronDown, ShoppingCart } from 'lucide-react';
+import { Minus, Plus, Clock, Flame, AlertTriangle, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LiveIndicator } from '@/components/shared/LiveIndicator';
+import { ImageCarousel } from '@/components/shared/ImageCarousel';
+import { NutritionalInfo } from '@/components/menu/NutritionalInfo';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { ModifierGroup } from '@/components/menu/ModifierGroup';
 import { formatVND } from '@/lib/format';
 import { customerHref } from '@/lib/customer/context';
 import { useMenuItemQuery } from '@/hooks/use-menu-query';
 import type { ModifierGroupDTO, CartSummaryDTO } from '@/lib/types/menu';
-
-// Image Carousel Component with swipe support and slide animation
-interface ImageCarouselProps {
-  images: Array<{ id: string; image_url: string; display_order: number }>;
-  alt: string;
-  badges?: string[];
-}
-
-function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [swipeOffset, setSwipeOffset] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Sort by display_order and extract URLs
-  const sortedImages = useMemo(() => 
-    [...(images || [])].sort((a, b) => a.display_order - b.display_order),
-    [images]
-  );
-  const imageUrls = sortedImages.map(img => img.image_url);
-  const hasImages = imageUrls.length > 0;
-  const showDots = hasImages && imageUrls.length > 1;
-
-  const goToIndex = useCallback((index: number) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex(index);
-    setTimeout(() => setIsAnimating(false), 300);
-  }, [isAnimating]);
-
-  // Swipe handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (isAnimating) return;
-    touchStartX.current = e.touches[0].clientX;
-  }, [isAnimating]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = e.touches[0].clientX - touchStartX.current;
-    setSwipeOffset(diff);
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    if (touchStartX.current === null) return;
-    
-    const minSwipeDistance = 50;
-
-    if (Math.abs(swipeOffset) > minSwipeDistance) {
-      if (swipeOffset < 0) {
-        // Swipe left - go to next
-        goToIndex(currentIndex === imageUrls.length - 1 ? 0 : currentIndex + 1);
-      } else {
-        // Swipe right - go to previous
-        goToIndex(currentIndex === 0 ? imageUrls.length - 1 : currentIndex - 1);
-      }
-    }
-
-    touchStartX.current = null;
-    setSwipeOffset(0);
-  }, [swipeOffset, currentIndex, imageUrls.length, goToIndex]);
-
-  // Mouse drag support for desktop
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (isAnimating) return;
-    touchStartX.current = e.clientX;
-  }, [isAnimating]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = e.clientX - touchStartX.current;
-    setSwipeOffset(diff);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    if (touchStartX.current === null) return;
-    
-    const minSwipeDistance = 50;
-
-    if (Math.abs(swipeOffset) > minSwipeDistance) {
-      if (swipeOffset < 0) {
-        goToIndex(currentIndex === imageUrls.length - 1 ? 0 : currentIndex + 1);
-      } else {
-        goToIndex(currentIndex === 0 ? imageUrls.length - 1 : currentIndex - 1);
-      }
-    }
-
-    touchStartX.current = null;
-    setSwipeOffset(0);
-  }, [swipeOffset, currentIndex, imageUrls.length, goToIndex]);
-
-  const handleMouseLeave = useCallback(() => {
-    touchStartX.current = null;
-    setSwipeOffset(0);
-  }, []);
-
-  return (
-    <div 
-      ref={containerRef}
-      className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square select-none cursor-grab active:cursor-grabbing"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* Image Slider */}
-      {hasImages ? (
-        <div 
-          className="flex size-full transition-transform duration-300 ease-out"
-          style={{ 
-            transform: `translateX(calc(-${currentIndex * 100}% + ${swipeOffset}px))`,
-            transitionDuration: swipeOffset !== 0 ? '0ms' : '300ms'
-          }}
-        >
-          {imageUrls.map((url, index) => (
-            <div
-              key={index}
-              className="size-full shrink-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url('${url}')` }}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex size-full flex-col items-center justify-center gap-3 text-gray-300 dark:text-slate-600">
-          <ImageIcon className="size-20" strokeWidth={1} />
-          <span className="text-sm font-medium text-gray-400 dark:text-slate-500">Không có hình ảnh</span>
-        </div>
-      )}
-
-      {/* Dot Indicators - Clickable */}
-      {showDots && (
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-          {imageUrls.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToIndex(index)}
-              className={`size-2.5 rounded-full transition-all duration-200 ${
-                index === currentIndex
-                  ? 'bg-white scale-125 shadow-lg'
-                  : 'bg-white/50 hover:bg-white/70'
-              }`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Badges */}
-      {badges?.map((badge) => (
-        <div key={badge} className="absolute left-4 top-4 pointer-events-none">
-          <span className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
-            {badge}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Nutritional Info Accordion Component
-interface NutritionalInfoAccordionProps {
-  nutritionalInfo?: {
-    calories?: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
-  };
-}
-
-function NutritionalInfoAccordion({ nutritionalInfo }: NutritionalInfoAccordionProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Don't render if no nutritional info
-  if (!nutritionalInfo) return null;
-  
-  const hasAnyInfo = nutritionalInfo.calories || nutritionalInfo.protein || 
-                     nutritionalInfo.carbs || nutritionalInfo.fat;
-  
-  if (!hasAnyInfo) return null;
-
-  return (
-    <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-slate-700"
-      >
-        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-          <Info className="size-4" />
-          <span className="text-sm font-medium">Thông tin dinh dưỡng</span>
-        </div>
-        <ChevronDown className={`size-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
-
-      {/* Content */}
-      <div className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'}`}>
-        <div className="flex flex-wrap gap-2 p-3">
-          {nutritionalInfo.calories && (
-            <div className="flex h-7 items-center gap-1.5 rounded-full bg-orange-500/10 px-3 text-orange-600 dark:text-orange-400">
-              <span className="text-xs font-bold">{nutritionalInfo.calories}</span>
-              <span className="text-xs">kcal</span>
-            </div>
-          )}
-          {nutritionalInfo.protein && (
-            <div className="flex h-7 items-center gap-1.5 rounded-full bg-red-500/10 px-3 text-red-600 dark:text-red-400">
-              <span className="text-xs font-bold">{nutritionalInfo.protein}g</span>
-              <span className="text-xs">protein</span>
-            </div>
-          )}
-          {nutritionalInfo.carbs && (
-            <div className="flex h-7 items-center gap-1.5 rounded-full bg-blue-500/10 px-3 text-blue-600 dark:text-blue-400">
-              <span className="text-xs font-bold">{nutritionalInfo.carbs}g</span>
-              <span className="text-xs">carbs</span>
-            </div>
-          )}
-          {nutritionalInfo.fat && (
-            <div className="flex h-7 items-center gap-1.5 rounded-full bg-yellow-500/10 px-3 text-yellow-600 dark:text-yellow-400">
-              <span className="text-xs font-bold">{nutritionalInfo.fat}g</span>
-              <span className="text-xs">fat</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 interface ItemDetailClientProps {
   tenantSlug: string;
@@ -425,7 +199,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                 )}
 
                 {/* Nutritional Info - Collapsible */}
-                <NutritionalInfoAccordion nutritionalInfo={item.nutritional_info} />
+                <NutritionalInfo nutritionalInfo={item.nutritional_info} />
               </div>
             </div>
 
