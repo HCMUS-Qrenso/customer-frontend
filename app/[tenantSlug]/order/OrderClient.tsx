@@ -13,6 +13,7 @@ import { OrderItemGroupList } from '@/components/order/OrderItemGroupList';
 import { OrderSummaryCard } from '@/components/order/OrderSummaryCard';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
+import { OrderStatusCard } from '@/components/shared/OrderStatusCard';
 
 interface OrderClientProps {
   tenantSlug: string;
@@ -120,28 +121,13 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
             {/* Left: Order Details */}
             <div className="flex flex-col gap-6 lg:col-span-7 xl:col-span-8">
               {/* Order Status Card */}
-              <div className="rounded-xl bg-white dark:bg-slate-800 p-5 shadow-sm border border-gray-200 dark:border-slate-700">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                      {t.bill.orderId}
-                    </p>
-                    <h2 className="text-2xl font-bold tracking-tight">{order.orderNumber}</h2>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1.5 text-emerald-600 dark:text-emerald-400">
-                      <span className="relative flex size-2.5">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-                        <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
-                      </span>
-                      <span className="text-sm font-bold">{t.order.live}</span>
-                    </div>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
-                      {t.bill.updated} {formatTime(lastUpdated.toISOString())}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <OrderStatusCard
+                orderLabel={t.bill.orderId}
+                orderNumber={order.orderNumber}
+                statusLabel={t.order.live}
+                updatedAt={formatTime(lastUpdated.toISOString())}
+                updatedLabel={t.bill.updated}
+              />
 
               {/* Order Items */}
               <OrderItemGroupList groupedItems={groupedItems} />

@@ -11,6 +11,7 @@ import { BatchItemsList } from '@/components/track/BatchItemsList';
 import { OrderTimeline } from '@/components/track/OrderTimeline';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
+import { LiveIndicator } from '@/components/shared/LiveIndicator';
 
 interface OrderTrackingClientProps {
   tenantSlug: string;
@@ -111,10 +112,7 @@ function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClien
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-xl font-bold">{mockOrderTracking.orderNumber}</h2>
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
-                  </span>
+                  <LiveIndicator size="md" />
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {t.track.createdAt}: {mockOrderTracking.createdAt}
