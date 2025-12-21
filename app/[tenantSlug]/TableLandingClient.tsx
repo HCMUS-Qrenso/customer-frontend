@@ -98,7 +98,7 @@ function LoadingSkeleton() {
       {/* Sticky Bottom CTA skeleton */}
       <div className="fixed bottom-0 left-1/2 z-40 w-full -translate-x-1/2 lg:px-40">
         {/* Gradient Overlay */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white dark:from-slate-900 via-white/95 dark:via-slate-900/95 to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-white dark:from-slate-900 via-white/95 dark:via-slate-900/95 to-transparent" />
 
         <div className="relative flex flex-col items-center gap-3 px-6 pb-[calc(env(safe-area-inset-bottom,20px)+20px)] pt-4">
           <Skeleton className="h-12 w-full max-w-xs rounded-full bg-slate-200 dark:bg-slate-700" />

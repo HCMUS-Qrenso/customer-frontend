@@ -31,7 +31,7 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
       )}
 
       {/* Content */}
-      <div className="flex flex-col flex-grow justify-between min-w-0">
+      <div className="flex flex-col grow justify-between min-w-0">
         <div>
           <div className="flex justify-between items-start gap-2">
             <h3 className="font-bold text-base leading-snug line-clamp-2 text-slate-900 dark:text-white">

@@ -2,10 +2,11 @@
 
 import { useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { Minus, Plus, Clock, Flame, AlertTriangle, ImageIcon, Info, ChevronDown } from 'lucide-react';
+import { Minus, Plus, Clock, Flame, AlertTriangle, ImageIcon, Info, ChevronDown, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CustomerHeader } from '@/components/CustomerHeader';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { LiveIndicator } from '@/components/shared/LiveIndicator';
 import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
 import { ModifierGroup } from '@/components/menu/ModifierGroup';
 import { formatVND } from '@/lib/format';
@@ -111,7 +112,7 @@ function ImageCarousel({ images, alt, badges }: ImageCarouselProps) {
   return (
     <div 
       ref={containerRef}
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square select-none cursor-grab active:cursor-grabbing"
+      className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-lg md:aspect-square select-none cursor-grab active:cursor-grabbing"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -327,12 +328,18 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
       {/* Header */}
-      <CustomerHeader
+      <PageHeader
         title={t.menu.itemDetail}
         backHref={menuHref}
-        cartHref={cartHref}
-        cartCount={cart.count}
-        showCart={true}
+        rightContent={
+          <Link
+            href={cartHref}
+            className="relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+          >
+            <ShoppingCart className="size-5" />
+            {cart.count > 0 && <LiveIndicator size="sm" className="absolute right-1 top-1" />}
+          </Link>
+        }
       />
 
       {/* Main Content */}
@@ -341,7 +348,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
           // Loading skeleton
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-12">
             <div className="flex flex-col gap-6">
-              <Skeleton className="aspect-[4/3] w-full rounded-xl bg-gray-200 dark:bg-slate-800 md:aspect-square" />
+              <Skeleton className="aspect-4/3 w-full rounded-xl bg-gray-200 dark:bg-slate-800 md:aspect-square" />
               <Skeleton className="h-8 w-3/4 bg-gray-200 dark:bg-slate-800" />
               <Skeleton className="h-20 w-full bg-gray-200 dark:bg-slate-800" />
             </div>

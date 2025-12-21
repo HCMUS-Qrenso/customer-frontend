@@ -20,10 +20,10 @@ export function CardPanel() {
       
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 shadow-sm">
         {/* Card Visual */}
-        <div className="mb-6 h-48 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 p-6 text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div className="mb-6 h-48 rounded-xl bg-linear-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 p-6 text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
           <div className="flex justify-between items-start z-10">
-            <div className="w-10 h-8 bg-gradient-to-br from-amber-300 to-amber-500 rounded opacity-80" />
+            <div className="w-10 h-8 bg-linear-to-br from-amber-300 to-amber-500 rounded opacity-80" />
             <span className="text-sm font-medium tracking-widest opacity-80">DEBIT</span>
           </div>
           <div className="z-10">
