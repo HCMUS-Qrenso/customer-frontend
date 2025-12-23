@@ -9,6 +9,7 @@ import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { MapPin, AlertTriangle, CircleX } from "lucide-react";
 
 interface TableLandingClientProps {
