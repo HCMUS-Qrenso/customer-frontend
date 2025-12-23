@@ -23,6 +23,7 @@ export interface BillDTO {
   serviceCharge: number;
   tax: number;
   discount?: number;
+  voucherCode?: string;
   total: number;
   status: 'unpaid' | 'paid' | 'partial';
 }
