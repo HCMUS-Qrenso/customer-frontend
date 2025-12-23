@@ -10,7 +10,7 @@ import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, AlertTriangle, Clock } from "lucide-react";
+import { MapPin, AlertTriangle, CircleX } from "lucide-react";
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -19,18 +19,18 @@ interface TableLandingClientProps {
 }
 
 // Error component for expired/invalid QR token
-function ExpiredTokenError() {
+function TokenError({ message }: { message?: string }) {
   const { t } = useLanguage();
   return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
       <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 shadow-sm ring-1 ring-amber-100 dark:ring-amber-500/20">
-        <Clock className="size-10" />
+        <CircleX className="size-10" />
       </div>
       <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">
-        Mã QR hết hạn
+        Không thể tải menu
       </h1>
       <p className="max-w-sm text-slate-500 dark:text-slate-400">
-        Mã QR này đã hết hạn hoặc không còn hợp lệ. Vui lòng quét lại mã QR tại bàn.
+        {message == 'Unauthorized' ? 'Mã QR bạn quét đã hết hạn hoặc không hợp lệ. Vui lòng quét lại mã QR tại bàn.' : message}
       </p>
     </div>
   );
@@ -39,7 +39,7 @@ function ExpiredTokenError() {
 // Error component for invalid QR token
 function InvalidTokenError() {
   return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
       <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 shadow-sm ring-1 ring-red-100 dark:ring-red-500/20">
         <AlertTriangle className="size-10" />
       </div>
@@ -54,7 +54,7 @@ function InvalidTokenError() {
 // Missing token component
 function MissingTokenError() {
   return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
       <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 shadow-sm ring-1 ring-amber-100 dark:ring-amber-500/20">
         <AlertTriangle className="size-10" />
       </div>
@@ -137,9 +137,9 @@ function TableLandingContent({
     return <LoadingSkeleton />;
   }
 
-  // Token expired or invalid (API returned error)
+  // Token expired or invalid (API returned error) or table under maintenance
   if (error) {
-    return <ExpiredTokenError />;
+    return <TokenError message={error.message} />;
   }
 
   // No table context returned

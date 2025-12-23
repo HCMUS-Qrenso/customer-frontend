@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Minus, Plus, Clock, Flame, AlertTriangle, ImageIcon, Info, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { ModifierGroup } from '@/components/menu/ModifierGroup';
 import { formatVND } from '@/lib/format';
 import { customerHref } from '@/lib/customer/context';
 import { useMenuItemQuery } from '@/hooks/use-menu-query';
+import { setQrToken } from '@/lib/stores/qr-token-store';
 import type { ModifierGroupDTO, CartSummaryDTO } from '@/lib/types/menu';
 
 // Image Carousel Component with swipe support and slide animation
@@ -257,6 +258,11 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
   // Mock cart state (would be from context/store in production)
   const [cart] = useState<CartSummaryDTO>({ count: 2, subtotal: 178000 });
 
+  // Set QR token for API requests
+  useEffect(() => {
+    setQrToken(ctx.token);
+  }, [ctx.token]);
+
   // Fetch menu item detail
   const { data: item, isLoading, error } = useMenuItemQuery(itemId);
 
@@ -374,6 +380,16 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                         Còn hàng
                       </span>
                     )}
+                    {item.status === 'sold_out' && (
+                      <span className="mt-1 rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-600 dark:text-red-500">
+                        Hết hàng
+                      </span>
+                    )}
+                    {item.status === 'unavailable' && (
+                      <span className="mt-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-500">
+                        Hết món
+                      </span>
+                    )}
                   </div>
                 </div>
                 
@@ -488,10 +504,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
 
             {/* Add to Cart Button */}
             <Button
-              disabled={!isValid || item.status === 'unavailable'}
+              disabled={!isValid || item.status === 'unavailable' || item.status === 'sold_out'}
               className={`
                 flex h-12 w-full items-center justify-between rounded-full px-6 font-bold shadow-lg transition-all active:scale-[0.98] md:h-14 md:min-w-[320px] md:w-auto
-                ${!isValid || item.status === 'unavailable'
+                ${!isValid || item.status === 'unavailable' || item.status === 'sold_out'
                   ? 'bg-gray-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed'
                   : 'bg-emerald-500 text-white hover:bg-emerald-600 dark:hover:bg-emerald-400 shadow-emerald-500/20'
                 }

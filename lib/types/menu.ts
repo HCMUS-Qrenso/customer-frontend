@@ -41,7 +41,7 @@ export interface ModifierGroupDTO {
 // Menu Item DTOs (from GET /menu response)
 // ============================================
 
-export type MenuItemStatus = 'available' | 'unavailable';
+export type MenuItemStatus = 'available' | 'unavailable' | 'sold_out';
 
 export interface MenuItemCategoryDTO {
   id: string;

@@ -14,6 +14,8 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
   const isUnavailable = item.status === 'unavailable';
+  const isSoldOut = item.status === 'sold_out';
+  const isDisabled = isUnavailable || isSoldOut;
   const hasImage = item.images && item.images.length > 0;
   // Get primary image (display_order = 0) or first image
   const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
@@ -22,7 +24,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isUnavailable && onQuickAdd) {
+    if (!isDisabled && onQuickAdd) {
       onQuickAdd(item);
     }
   };
@@ -32,13 +34,13 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
       <div 
         className={`
           relative flex h-32 overflow-hidden rounded-xl shadow-sm
-          ${isUnavailable ? 'opacity-70' : 'cursor-pointer active:opacity-90 hover:shadow-md transition-shadow'}
+          ${isDisabled ? 'opacity-70' : 'cursor-pointer active:opacity-90 hover:shadow-md transition-shadow'}
           ${item.isChefRecommendation ? 'ring-2 ring-emerald-500/40' : ''}
           bg-white dark:bg-slate-800
         `}
       >
         {/* Chef's Pick Badge */}
-        {item.isChefRecommendation && !isUnavailable && (
+        {item.isChefRecommendation && !isDisabled && (
           <div className="absolute right-0 top-0 z-10 rounded-bl-lg bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Chef's Pick
           </div>
@@ -48,20 +50,20 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
         <div className="relative h-full w-32 shrink-0">
           {hasImage ? (
             <div
-              className={`h-full w-full bg-cover bg-center ${isUnavailable ? 'grayscale' : ''}`}
+              className={`h-full w-full bg-cover bg-center ${isDisabled ? 'grayscale' : ''}`}
               style={{ backgroundImage: `url('${imageUrl}')` }}
             />
           ) : (
-            <div className={`flex h-full w-full items-center justify-center bg-gray-100 dark:bg-slate-700 ${isUnavailable ? 'grayscale' : ''}`}>
+            <div className={`flex h-full w-full items-center justify-center bg-gray-100 dark:bg-slate-700 ${isDisabled ? 'grayscale' : ''}`}>
               <svg className="size-12 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           )}
-          {isUnavailable && (
+          {isDisabled && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50">
               <span className="rounded border border-white px-2 py-0.5 text-xs font-bold uppercase text-white">
-                Hết món
+                {isSoldOut ? 'Hết hàng' : 'Hết món'}
               </span>
             </div>
           )}
@@ -82,7 +84,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
 
           <div className="flex items-end justify-between mt-auto">
             <div className="flex flex-col">
-              <span className={`font-bold ${isUnavailable ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'}`}>
+              <span className={`font-bold ${isDisabled ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'}`}>
                 {formatUSD(item.base_price)}
               </span>
               {/* Show category name as a hint */}
@@ -91,7 +93,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
               )}
             </div>
 
-            {!isUnavailable && (
+            {!isDisabled && (
               <Button
                 variant="ghost"
                 size="icon"
