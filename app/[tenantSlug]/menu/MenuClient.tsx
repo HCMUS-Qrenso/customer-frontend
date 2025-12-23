@@ -254,7 +254,6 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   } = useInfiniteMenuQuery({
     category_id: selectedCategory || undefined,
     search: debouncedSearch || undefined,
-    status: 'available',
     limit: 20,
     sort_by: sortBy as 'createdAt' | 'name' | 'basePrice' | 'popularityScore',
     sort_order: sortOrder,
