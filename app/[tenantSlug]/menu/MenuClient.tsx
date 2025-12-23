@@ -171,6 +171,8 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
             {cart.count > 0 && <LiveIndicator size="sm" className="absolute right-1 top-1" />}
           </Link>
         }
+        maxWidth="full"
+        bottomBorder={false}
       />
 
       {/* Sticky Search & Categories */}
@@ -208,7 +210,7 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
       </div>
 
       {/* Content */}
-      <main className="flex-1 overflow-y-auto pb-24">
+      <main className="flex-1 overflow-y-auto">
         {/* Chef Picks Carousel - Only show when not searching and no category selected */}
         {!searchQuery && !selectedCategory && chefPicks.length > 0 && (
           <ChefPicksCarousel

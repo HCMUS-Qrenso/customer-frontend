@@ -19,9 +19,11 @@ interface PageHeaderProps {
   /** Additional content to render on the right side (after theme/language toggles) */
   rightContent?: React.ReactNode;
   /** Max width class for the container */
-  maxWidth?: 'sm' | 'md' | 'lg' | '2xl' | '7xl' | '6xl';
+  maxWidth?: 'sm' | 'md' | 'lg' | '2xl' | '7xl' | '6xl' | 'full';
   /** Custom header height class. Default: h-16 */
   headerHeight?: string;
+  /** Whether to show bottom border */
+  bottomBorder?: boolean;
 }
 
 const maxWidthClasses = {
@@ -31,6 +33,7 @@ const maxWidthClasses = {
   '2xl': 'max-w-2xl',
   '6xl': 'max-w-6xl',
   '7xl': 'max-w-7xl',
+  'full': 'max-w-full',
 };
 
 export function PageHeader({
@@ -42,6 +45,7 @@ export function PageHeader({
   rightContent,
   maxWidth = '7xl',
   headerHeight = 'h-16',
+  bottomBorder = true,
 }: PageHeaderProps) {
   // Determine if back button should show
   const shouldShowBack = showBackButton ?? (!!backHref || !!onBack);
@@ -65,8 +69,8 @@ export function PageHeader({
   );
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-slate-700/50 bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md">
-      <div className={`mx-auto flex ${headerHeight} items-center justify-between px-4 lg:px-8 ${maxWidthClasses[maxWidth]}`}>
+    <header className={`sticky top-0 z-40 w-full ${bottomBorder ? 'border-b border-gray-200 dark:border-slate-700/50' : ''} bg-gray-50/95 dark:bg-slate-900/95 backdrop-blur-md`}>
+      <div className={`mx-auto flex ${headerHeight} items-center justify-between px-4 lg:px-6 ${maxWidthClasses[maxWidth]}`}>
         <div className="flex items-center gap-3 overflow-hidden">
           {shouldShowBack && (backHref ? <BackLink /> : onBack ? <BackButton /> : null)}
           <div className="flex flex-col min-w-0">
