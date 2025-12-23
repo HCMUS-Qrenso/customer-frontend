@@ -64,6 +64,92 @@ export interface Translations {
     noteForKitchen: string;
     notePlaceholder: string;
   };
+  // Cart Page
+  cart: {
+    title: string;
+    emptyTitle: string;
+    emptyMessage: string;
+    clearAll: string;
+    addNote: string;
+    note: string;
+    youMayLike: string;
+    orderSummary: string;
+    subtotal: string;
+    serviceCharge: string;
+    tax: string;
+    total: string;
+    placeOrder: string;
+    termsAgreement: string;
+    items: string;
+    backToMenu: string;
+  };
+  // Checkout Page
+  checkout: {
+    title: string;
+    table: string;
+    selectPaymentMethod: string;
+    eWallet: string;
+    eWalletDesc: string;
+    card: string;
+    cardDesc: string;
+    counter: string;
+    counterDesc: string;
+    zeroFees: string;
+    cardFee: string;
+    processingFee: string;
+    paymentDetails: string;
+    secureTransaction: string;
+    cardHolder: string;
+    cardNumber: string;
+    expiry: string;
+    cvc: string;
+    confirmPayment: string;
+    totalAmount: string;
+    paymentSuccess: string;
+    paymentFailed: string;
+    transactionId: string;
+    viewReceipt: string;
+    trackOrderStatus: string;
+    returnToMenu: string;
+    processing: string;
+  };
+  // Bill Page
+  bill: {
+    title: string;
+    orderId: string;
+    dining: string;
+    updated: string;
+    addedAt: string;
+    each: string;
+    paymentSummary: string;
+    vat: string;
+    voucher: string;
+    inclTaxes: string;
+    billInfoText: string;
+    payNow: string;
+    payCounter: string;
+    callStaff: string;
+  };
+  // Order Page
+  order: {
+    title: string;
+    live: string;
+    requestBill: string;
+    addMoreItems: string;
+  };
+  // Track Page
+  track: {
+    liveUpdate: string;
+    createdAt: string;
+    accepted: string;
+    cooking: string;
+    ready: string;
+    served: string;
+    batch: string;
+    orderUpdates: string;
+    estimatedTime: string;
+    preparingMessage: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -133,6 +219,92 @@ export const translations: Record<Language, Translations> = {
       noteForKitchen: 'Ghi chú cho bếp',
       notePlaceholder: 'Ví dụ: Không hành, ít nước bọng...',
     },
+    // Cart
+    cart: {
+      title: 'Giỏ hàng',
+      emptyTitle: 'Giỏ hàng trống',
+      emptyMessage: 'Bạn chưa có món nào trong giỏ hàng',
+      clearAll: 'Xoá tất cả',
+      addNote: 'Thêm ghi chú',
+      note: 'Ghi chú',
+      youMayLike: 'Có thể bạn thích',
+      orderSummary: 'Tóm tắt đơn hàng',
+      subtotal: 'Tạm tính',
+      serviceCharge: 'Phí dịch vụ',
+      tax: 'Thuế VAT (10%)',
+      total: 'Tổng cộng',
+      placeOrder: 'Đặt món',
+      termsAgreement: 'Bằng cách đặt món, bạn đồng ý với điều khoản sử dụng.',
+      items: 'món',
+      backToMenu: 'Quay lại menu',
+    },
+    // Checkout
+    checkout: {
+      title: 'Thanh toán',
+      table: 'Bàn',
+      selectPaymentMethod: 'Chọn phương thức thanh toán',
+      eWallet: 'Ví điện tử',
+      eWalletDesc: 'ZaloPay, MoMo, VNPay',
+      card: 'Thẻ tín dụng/ghi nợ',
+      cardDesc: 'Visa, Mastercard, JCB',
+      counter: 'Thanh toán tại quầy',
+      counterDesc: 'Thanh toán tiền mặt',
+      zeroFees: 'Miễn phí',
+      cardFee: 'Phí 2%',
+      processingFee: 'Phí xử lý',
+      paymentDetails: 'Chi tiết thanh toán',
+      secureTransaction: 'Giao dịch bảo mật',
+      cardHolder: 'Tên chủ thẻ',
+      cardNumber: 'Số thẻ',
+      expiry: 'Ngày hết hạn',
+      cvc: 'CVC',
+      confirmPayment: 'Xác nhận thanh toán',
+      totalAmount: 'Tổng thanh toán',
+      paymentSuccess: 'Thanh toán thành công!',
+      paymentFailed: 'Thanh toán thất bại',
+      transactionId: 'Mã giao dịch',
+      viewReceipt: 'Xem hoá đơn',
+      trackOrderStatus: 'Theo dõi đơn hàng',
+      returnToMenu: 'Quay lại menu',
+      processing: 'Đang xử lý...',
+    },
+    // Bill
+    bill: {
+      title: 'Hoá đơn',
+      orderId: 'Mã đơn hàng',
+      dining: 'Đang dùng bữa',
+      updated: 'Cập nhật',
+      addedAt: 'Thêm lúc',
+      each: 'mỗi phần',
+      paymentSummary: 'Tóm tắt thanh toán',
+      vat: 'Thuế VAT',
+      voucher: 'Voucher',
+      inclTaxes: 'Đã bao gồm thuế',
+      billInfoText: 'Hoá đơn sẽ được gửi đến email của bạn sau khi thanh toán.',
+      payNow: 'Thanh toán ngay',
+      payCounter: 'Thanh toán tại quầy',
+      callStaff: 'Gọi nhân viên',
+    },
+    // Order
+    order: {
+      title: 'Đơn hàng',
+      live: 'Trực tiếp',
+      requestBill: 'Yêu cầu hoá đơn',
+      addMoreItems: 'Thêm món',
+    },
+    // Track
+    track: {
+      liveUpdate: 'Cập nhật trực tiếp',
+      createdAt: 'Tạo lúc',
+      accepted: 'Đã nhận',
+      cooking: 'Đang nấu',
+      ready: 'Sẵn sàng',
+      served: 'Đã phục vụ',
+      batch: 'Đợt',
+      orderUpdates: 'Cập nhật đơn hàng',
+      estimatedTime: 'Dự kiến',
+      preparingMessage: 'Đơn hàng của bạn đang được bếp chuẩn bị.',
+    },
   },
   en: {
     // Header
@@ -199,6 +371,92 @@ export const translations: Record<Language, Translations> = {
       addToCart: 'Add to Cart',
       noteForKitchen: 'Note for Kitchen',
       notePlaceholder: 'e.g., No onions, less spicy...',
+    },
+    // Cart
+    cart: {
+      title: 'Cart',
+      emptyTitle: 'Your cart is empty',
+      emptyMessage: 'You have no items in your cart',
+      clearAll: 'Clear all',
+      addNote: 'Add note',
+      note: 'Note',
+      youMayLike: 'You may also like',
+      orderSummary: 'Order Summary',
+      subtotal: 'Subtotal',
+      serviceCharge: 'Service charge',
+      tax: 'VAT (10%)',
+      total: 'Total',
+      placeOrder: 'Place Order',
+      termsAgreement: 'By placing order, you agree to the terms of service.',
+      items: 'items',
+      backToMenu: 'Back to menu',
+    },
+    // Checkout
+    checkout: {
+      title: 'Checkout',
+      table: 'Table',
+      selectPaymentMethod: 'Select Payment Method',
+      eWallet: 'E-Wallet',
+      eWalletDesc: 'ZaloPay, MoMo, VNPay',
+      card: 'Credit/Debit Card',
+      cardDesc: 'Visa, Mastercard, JCB',
+      counter: 'Pay at Counter',
+      counterDesc: 'Cash payment',
+      zeroFees: 'Zero fees',
+      cardFee: '2% fee',
+      processingFee: 'Processing fee',
+      paymentDetails: 'Payment Details',
+      secureTransaction: 'Secure transaction',
+      cardHolder: 'Card Holder',
+      cardNumber: 'Card Number',
+      expiry: 'Expiry',
+      cvc: 'CVC',
+      confirmPayment: 'Confirm Payment',
+      totalAmount: 'Total Amount',
+      paymentSuccess: 'Payment Successful!',
+      paymentFailed: 'Payment Failed',
+      transactionId: 'Transaction ID',
+      viewReceipt: 'View Receipt',
+      trackOrderStatus: 'Track Order Status',
+      returnToMenu: 'Return to Menu',
+      processing: 'Processing...',
+    },
+    // Bill
+    bill: {
+      title: 'Bill',
+      orderId: 'Order ID',
+      dining: 'Dining',
+      updated: 'Updated',
+      addedAt: 'Added at',
+      each: 'each',
+      paymentSummary: 'Payment Summary',
+      vat: 'VAT',
+      voucher: 'Voucher',
+      inclTaxes: 'Incl. taxes',
+      billInfoText: 'Your receipt will be sent to your email after payment.',
+      payNow: 'Pay Now',
+      payCounter: 'Pay at Counter',
+      callStaff: 'Call Staff',
+    },
+    // Order
+    order: {
+      title: 'Order',
+      live: 'Live',
+      requestBill: 'Request Bill',
+      addMoreItems: 'Add More Items',
+    },
+    // Track
+    track: {
+      liveUpdate: 'Live Update',
+      createdAt: 'Created',
+      accepted: 'Accepted',
+      cooking: 'Cooking',
+      ready: 'Ready',
+      served: 'Served',
+      batch: 'Batch',
+      orderUpdates: 'Order Updates',
+      estimatedTime: 'Estimated',
+      preparingMessage: 'Your order is being prepared by the kitchen.',
     },
   },
 };

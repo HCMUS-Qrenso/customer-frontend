@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { setQrToken } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { TableHeroCard } from "@/components/TableHeroCard";
@@ -10,6 +9,7 @@ import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { MapPin, AlertTriangle, CircleX } from "lucide-react";
 
 interface TableLandingClientProps {
@@ -121,11 +121,7 @@ function TableLandingContent({
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
   // Store the QR token for API requests
-  useEffect(() => {
-    if (token && tableContext) {
-      setQrToken(token);
-    }
-  }, [token, tableContext]);
+  useQrToken(tableContext ? token : undefined);
 
   // No token provided
   if (!token) {
@@ -134,7 +130,7 @@ function TableLandingContent({
 
   // Loading state
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <PageLoadingSkeleton />;
   }
 
   // Token expired or invalid (API returned error) or table under maintenance

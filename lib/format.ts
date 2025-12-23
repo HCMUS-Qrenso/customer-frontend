@@ -40,3 +40,15 @@ export function formatUSD(price: number): string {
   return formatVND(price);
 }
 
+/**
+ * Format a date string to time in Vietnamese locale (HH:mm)
+ * @param dateString - ISO date string
+ * @returns Formatted time string like "14:30"
+ */
+export function formatTime(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+}
