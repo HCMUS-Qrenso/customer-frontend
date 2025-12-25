@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useLanguage } from '@/lib/i18n/context';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Minus, Plus, Users } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { useLanguage } from "@/lib/i18n/context";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Minus, Plus, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const GUEST_COUNT_STORAGE_KEY = 'qrenso_guest_count';
+const GUEST_COUNT_STORAGE_KEY = "qrenso_guest_count";
 const MIN_GUESTS = 1;
 const MAX_GUESTS = 20;
 
@@ -43,8 +43,12 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex flex-col gap-0.5">
-            <span className="text-base font-bold text-slate-900 dark:text-white">{t.guestCount.title}</span>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t.guestCount.subtitle}</span>
+            <span className="text-base font-bold text-slate-900 dark:text-white">
+              {t.guestCount.title}
+            </span>
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              {t.guestCount.subtitle}
+            </span>
           </div>
         </div>
 
@@ -59,7 +63,9 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
             disabled={count <= MIN_GUESTS}
             className={cn(
               "size-10 rounded-full bg-white dark:bg-slate-600 shadow-sm active:scale-95 disabled:opacity-50 disabled:shadow-none",
-              count <= MIN_GUESTS ? "text-slate-300 dark:text-slate-500" : "text-slate-600 dark:text-slate-200"
+              count <= MIN_GUESTS
+                ? "text-slate-300 dark:text-slate-500"
+                : "text-slate-600 dark:text-slate-200",
             )}
           >
             <Minus className="size-5" />
@@ -89,5 +95,3 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
     </Card>
   );
 }
-
-

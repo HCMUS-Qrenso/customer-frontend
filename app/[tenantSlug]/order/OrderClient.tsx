@@ -1,27 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Receipt, UtensilsCrossed } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { formatTime } from '@/lib/format';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockOrder, ORDER_POLLING_CONFIG } from '@/lib/mocks';
-import type { OrderDTO, OrderItemDTO } from '@/lib/types/order';
-import { OrderItemGroupList } from '@/components/order/OrderItemGroupList';
-import { OrderSummaryCard } from '@/components/order/OrderSummaryCard';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
-import { OrderStatusCard } from '@/components/shared/OrderStatusCard';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Receipt, UtensilsCrossed } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { formatTime } from "@/lib/format";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockOrder, ORDER_POLLING_CONFIG } from "@/lib/mocks";
+import type { OrderDTO, OrderItemDTO } from "@/lib/types/order";
+import { OrderItemGroupList } from "@/components/order/OrderItemGroupList";
+import { OrderSummaryCard } from "@/components/order/OrderSummaryCard";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { OrderStatusCard } from "@/components/shared/OrderStatusCard";
 
 interface OrderClientProps {
   tenantSlug: string;
   tableId?: string;
   token?: string;
 }
-
 
 function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
   const router = useRouter();
@@ -55,7 +54,7 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
       groups[time].push(item);
       return groups;
     },
-    {} as Record<string, OrderItemDTO[]>
+    {} as Record<string, OrderItemDTO[]>,
   );
 
   return (
@@ -87,7 +86,11 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
 
             {/* Right: Summary */}
             <div className="lg:col-span-5 xl:col-span-4">
-              <OrderSummaryCard order={order} billHref={billHref} menuHref={menuHref} />
+              <OrderSummaryCard
+                order={order}
+                billHref={billHref}
+                menuHref={menuHref}
+              />
             </div>
           </div>
         </div>
@@ -123,4 +126,3 @@ export function OrderClient(props: OrderClientProps) {
     </LanguageProvider>
   );
 }
-

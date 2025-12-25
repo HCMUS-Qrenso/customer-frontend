@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
 
-type ItemStatus = 'preparing' | 'ready' | 'served';
+type ItemStatus = "preparing" | "ready" | "served";
 
 interface BatchItem {
   id: string;
@@ -34,19 +34,31 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
 
   const getStatusInfo = (status: ItemStatus) => {
     switch (status) {
-      case 'preparing':
-        return { color: 'bg-orange-400', textColor: 'text-orange-500', label: t.track.cooking };
-      case 'ready':
-        return { color: 'bg-blue-400', textColor: 'text-blue-500', label: t.track.ready };
-      case 'served':
-        return { color: 'bg-emerald-500', textColor: 'text-emerald-500', label: t.track.served };
+      case "preparing":
+        return {
+          color: "bg-orange-400",
+          textColor: "text-orange-500",
+          label: t.track.cooking,
+        };
+      case "ready":
+        return {
+          color: "bg-blue-400",
+          textColor: "text-blue-500",
+          label: t.track.ready,
+        };
+      case "served":
+        return {
+          color: "bg-emerald-500",
+          textColor: "text-emerald-500",
+          label: t.track.served,
+        };
     }
   };
 
   return (
     <div className="flex flex-col">
       {batches.map((batch, index) => (
-        <div key={batch.id} className={index > 0 ? 'opacity-70' : ''}>
+        <div key={batch.id} className={index > 0 ? "opacity-70" : ""}>
           {/* Batch Header */}
           <div className="px-4 pt-4 pb-2 flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -61,7 +73,8 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
           <div className="flex flex-col gap-2 px-4">
             {batch.items.map((item) => {
               const statusInfo = getStatusInfo(item.status);
-              const name = lang === 'en' && item.nameEn ? item.nameEn : item.name;
+              const name =
+                lang === "en" && item.nameEn ? item.nameEn : item.name;
 
               return (
                 <div
@@ -85,7 +98,7 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
                     </div>
                     {item.modifiers && (
                       <div className="flex flex-wrap gap-1.5 my-1">
-                        {item.modifiers.split(', ').map((mod, i) => (
+                        {item.modifiers.split(", ").map((mod, i) => (
                           <span
                             key={i}
                             className="text-[10px] font-medium px-2 py-0.5 bg-gray-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full"
@@ -96,8 +109,12 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
                       </div>
                     )}
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className={`flex h-2 w-2 rounded-full ${statusInfo.color}`} />
-                      <span className={`text-xs font-medium ${statusInfo.textColor}`}>
+                      <span
+                        className={`flex h-2 w-2 rounded-full ${statusInfo.color}`}
+                      />
+                      <span
+                        className={`text-xs font-medium ${statusInfo.textColor}`}
+                      >
                         {statusInfo.label}
                       </span>
                     </div>

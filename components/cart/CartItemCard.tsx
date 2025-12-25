@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Minus, Plus, Trash2, FileEdit } from 'lucide-react';
-import { CartItemDTO } from '@/lib/types/menu';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
+import { Minus, Plus, Trash2, FileEdit } from "lucide-react";
+import { CartItemDTO } from "@/lib/types/menu";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
 
 interface CartItemCardProps {
   item: CartItemDTO;
@@ -11,14 +11,21 @@ interface CartItemCardProps {
   onRemove: () => void;
 }
 
-export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
+export function CartItemCard({
+  item,
+  onUpdateQuantity,
+  onRemove,
+}: CartItemCardProps) {
   const { lang, t } = useLanguage();
-  const name = lang === 'en' && item.menuItemNameEn ? item.menuItemNameEn : item.menuItemName;
-  
+  const name =
+    lang === "en" && item.menuItemNameEn
+      ? item.menuItemNameEn
+      : item.menuItemName;
+
   // Format modifiers text
   const modifiersText = item.selectedModifiers
-    .map(m => m.modifierName)
-    .join(', ');
+    .map((m) => m.modifierName)
+    .join(", ");
 
   return (
     <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700/50 flex gap-4 transition-all hover:border-emerald-500/30 group">
@@ -37,14 +44,16 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
             <h3 className="font-bold text-base leading-snug line-clamp-2 text-slate-900 dark:text-white">
               {name}
             </h3>
-            <button 
-              onClick={onRemove} 
+            <button
+              onClick={onRemove}
               className="text-slate-400 hover:text-red-500 transition-colors p-1 -mr-2 -mt-1 shrink-0"
             >
               <Trash2 className="size-4" />
             </button>
           </div>
-          <p className="text-emerald-500 font-semibold text-sm mt-1">{formatVND(item.basePrice)}</p>
+          <p className="text-emerald-500 font-semibold text-sm mt-1">
+            {formatVND(item.basePrice)}
+          </p>
           {modifiersText && (
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
               {modifiersText}

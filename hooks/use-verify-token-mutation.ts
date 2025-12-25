@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query'
-import { verifyTokenApi } from '@/lib/api/verify-token'
-import type { VerifyTokenResponse } from '@/lib/types/table'
+import { useMutation } from "@tanstack/react-query";
+import { verifyTokenApi } from "@/lib/api/verify-token";
+import type { VerifyTokenResponse } from "@/lib/types/table";
 
 /**
  * Hook to verify a QR code token
@@ -9,6 +9,5 @@ import type { VerifyTokenResponse } from '@/lib/types/table'
 export function useVerifyTokenMutation() {
   return useMutation<VerifyTokenResponse, Error, string>({
     mutationFn: (token) => verifyTokenApi.verifyToken(token),
-  })
+  });
 }
-

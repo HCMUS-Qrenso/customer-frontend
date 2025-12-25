@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-import { Moon, Sun, Monitor } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Moon, Sun, Monitor } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
@@ -20,7 +20,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <Button
         variant="ghost"
         size="icon"
-        className={cn('size-10 rounded-full', className)}
+        className={cn("size-10 rounded-full", className)}
         disabled
       >
         <Sun className="size-5" />
@@ -30,20 +30,20 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   // Cycle through: light → dark → system → light
   const cycleTheme = () => {
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('system');
+    if (theme === "light") {
+      setTheme("dark");
+    } else if (theme === "dark") {
+      setTheme("system");
     } else {
-      setTheme('light');
+      setTheme("light");
     }
   };
 
   const getIcon = () => {
     switch (theme) {
-      case 'light':
+      case "light":
         return <Sun className="size-5" />;
-      case 'dark':
+      case "dark":
         return <Moon className="size-5" />;
       default:
         return <Monitor className="size-5" />;
@@ -52,12 +52,12 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   const getLabel = () => {
     switch (theme) {
-      case 'light':
-        return 'Chế độ sáng';
-      case 'dark':
-        return 'Chế độ tối';
+      case "light":
+        return "Chế độ sáng";
+      case "dark":
+        return "Chế độ tối";
       default:
-        return 'Theo hệ thống';
+        return "Theo hệ thống";
     }
   };
 
@@ -67,9 +67,9 @@ export function ThemeToggle({ className }: { className?: string }) {
       size="icon"
       onClick={cycleTheme}
       className={cn(
-        'size-10 rounded-full transition-colors',
-        'hover:bg-slate-100 dark:hover:bg-slate-800',
-        className
+        "size-10 rounded-full transition-colors",
+        "hover:bg-slate-100 dark:hover:bg-slate-800",
+        className,
       )}
       title={getLabel()}
     >

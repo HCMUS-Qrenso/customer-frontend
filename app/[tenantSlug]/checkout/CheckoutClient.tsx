@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Receipt, Lock, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockCheckoutBill as mockBill } from '@/lib/mocks';
-import type { BillDTO, PaymentMethod } from '@/lib/types/checkout';
-import { MethodPicker } from '@/components/checkout/MethodPicker';
-import { CardPanel } from '@/components/checkout/CardPanel';
-import { OrderSummaryPanel } from '@/components/checkout/OrderSummaryPanel';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Receipt, Lock, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockCheckoutBill as mockBill } from "@/lib/mocks";
+import type { BillDTO, PaymentMethod } from "@/lib/types/checkout";
+import { MethodPicker } from "@/components/checkout/MethodPicker";
+import { CardPanel } from "@/components/checkout/CardPanel";
+import { OrderSummaryPanel } from "@/components/checkout/OrderSummaryPanel";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 
 interface CheckoutClientProps {
   tenantSlug: string;
@@ -21,11 +21,10 @@ interface CheckoutClientProps {
   token?: string;
 }
 
-
 function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('e-wallet');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("e-wallet");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Store QR token
@@ -35,7 +34,8 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
   const resultHref = `/${tenantSlug}/checkout/result?table=${tableId}&token=${token}`;
 
   // Calculate fees
-  const cardFee = paymentMethod === 'card' ? Math.round(mockBill.total * 0.02) : 0;
+  const cardFee =
+    paymentMethod === "card" ? Math.round(mockBill.total * 0.02) : 0;
   const total = mockBill.total + cardFee;
 
   const handlePayment = async () => {
@@ -81,9 +81,12 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
             </div>
           </div>
 
-          <MethodPicker selectedMethod={paymentMethod} onSelect={setPaymentMethod} />
+          <MethodPicker
+            selectedMethod={paymentMethod}
+            onSelect={setPaymentMethod}
+          />
 
-          {paymentMethod === 'card' && <CardPanel />}
+          {paymentMethod === "card" && <CardPanel />}
         </div>
 
         {/* Right: Order Summary (Desktop) */}
@@ -104,7 +107,9 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
       {/* Mobile Sticky Footer */}
       <MobileStickyBar>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">{t.checkout.totalAmount}</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">
+            {t.checkout.totalAmount}
+          </span>
           <span className="text-xl font-bold">{formatVND(total)}</span>
         </div>
         <Button
@@ -136,4 +141,3 @@ export function CheckoutClient(props: CheckoutClientProps) {
     </LanguageProvider>
   );
 }
-

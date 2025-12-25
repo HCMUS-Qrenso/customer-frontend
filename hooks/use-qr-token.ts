@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { setQrToken } from '@/lib/stores/qr-token-store';
+import { useEffect } from "react";
+import { setQrToken } from "@/lib/stores/qr-token-store";
 
 /**
  * Hook to store QR token in global store

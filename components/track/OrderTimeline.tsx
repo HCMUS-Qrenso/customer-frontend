@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n/context';
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface TimelineEntry {
   time: string;
@@ -29,7 +29,7 @@ export function OrderTimeline({ entries }: OrderTimelineProps) {
             {t.track.orderUpdates} ({entries.length})
           </span>
           <ChevronDown
-            className={`size-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`size-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
           />
         </summary>
         <div className="px-4 pb-4">
@@ -37,8 +37,12 @@ export function OrderTimeline({ entries }: OrderTimelineProps) {
             {entries.map((entry, index) => (
               <div key={index} className="relative">
                 <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-gray-300 dark:bg-slate-500" />
-                <p className="text-xs text-slate-500 dark:text-slate-400">{entry.time}</p>
-                <p className="text-sm font-medium text-slate-900 dark:text-white">{entry.message}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {entry.time}
+                </p>
+                <p className="text-sm font-medium text-slate-900 dark:text-white">
+                  {entry.message}
+                </p>
               </div>
             ))}
           </div>

@@ -1,10 +1,17 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { translations, Language, Translations } from './translations';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { translations, Language, Translations } from "./translations";
 
-const LANGUAGE_STORAGE_KEY = 'qrenso_preferred_language';
-const DEFAULT_LANGUAGE: Language = 'vi';
+const LANGUAGE_STORAGE_KEY = "qrenso_preferred_language";
+const DEFAULT_LANGUAGE: Language = "vi";
 
 interface LanguageContextType {
   lang: Language;
@@ -12,21 +19,28 @@ interface LanguageContextType {
   t: Translations;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined,
+);
 
 interface LanguageProviderProps {
   children: React.ReactNode;
   initialLang?: Language;
 }
 
-export function LanguageProvider({ children, initialLang }: LanguageProviderProps) {
-  const [lang, setLangState] = useState<Language>(initialLang ?? DEFAULT_LANGUAGE);
+export function LanguageProvider({
+  children,
+  initialLang,
+}: LanguageProviderProps) {
+  const [lang, setLangState] = useState<Language>(
+    initialLang ?? DEFAULT_LANGUAGE,
+  );
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored === 'vi' || stored === 'en') {
+    if (stored === "vi" || stored === "en") {
       setLangState(stored);
     }
     setIsHydrated(true);
@@ -44,7 +58,13 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
   // Prevent hydration mismatch by rendering with default until client is ready
   if (!isHydrated) {
     return (
-      <LanguageContext.Provider value={{ lang: DEFAULT_LANGUAGE, setLang, t: translations[DEFAULT_LANGUAGE] }}>
+      <LanguageContext.Provider
+        value={{
+          lang: DEFAULT_LANGUAGE,
+          setLang,
+          t: translations[DEFAULT_LANGUAGE],
+        }}
+      >
         {children}
       </LanguageContext.Provider>
     );
@@ -60,7 +80,7 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 }

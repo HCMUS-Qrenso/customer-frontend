@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { CreditCard, Store, Info } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
-import type { BillDTO } from '@/lib/types/checkout';
+import Link from "next/link";
+import { CreditCard, Store, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
+import type { BillDTO } from "@/lib/types/checkout";
 
 interface BillSummaryCardProps {
   bill: BillDTO;
@@ -13,27 +13,41 @@ interface BillSummaryCardProps {
   checkoutHref: string;
 }
 
-export function BillSummaryCard({ bill, menuHref, checkoutHref }: BillSummaryCardProps) {
+export function BillSummaryCard({
+  bill,
+  menuHref,
+  checkoutHref,
+}: BillSummaryCardProps) {
   const { t } = useLanguage();
 
   return (
     <div className="lg:sticky lg:top-24 flex flex-col gap-6">
       <div className="flex flex-col gap-4 rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-gray-200 dark:border-slate-700">
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t.bill.paymentSummary}</h3>
-        
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          {t.bill.paymentSummary}
+        </h3>
+
         <div className="flex flex-col gap-3 border-b border-dashed border-gray-200 dark:border-slate-600 pb-4">
           <div className="flex justify-between text-sm">
             <span className="text-slate-500 dark:text-slate-400">
               {t.cart.subtotal} ({bill.items.length} {t.cart.items})
             </span>
-            <span className="font-medium text-slate-900 dark:text-white">{formatVND(bill.subtotal)}</span>
+            <span className="font-medium text-slate-900 dark:text-white">
+              {formatVND(bill.subtotal)}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{t.cart.serviceCharge} (5%)</span>
-            <span className="font-medium text-slate-900 dark:text-white">{formatVND(bill.serviceCharge)}</span>
+            <span className="text-slate-500 dark:text-slate-400">
+              {t.cart.serviceCharge} (5%)
+            </span>
+            <span className="font-medium text-slate-900 dark:text-white">
+              {formatVND(bill.serviceCharge)}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{t.bill.vat}</span>
+            <span className="text-slate-500 dark:text-slate-400">
+              {t.bill.vat}
+            </span>
             <span className="font-medium text-slate-400">--</span>
           </div>
           {bill.discount && bill.discount > 0 && (
@@ -45,7 +59,7 @@ export function BillSummaryCard({ bill, menuHref, checkoutHref }: BillSummaryCar
             </div>
           )}
         </div>
-        
+
         <div className="flex items-end justify-between pt-1">
           <div className="flex flex-col">
             <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -53,7 +67,9 @@ export function BillSummaryCard({ bill, menuHref, checkoutHref }: BillSummaryCar
             </span>
             <span className="text-xs text-slate-400">{t.bill.inclTaxes}</span>
           </div>
-          <span className="text-2xl font-bold text-slate-900 dark:text-white">{formatVND(bill.total)}</span>
+          <span className="text-2xl font-bold text-slate-900 dark:text-white">
+            {formatVND(bill.total)}
+          </span>
         </div>
 
         {/* Info Text */}

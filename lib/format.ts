@@ -6,10 +6,12 @@
  * @returns Formatted string like "120.000₫"
  */
 export function formatVND(price: number): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'decimal',
-    maximumFractionDigits: 0,
-  }).format(price) + '₫';
+  return (
+    new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+    }).format(price) + "₫"
+  );
 }
 
 /**
@@ -18,15 +20,18 @@ export function formatVND(price: number): string {
  * @param currency - Currency code ('VND' or 'USD'), defaults to 'VND'
  * @returns Formatted string with currency symbol
  */
-export function formatCurrency(price: number, currency: 'VND' | 'USD' = 'VND'): string {
-  if (currency === 'VND') {
+export function formatCurrency(
+  price: number,
+  currency: "VND" | "USD" = "VND",
+): string {
+  if (currency === "VND") {
     return formatVND(price);
   }
-  
+
   // USD formatting
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
   }).format(price);
 }
 
@@ -47,8 +52,8 @@ export function formatUSD(price: number): string {
  */
 export function formatTime(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 }

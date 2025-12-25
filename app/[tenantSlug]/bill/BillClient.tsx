@@ -1,27 +1,25 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { CreditCard, Bell } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { formatTime } from '@/lib/format';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockBill } from '@/lib/mocks';
-import type { BillDTO } from '@/lib/types/checkout';
-import { BillItemsList } from '@/components/bill/BillItemsList';
-import { BillSummaryCard } from '@/components/bill/BillSummaryCard';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
-import { OrderStatusCard } from '@/components/shared/OrderStatusCard';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { CreditCard, Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { formatTime } from "@/lib/format";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockBill } from "@/lib/mocks";
+import type { BillDTO } from "@/lib/types/checkout";
+import { BillItemsList } from "@/components/bill/BillItemsList";
+import { BillSummaryCard } from "@/components/bill/BillSummaryCard";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { OrderStatusCard } from "@/components/shared/OrderStatusCard";
 
 interface BillClientProps {
   tenantSlug: string;
   tableId?: string;
   token?: string;
 }
-
-
 
 function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
   const router = useRouter();
@@ -61,7 +59,11 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
 
             {/* Right: Summary */}
             <div className="lg:col-span-5 xl:col-span-4">
-              <BillSummaryCard bill={mockBill} menuHref={menuHref} checkoutHref={checkoutHref} />
+              <BillSummaryCard
+                bill={mockBill}
+                menuHref={menuHref}
+                checkoutHref={checkoutHref}
+              />
             </div>
           </div>
         </div>
@@ -84,7 +86,10 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
               <Bell className="size-5" />
             </Button>
           </div>
-          <Link href={menuHref} className="text-center text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <Link
+            href={menuHref}
+            className="text-center text-xs font-bold text-emerald-600 dark:text-emerald-400"
+          >
             {t.cart.backToMenu}
           </Link>
         </div>
