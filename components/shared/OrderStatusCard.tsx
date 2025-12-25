@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { LiveIndicator } from './LiveIndicator';
+import { LiveIndicator } from "./LiveIndicator";
 
 interface OrderStatusCardProps {
   orderLabel: string;

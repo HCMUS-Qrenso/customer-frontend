@@ -1,7 +1,7 @@
 // Checkout Types
 
 // Payment Method
-export type PaymentMethod = 'e-wallet' | 'card' | 'counter';
+export type PaymentMethod = "e-wallet" | "card" | "counter";
 
 // Bill Item DTO
 export interface BillItemDTO {
@@ -25,7 +25,7 @@ export interface BillDTO {
   discount?: number;
   voucherCode?: string;
   total: number;
-  status: 'unpaid' | 'paid' | 'partial';
+  status: "unpaid" | "paid" | "partial";
 }
 
 // Checkout Result DTO

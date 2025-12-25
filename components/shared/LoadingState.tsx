@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LoadingStateProps {
-  variant?: 'page' | 'card' | 'list';
+  variant?: "page" | "card" | "list";
   className?: string;
 }
 
@@ -14,9 +14,12 @@ export function PageLoadingSkeleton() {
   return (
     <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
       {/* Background Pattern */}
-      <div 
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" 
-        style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]"
+        style={{
+          backgroundImage: "radial-gradient(#0f172a 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
       />
 
       {/* Header skeleton */}
@@ -59,7 +62,9 @@ export function PageLoadingSkeleton() {
  */
 export function CardLoadingSkeleton({ className }: { className?: string }) {
   return (
-    <div className={`rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ${className}`}>
+    <div
+      className={`rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ${className}`}
+    >
       <Skeleton className="h-40 w-full rounded-lg bg-slate-200 dark:bg-slate-700 mb-4" />
       <Skeleton className="h-5 w-3/4 bg-slate-200 dark:bg-slate-700 mb-2" />
       <Skeleton className="h-4 w-1/2 bg-slate-200 dark:bg-slate-700" />
@@ -74,7 +79,10 @@ export function ListItemLoadingSkeleton({ count = 3 }: { count?: number }) {
   return (
     <div className="space-y-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4 rounded-xl bg-white dark:bg-slate-800 p-4">
+        <div
+          key={i}
+          className="flex items-center gap-4 rounded-xl bg-white dark:bg-slate-800 p-4"
+        >
           <Skeleton className="size-16 rounded-lg bg-slate-200 dark:bg-slate-700" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4 bg-slate-200 dark:bg-slate-700" />
@@ -90,13 +98,16 @@ export function ListItemLoadingSkeleton({ count = 3 }: { count?: number }) {
 /**
  * Generic loading state wrapper
  */
-export function LoadingState({ variant = 'page', className }: LoadingStateProps) {
+export function LoadingState({
+  variant = "page",
+  className,
+}: LoadingStateProps) {
   switch (variant) {
-    case 'card':
+    case "card":
       return <CardLoadingSkeleton className={className} />;
-    case 'list':
+    case "list":
       return <ListItemLoadingSkeleton />;
-    case 'page':
+    case "page":
     default:
       return <PageLoadingSkeleton />;
   }

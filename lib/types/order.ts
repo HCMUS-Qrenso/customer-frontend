@@ -1,6 +1,13 @@
 // Order Types
 
-export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "preparing"
+  | "ready"
+  | "served"
+  | "completed"
+  | "cancelled";
 
 export interface OrderItemDTO {
   id: string;

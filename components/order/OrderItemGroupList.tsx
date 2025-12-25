@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Clock } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
-import type { OrderItemDTO } from '@/lib/types/order';
+import { Clock } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
+import type { OrderItemDTO } from "@/lib/types/order";
 
 interface OrderItemGroupListProps {
   groupedItems: Record<string, OrderItemDTO[]>;
@@ -24,7 +24,7 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
           </div>
 
           {items.map((item) => {
-            const name = lang === 'en' && item.nameEn ? item.nameEn : item.name;
+            const name = lang === "en" && item.nameEn ? item.nameEn : item.name;
 
             return (
               <div
@@ -42,10 +42,12 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                 <div className="flex flex-1 flex-col justify-between gap-2 sm:gap-1">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h4 className="text-base font-bold text-slate-900 dark:text-white">{name}</h4>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                        {name}
+                      </h4>
                       {item.modifiers && (
                         <div className="mt-1 flex flex-wrap gap-2">
-                          {item.modifiers.split(', ').map((mod, i) => (
+                          {item.modifiers.split(", ").map((mod, i) => (
                             <span
                               key={i}
                               className="inline-flex items-center rounded bg-gray-100 dark:bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-500 dark:text-slate-400"
@@ -56,7 +58,9 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                         </div>
                       )}
                       {item.note && (
-                        <p className="mt-2 text-sm italic text-gray-400">&quot;{item.note}&quot;</p>
+                        <p className="mt-2 text-sm italic text-gray-400">
+                          &quot;{item.note}&quot;
+                        </p>
                       )}
                     </div>
                     <div className="text-right shrink-0">

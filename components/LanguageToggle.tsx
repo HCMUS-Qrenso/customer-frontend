@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useLanguage } from '@/lib/i18n/context';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/context";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function LanguageToggle({ className }: { className?: string }) {
   const { lang, setLang } = useLanguage();
 
   // Cycle through languages: vi → en → vi
   const cycleLanguage = () => {
-    setLang(lang === 'vi' ? 'en' : 'vi');
+    setLang(lang === "vi" ? "en" : "vi");
   };
 
   const getFlag = () => {
-    return lang === 'vi' ? '/vietnam.png' : '/united-kingdom.png';
+    return lang === "vi" ? "/vietnam.png" : "/united-kingdom.png";
   };
 
   const getLabel = () => {
-    return lang === 'vi' ? 'Tiếng Việt' : 'English';
+    return lang === "vi" ? "Tiếng Việt" : "English";
   };
 
   return (
@@ -27,9 +27,9 @@ export function LanguageToggle({ className }: { className?: string }) {
       size="icon"
       onClick={cycleLanguage}
       className={cn(
-        'size-10 rounded-full transition-colors',
-        'hover:bg-slate-100 dark:hover:bg-slate-800',
-        className
+        "size-10 rounded-full transition-colors",
+        "hover:bg-slate-100 dark:hover:bg-slate-800",
+        className,
       )}
       title={getLabel()}
     >

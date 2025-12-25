@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Receipt, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockOrderTracking } from '@/lib/mocks';
-import { OrderStatusStepper } from '@/components/track/OrderStatusStepper';
-import { BatchItemsList } from '@/components/track/BatchItemsList';
-import { OrderTimeline } from '@/components/track/OrderTimeline';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
-import { LiveIndicator } from '@/components/shared/LiveIndicator';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Receipt, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockOrderTracking } from "@/lib/mocks";
+import { OrderStatusStepper } from "@/components/track/OrderStatusStepper";
+import { BatchItemsList } from "@/components/track/BatchItemsList";
+import { OrderTimeline } from "@/components/track/OrderTimeline";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { LiveIndicator } from "@/components/shared/LiveIndicator";
 
 interface OrderTrackingClientProps {
   tenantSlug: string;
@@ -20,8 +20,11 @@ interface OrderTrackingClientProps {
   token?: string;
 }
 
-
-function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClientProps) {
+function OrderTrackingContent({
+  tenantSlug,
+  tableId,
+  token,
+}: OrderTrackingClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
 
@@ -48,7 +51,9 @@ function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClien
             <div className="p-4 border-b border-gray-200 dark:border-slate-700 flex justify-between items-start">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-xl font-bold">{mockOrderTracking.orderNumber}</h2>
+                  <h2 className="text-xl font-bold">
+                    {mockOrderTracking.orderNumber}
+                  </h2>
                   <LiveIndicator size="md" />
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -59,7 +64,9 @@ function OrderTrackingContent({ tenantSlug, tableId, token }: OrderTrackingClien
                 <p className="text-xs font-bold text-emerald-500 uppercase tracking-wide">
                   {t.track.liveUpdate}
                 </p>
-                <p className="text-xs text-slate-400">{mockOrderTracking.updatedAt}</p>
+                <p className="text-xs text-slate-400">
+                  {mockOrderTracking.updatedAt}
+                </p>
               </div>
             </div>
 
@@ -106,4 +113,3 @@ export function OrderTrackingClient(props: OrderTrackingClientProps) {
     </LanguageProvider>
   );
 }
-

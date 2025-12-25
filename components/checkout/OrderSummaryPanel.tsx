@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Receipt, Lock, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
-import type { BillItemDTO, PaymentMethod } from '@/lib/types/checkout';
+import { Receipt, Lock, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
+import type { BillItemDTO, PaymentMethod } from "@/lib/types/checkout";
 
 interface OrderSummaryPanelProps {
   items: BillItemDTO[];
@@ -39,14 +39,21 @@ export function OrderSummaryPanel({
         {/* Line Items */}
         <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
           {items.map((item) => (
-            <div key={item.id} className="flex justify-between items-start gap-4">
+            <div
+              key={item.id}
+              className="flex justify-between items-start gap-4"
+            >
               <div className="flex items-center justify-center w-6 h-6 rounded bg-gray-100 dark:bg-slate-700 text-xs font-bold text-slate-900 dark:text-white">
                 {item.quantity}
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-white">{item.name}</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-white">
+                  {item.name}
+                </p>
                 {item.modifiers && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.modifiers}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {item.modifiers}
+                  </p>
                 )}
               </div>
               <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -59,14 +66,22 @@ export function OrderSummaryPanel({
         {/* Calculations */}
         <div className="mt-6 space-y-2 pt-4 border-t border-dashed border-gray-200 dark:border-slate-600">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{t.cart.subtotal}</span>
-            <span className="font-medium text-slate-900 dark:text-white">{formatVND(subtotal)}</span>
+            <span className="text-slate-500 dark:text-slate-400">
+              {t.cart.subtotal}
+            </span>
+            <span className="font-medium text-slate-900 dark:text-white">
+              {formatVND(subtotal)}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{t.cart.serviceCharge} (5%)</span>
-            <span className="font-medium text-slate-900 dark:text-white">{formatVND(serviceCharge)}</span>
+            <span className="text-slate-500 dark:text-slate-400">
+              {t.cart.serviceCharge} (5%)
+            </span>
+            <span className="font-medium text-slate-900 dark:text-white">
+              {formatVND(serviceCharge)}
+            </span>
           </div>
-          {paymentMethod === 'card' && cardFee > 0 && (
+          {paymentMethod === "card" && cardFee > 0 && (
             <div className="flex justify-between text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/10 -mx-2 px-2 py-1 rounded">
               <span>{t.checkout.processingFee} (2%)</span>
               <span className="font-medium">+{formatVND(cardFee)}</span>

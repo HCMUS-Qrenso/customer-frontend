@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { X, Check, AlertTriangle, Receipt, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockCheckoutResult as mockResult } from '@/lib/mocks';
-import type { CheckoutResultDTO } from '@/lib/types/checkout';
+import { useState } from "react";
+import Link from "next/link";
+import { X, Check, AlertTriangle, Receipt, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockCheckoutResult as mockResult } from "@/lib/mocks";
+import type { CheckoutResultDTO } from "@/lib/types/checkout";
 
 interface CheckoutResultClientProps {
   tenantSlug: string;
@@ -16,19 +16,22 @@ interface CheckoutResultClientProps {
   token?: string;
 }
 
-
 function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 }
 
-function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultClientProps) {
+function CheckoutResultContent({
+  tenantSlug,
+  tableId,
+  token,
+}: CheckoutResultClientProps) {
   const { t } = useLanguage();
   const [result] = useState<CheckoutResultDTO>(mockResult);
 
@@ -49,7 +52,9 @@ function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultCli
           <h1 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">
             {t.checkout.paymentFailed}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-8">{result.error}</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">
+            {result.error}
+          </p>
           <Link href={menuHref}>
             <Button className="h-12 px-8 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full">
               Try Again
@@ -116,15 +121,21 @@ function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultCli
             </div>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500 dark:text-slate-400">Date & Time</span>
+                <span className="text-slate-500 dark:text-slate-400">
+                  Date & Time
+                </span>
                 <span className="font-medium text-slate-900 dark:text-white">
                   {formatDateTime(result.timestamp || new Date().toISOString())}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500 dark:text-slate-400">Payment Method</span>
+                <span className="text-slate-500 dark:text-slate-400">
+                  Payment Method
+                </span>
                 <span className="font-medium text-slate-900 dark:text-white">
-                  {result.paymentMethod === 'card' ? 'Card •• 4242' : result.paymentMethod}
+                  {result.paymentMethod === "card"
+                    ? "Card •• 4242"
+                    : result.paymentMethod}
                 </span>
               </div>
             </div>
@@ -134,7 +145,9 @@ function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultCli
           <div className="w-full space-y-3 mt-auto">
             <Button className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] transition-all rounded-full flex items-center justify-center gap-2 shadow-lg">
               <Receipt className="size-5 text-white" />
-              <span className="text-white font-bold text-base">{t.checkout.viewReceipt}</span>
+              <span className="text-white font-bold text-base">
+                {t.checkout.viewReceipt}
+              </span>
             </Button>
             <Link
               href={orderHref}
@@ -145,7 +158,10 @@ function CheckoutResultContent({ tenantSlug, tableId, token }: CheckoutResultCli
               </span>
               <ArrowRight className="size-5 text-slate-900 dark:text-white" />
             </Link>
-            <Link href={menuHref} className="w-full h-12 flex items-center justify-center mt-2 group">
+            <Link
+              href={menuHref}
+              className="w-full h-12 flex items-center justify-center mt-2 group"
+            >
               <span className="text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white font-semibold text-sm transition-colors">
                 {t.checkout.returnToMenu}
               </span>

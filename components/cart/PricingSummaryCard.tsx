@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND } from '@/lib/format';
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND } from "@/lib/format";
 
 interface PricingSummaryCardProps {
   itemCount: number;
@@ -30,7 +30,7 @@ export function PricingSummaryCard({
         <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">
           {t.cart.orderSummary}
         </h2>
-        
+
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
             <span>
@@ -52,9 +52,9 @@ export function PricingSummaryCard({
               {formatVND(tax)}
             </span>
           </div>
-          
+
           <div className="my-4 border-t border-dashed border-gray-200 dark:border-slate-600" />
-          
+
           <div className="flex justify-between items-end">
             <span className="text-base font-bold text-slate-900 dark:text-white">
               {t.cart.total}

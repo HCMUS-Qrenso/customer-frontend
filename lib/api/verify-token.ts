@@ -15,7 +15,7 @@ export const verifyTokenApi = {
       "/tables/verify-token",
       {
         token,
-      }
+      },
     );
     return data;
   },

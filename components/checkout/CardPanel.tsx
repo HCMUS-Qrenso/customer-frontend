@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { CreditCard, Lock } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n/context';
+import { CreditCard, Lock } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/context";
 
 export function CardPanel() {
   const { t } = useLanguage();
@@ -17,24 +17,34 @@ export function CardPanel() {
           {t.checkout.secureTransaction}
         </span>
       </div>
-      
+
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 shadow-sm">
         {/* Card Visual */}
         <div className="mb-6 h-48 rounded-xl bg-linear-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 p-6 text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
           <div className="flex justify-between items-start z-10">
             <div className="w-10 h-8 bg-linear-to-br from-amber-300 to-amber-500 rounded opacity-80" />
-            <span className="text-sm font-medium tracking-widest opacity-80">DEBIT</span>
+            <span className="text-sm font-medium tracking-widest opacity-80">
+              DEBIT
+            </span>
           </div>
           <div className="z-10">
-            <p className="font-mono text-xl tracking-[0.15em] mb-4">•••• •••• •••• 4242</p>
+            <p className="font-mono text-xl tracking-[0.15em] mb-4">
+              •••• •••• •••• 4242
+            </p>
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-[10px] opacity-60 uppercase tracking-wider">{t.checkout.cardHolder}</p>
-                <p className="text-sm font-medium tracking-wide">JENNY WILSON</p>
+                <p className="text-[10px] opacity-60 uppercase tracking-wider">
+                  {t.checkout.cardHolder}
+                </p>
+                <p className="text-sm font-medium tracking-wide">
+                  JENNY WILSON
+                </p>
               </div>
               <div>
-                <p className="text-[10px] opacity-60 uppercase tracking-wider">{t.checkout.expiry}</p>
+                <p className="text-[10px] opacity-60 uppercase tracking-wider">
+                  {t.checkout.expiry}
+                </p>
                 <p className="text-sm font-medium tracking-wide">12/25</p>
               </div>
             </div>

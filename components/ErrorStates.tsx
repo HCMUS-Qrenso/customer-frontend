@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { useLanguage } from '@/lib/i18n/context';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, Wrench, AlertCircle, RefreshCw, Clock, QrCode } from 'lucide-react';
-import { ReactNode } from 'react';
+import { useLanguage } from "@/lib/i18n/context";
+import { Button } from "@/components/ui/button";
+import {
+  AlertTriangle,
+  Wrench,
+  AlertCircle,
+  RefreshCw,
+  Clock,
+  QrCode,
+} from "lucide-react";
+import { ReactNode } from "react";
 
 interface ErrorStateProps {
   onRetry?: () => void;
@@ -19,7 +26,7 @@ function FullScreenError({
   title,
   description,
   onRetry,
-  retryText = 'Thử lại',
+  retryText = "Thử lại",
 }: {
   icon: ReactNode;
   iconBgClass: string;
@@ -31,7 +38,9 @@ function FullScreenError({
 }) {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-6 text-center transition-colors">
-      <div className={`mb-6 flex size-20 items-center justify-center rounded-3xl ${iconBgClass} ${iconColorClass} shadow-sm ring-1`}>
+      <div
+        className={`mb-6 flex size-20 items-center justify-center rounded-3xl ${iconBgClass} ${iconColorClass} shadow-sm ring-1`}
+      >
         {icon}
       </div>
       <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">
@@ -163,8 +172,12 @@ export function NetworkError({ onRetry }: ErrorStateProps) {
       <div className="flex items-start gap-3">
         <AlertCircle className="size-5 shrink-0 text-red-500" />
         <div className="flex-1">
-          <p className="text-sm font-semibold text-red-800 dark:text-red-400">{t.errors.network.title}</p>
-          <p className="mt-1 text-xs text-red-600 dark:text-red-300">{t.errors.network.description}</p>
+          <p className="text-sm font-semibold text-red-800 dark:text-red-400">
+            {t.errors.network.title}
+          </p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-300">
+            {t.errors.network.description}
+          </p>
           {onRetry && (
             <Button
               variant="ghost"

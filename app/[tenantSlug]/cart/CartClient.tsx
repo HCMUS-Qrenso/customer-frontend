@@ -1,26 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ShoppingCart, Plus, Trash2, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { LanguageProvider, useLanguage } from '@/lib/i18n/context';
-import { CartItemDTO, MenuItemDTO } from '@/lib/types/menu';
-import { formatVND } from '@/lib/format';
-import { useQrToken } from '@/hooks/use-qr-token';
-import { mockCartItems, mockUpsellItems } from '@/lib/mocks';
-import { CartItemCard } from '@/components/cart/CartItemCard';
-import { PricingSummaryCard } from '@/components/cart/PricingSummaryCard';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { MobileStickyBar } from '@/components/shared/MobileStickyBar';
+import { useState, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
+import { CartItemDTO, MenuItemDTO } from "@/lib/types/menu";
+import { formatVND } from "@/lib/format";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { mockCartItems, mockUpsellItems } from "@/lib/mocks";
+import { CartItemCard } from "@/components/cart/CartItemCard";
+import { PricingSummaryCard } from "@/components/cart/PricingSummaryCard";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 
 interface CartClientProps {
   tenantSlug: string;
   tableId?: string;
   token?: string;
 }
-
 
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
@@ -41,16 +40,24 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             ? {
                 ...item,
                 quantity: Math.max(0, item.quantity + delta),
-                totalPrice: Math.max(0, item.quantity + delta) * (item.basePrice + item.selectedModifiers.reduce((sum, m) => sum + m.price, 0)),
+                totalPrice:
+                  Math.max(0, item.quantity + delta) *
+                  (item.basePrice +
+                    item.selectedModifiers.reduce(
+                      (sum, m) => sum + m.price,
+                      0,
+                    )),
               }
-            : item
+            : item,
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.quantity > 0),
     );
   };
 
   const removeItem = (menuItemId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.menuItemId !== menuItemId));
+    setCartItems((prev) =>
+      prev.filter((item) => item.menuItemId !== menuItemId),
+    );
   };
 
   const clearCart = () => {
@@ -119,7 +126,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
               <CartItemCard
                 key={item.menuItemId}
                 item={item}
-                onUpdateQuantity={(delta) => updateQuantity(item.menuItemId, delta)}
+                onUpdateQuantity={(delta) =>
+                  updateQuantity(item.menuItemId, delta)
+                }
                 onRemove={() => removeItem(item.menuItemId)}
               />
             ))}
@@ -139,7 +148,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
                   >
                     <div
                       className="aspect-square rounded-lg bg-gray-100 dark:bg-slate-700 mb-2 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${item.images[0]?.image_url}')` }}
+                      style={{
+                        backgroundImage: `url('${item.images.find((img: any) => img.is_primary)?.image_url || item.images[0]?.image_url}')`,
+                      }}
                     />
                     <h4 className="font-medium text-sm truncate text-slate-900 dark:text-white">
                       {item.name}
@@ -176,7 +187,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       <MobileStickyBar maxWidth="6xl">
         <div className="flex gap-4 items-center">
           <div className="flex flex-col flex-1">
-            <span className="text-xs text-slate-500 dark:text-slate-400">{t.cart.total}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {t.cart.total}
+            </span>
             <span className="text-xl font-bold text-emerald-500">
               {formatVND(calculations.total)}
             </span>

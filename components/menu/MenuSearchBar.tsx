@@ -1,15 +1,40 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Search, ArrowUpDown, X, Check } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import { Search, ArrowUpDown, X, Check } from "lucide-react";
 
 // Sort options
 const SORT_OPTIONS = [
-  { value: 'popularityScore_desc', label: 'Phổ biến nhất', sortBy: 'popularityScore', sortOrder: 'desc' as const },
-  { value: 'createdAt_desc', label: 'Mới nhất', sortBy: 'createdAt', sortOrder: 'desc' as const },
-  { value: 'basePrice_asc', label: 'Giá: Thấp → Cao', sortBy: 'basePrice', sortOrder: 'asc' as const },
-  { value: 'basePrice_desc', label: 'Giá: Cao → Thấp', sortBy: 'basePrice', sortOrder: 'desc' as const },
-  { value: 'name_asc', label: 'Tên A-Z', sortBy: 'name', sortOrder: 'asc' as const },
+  {
+    value: "popularityScore_desc",
+    label: "Phổ biến nhất",
+    sortBy: "popularityScore",
+    sortOrder: "desc" as const,
+  },
+  {
+    value: "createdAt_desc",
+    label: "Mới nhất",
+    sortBy: "createdAt",
+    sortOrder: "desc" as const,
+  },
+  {
+    value: "basePrice_asc",
+    label: "Giá: Thấp → Cao",
+    sortBy: "basePrice",
+    sortOrder: "asc" as const,
+  },
+  {
+    value: "basePrice_desc",
+    label: "Giá: Cao → Thấp",
+    sortBy: "basePrice",
+    sortOrder: "desc" as const,
+  },
+  {
+    value: "name_asc",
+    label: "Tên A-Z",
+    sortBy: "name",
+    sortOrder: "asc" as const,
+  },
 ];
 
 interface MenuSearchBarProps {
@@ -17,8 +42,8 @@ interface MenuSearchBarProps {
   onChange: (v: string) => void;
   placeholder: string;
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
-  onSortChange: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
+  sortOrder: "asc" | "desc";
+  onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void;
 }
 
 export function MenuSearchBar({
@@ -35,17 +60,21 @@ export function MenuSearchBar({
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const currentSort = `${sortBy}_${sortOrder}`;
-  const currentLabel = SORT_OPTIONS.find((o) => o.value === currentSort)?.label || 'Sắp xếp';
-  const isDefaultSort = sortBy === 'popularityScore' && sortOrder === 'desc';
+  const currentLabel =
+    SORT_OPTIONS.find((o) => o.value === currentSort)?.label || "Sắp xếp";
+  const isDefaultSort = sortBy === "popularityScore" && sortOrder === "desc";
 
   return (
     <div className="px-4 pb-3 md:px-6">
@@ -64,7 +93,7 @@ export function MenuSearchBar({
           />
           {value && (
             <button
-              onClick={() => onChange('')}
+              onClick={() => onChange("")}
               className="mr-2 flex items-center justify-center rounded-full p-1.5 text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-white"
             >
               <X className="size-4" />
@@ -78,12 +107,14 @@ export function MenuSearchBar({
             onClick={() => setIsOpen(!isOpen)}
             className={`flex h-12 items-center gap-2 rounded-xl px-3 transition-colors border ${
               isOpen || !isDefaultSort
-                ? 'bg-emerald-500 text-white border-emerald-500'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-gray-100 dark:border-transparent shadow-sm'
+                ? "bg-emerald-500 text-white border-emerald-500"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-gray-100 dark:border-transparent shadow-sm"
             }`}
           >
             <ArrowUpDown className="size-5" />
-            <span className="hidden text-sm font-medium sm:inline">{currentLabel}</span>
+            <span className="hidden text-sm font-medium sm:inline">
+              {currentLabel}
+            </span>
           </button>
 
           {/* Dropdown Menu */}
@@ -99,12 +130,14 @@ export function MenuSearchBar({
                     }}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                       currentSort === option.value
-                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700'
+                        ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                        : "text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     <span>{option.label}</span>
-                    {currentSort === option.value && <Check className="size-4" />}
+                    {currentSort === option.value && (
+                      <Check className="size-4" />
+                    )}
                   </button>
                 ))}
               </div>

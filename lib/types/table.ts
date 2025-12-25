@@ -22,7 +22,7 @@ export interface TenantDTO {
 // Table DTOs
 // ============================================
 
-export type TableStatus = 'available' | 'occupied' | 'reserved' | 'maintenance';
+export type TableStatus = "available" | "occupied" | "reserved" | "maintenance";
 
 export interface TableDTO {
   id: string;
@@ -54,7 +54,7 @@ export interface TableContextDTO {
 export interface StartSessionRequest {
   tenantSlug: string;
   tableCode: string;
-  preferredLanguage: 'vi' | 'en';
+  preferredLanguage: "vi" | "en";
   partySize?: number;
 }
 
@@ -66,10 +66,10 @@ export interface StartSessionResponse {
 // Error Types
 // ============================================
 
-export type TableLandingError = 
-  | 'not_found'
-  | 'table_inactive'
-  | 'network_error';
+export type TableLandingError =
+  | "not_found"
+  | "table_inactive"
+  | "network_error";
 
 // ============================================
 // Token Verification Types

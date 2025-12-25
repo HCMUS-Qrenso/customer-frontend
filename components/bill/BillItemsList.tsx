@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Clock } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatVND, formatTime } from '@/lib/format';
-import type { BillItemDTO } from '@/lib/types/checkout';
+import { Clock } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatVND, formatTime } from "@/lib/format";
+import type { BillItemDTO } from "@/lib/types/checkout";
 
 interface BillItemsListProps {
   items: (BillItemDTO & { image?: string; note?: string; addedAt: string })[];
@@ -20,7 +20,7 @@ export function BillItemsList({ items }: BillItemsListProps) {
       acc[time].push(item);
       return acc;
     },
-    {} as Record<string, typeof items>
+    {} as Record<string, typeof items>,
   );
 
   return (
@@ -35,7 +35,7 @@ export function BillItemsList({ items }: BillItemsListProps) {
           </div>
 
           {groupItems.map((item) => {
-            const name = lang === 'en' && item.nameEn ? item.nameEn : item.name;
+            const name = lang === "en" && item.nameEn ? item.nameEn : item.name;
 
             return (
               <div
@@ -53,10 +53,12 @@ export function BillItemsList({ items }: BillItemsListProps) {
                 <div className="flex flex-1 flex-col justify-between gap-2 sm:gap-1">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h4 className="text-base font-bold text-slate-900 dark:text-white">{name}</h4>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                        {name}
+                      </h4>
                       {item.modifiers && (
                         <div className="mt-1 flex flex-wrap gap-2">
-                          {item.modifiers.split(', ').map((mod, i) => (
+                          {item.modifiers.split(", ").map((mod, i) => (
                             <span
                               key={i}
                               className="inline-flex items-center rounded bg-gray-100 dark:bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-500 dark:text-slate-400"
@@ -67,7 +69,9 @@ export function BillItemsList({ items }: BillItemsListProps) {
                         </div>
                       )}
                       {item.note && (
-                        <p className="mt-2 text-sm italic text-gray-400">&quot;{item.note}&quot;</p>
+                        <p className="mt-2 text-sm italic text-gray-400">
+                          &quot;{item.note}&quot;
+                        </p>
                       )}
                     </div>
                     <div className="text-right shrink-0">

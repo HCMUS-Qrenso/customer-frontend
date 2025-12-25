@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
-import { Sparkles } from 'lucide-react';
-import { MenuItemDTO } from '@/lib/types/menu';
-import { useLanguage } from '@/lib/i18n/context';
-import { formatUSD } from '@/lib/format';
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles } from "lucide-react";
+import { MenuItemDTO } from "@/lib/types/menu";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatUSD } from "@/lib/format";
 
 interface ChefPicksCarouselProps {
   items: MenuItemDTO[];
@@ -14,14 +14,14 @@ interface ChefPicksCarouselProps {
   token: string;
 }
 
-export function ChefPicksCarousel({ 
-  items, 
-  tenantSlug, 
+export function ChefPicksCarousel({
+  items,
+  tenantSlug,
   tableCode,
   token,
 }: ChefPicksCarouselProps) {
   const { t } = useLanguage();
-  
+
   if (items.length === 0) return null;
 
   return (
@@ -36,13 +36,14 @@ export function ChefPicksCarousel({
       <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar snap-x snap-mandatory scroll-pl-4 md:px-6 md:scroll-pl-6">
         {items.map((item) => {
           const hasImage = item.images && item.images.length > 0;
-          // Get primary image (display_order = 0) or first image
-          const primaryImage = item.images?.find(img => img.display_order === 0) || item.images?.[0];
+          // Get primary image (is_primary = true) or first image
+          const primaryImage =
+            item.images?.find((img) => img.is_primary) || item.images?.[0];
           const imageUrl = primaryImage?.image_url;
-          const isUnavailable = item.status === 'unavailable';
-          const isSoldOut = item.status === 'sold_out';
+          const isUnavailable = item.status === "unavailable";
+          const isSoldOut = item.status === "sold_out";
           const isDisabled = isUnavailable || isSoldOut;
-          
+
           return (
             <div key={item.id} className="relative">
               {isDisabled ? (
@@ -55,18 +56,28 @@ export function ChefPicksCarousel({
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-slate-700">
-                        <svg className="size-16 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <svg
+                          className="size-16 text-gray-300 dark:text-slate-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
                         </svg>
                       </div>
                     )}
                     {/* Gradient overlay - stronger at bottom for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                    
+
                     {/* Status overlay */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                       <span className="rounded border border-white px-2 py-0.5 text-xs font-bold uppercase text-white">
-                        {isSoldOut ? 'Hết hàng' : 'Hết món'}
+                        {isSoldOut ? "Hết hàng" : "Hết món"}
                       </span>
                     </div>
 
@@ -106,14 +117,24 @@ export function ChefPicksCarousel({
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-slate-700">
-                        <svg className="size-16 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <svg
+                          className="size-16 text-gray-300 dark:text-slate-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
                         </svg>
                       </div>
                     )}
                     {/* Gradient overlay - stronger at bottom for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                    
+
                     {/* Badge - Top Left */}
                     {item.badges?.[0] && (
                       <Badge className="absolute left-2 top-2 border-0 bg-emerald-500 px-2 py-1 text-xs font-bold uppercase tracking-wider text-white">
