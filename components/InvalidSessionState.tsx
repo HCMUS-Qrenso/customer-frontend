@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { AlertTriangle, QrCode, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { CustomerContextError } from '@/lib/types/menu';
+import { AlertTriangle, QrCode, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { CustomerContextError } from "@/lib/types/menu";
 
 interface InvalidSessionStateProps {
   type: CustomerContextError;
@@ -11,32 +11,34 @@ interface InvalidSessionStateProps {
 export function InvalidSessionState({ type }: InvalidSessionStateProps) {
   const getContent = () => {
     switch (type) {
-      case 'missing_params':
+      case "missing_params":
         return {
           icon: QrCode,
-          title: 'Vui lòng quét mã QR',
-          description: 'Bạn cần quét mã QR tại bàn để truy cập menu.',
+          title: "Vui lòng quét mã QR",
+          description: "Bạn cần quét mã QR tại bàn để truy cập menu.",
           showRetry: false,
         };
-      case 'invalid_table':
+      case "invalid_table":
         return {
           icon: AlertTriangle,
-          title: 'Mã QR không hợp lệ',
-          description: 'Mã QR bạn quét không đúng hoặc đã hết hạn. Vui lòng quét lại.',
+          title: "Mã QR không hợp lệ",
+          description:
+            "Mã QR bạn quét không đúng hoặc đã hết hạn. Vui lòng quét lại.",
           showRetry: true,
         };
-      case 'inactive':
+      case "inactive":
         return {
           icon: Clock,
-          title: 'Bàn tạm ngưng phục vụ',
-          description: 'Bàn này hiện không hoạt động. Vui lòng liên hệ nhân viên.',
+          title: "Bàn tạm ngưng phục vụ",
+          description:
+            "Bàn này hiện không hoạt động. Vui lòng liên hệ nhân viên.",
           showRetry: false,
         };
       default:
         return {
           icon: AlertTriangle,
-          title: 'Đã có lỗi xảy ra',
-          description: 'Vui lòng thử lại sau.',
+          title: "Đã có lỗi xảy ra",
+          description: "Vui lòng thử lại sau.",
           showRetry: true,
         };
     }

@@ -1,10 +1,13 @@
-import { apiClient } from './client'
-import type { TableContextDTO as LegacyTableContextDTO } from '@/lib/types/table'
-import type { TableContextDTO, VerifyTokenResponse } from '@/lib/types/table-context'
+import { apiClient } from "./client";
+import type { TableContextDTO as LegacyTableContextDTO } from "@/lib/types/table";
+import type {
+  TableContextDTO,
+  VerifyTokenResponse,
+} from "@/lib/types/table-context";
 
 export interface GetTableContextParams {
-  tenantSlug: string
-  tableCode: string
+  tenantSlug: string;
+  tableCode: string;
 }
 
 export const tableContextApi = {
@@ -15,12 +18,12 @@ export const tableContextApi = {
    */
   verifyToken: async (token: string): Promise<TableContextDTO> => {
     const { data } = await apiClient.get<VerifyTokenResponse>(
-      '/tables/qr/verify-token',
-      { 
-        headers: { 'Authorization': `Bearer ${token}` }
-      }
-    )
-    return data.data
+      "/tables/qr/verify-token",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    return data.data;
   },
 
   /**
@@ -28,13 +31,19 @@ export const tableContextApi = {
    * This is used on the landing page to show table information
    * @deprecated Use verifyToken instead
    */
-  getTableContext: async ({ tenantSlug, tableCode }: GetTableContextParams): Promise<LegacyTableContextDTO> => {
-    const { data } = await apiClient.get<LegacyTableContextDTO>('/tables/context', {
-      params: {
-        tenant_slug: tenantSlug,
-        table_code: tableCode,
+  getTableContext: async ({
+    tenantSlug,
+    tableCode,
+  }: GetTableContextParams): Promise<LegacyTableContextDTO> => {
+    const { data } = await apiClient.get<LegacyTableContextDTO>(
+      "/tables/context",
+      {
+        params: {
+          tenant_slug: tenantSlug,
+          table_code: tableCode,
+        },
       },
-    })
-    return data
+    );
+    return data;
   },
-}
+};

@@ -1,5 +1,5 @@
 /* Google Fonts Import - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -13,8 +13,8 @@
   --primary-foreground: oklch(0.984 0.003 247.858); /* emerald-900 */
 
   /* Fonts */
-  --font-display: 'Be Vietnam Pro', var(--font-geist-sans), sans-serif;
-  --font-body: 'Noto Sans', var(--font-geist-sans), sans-serif;
+  --font-display: "Be Vietnam Pro", var(--font-geist-sans), sans-serif;
+  --font-body: "Noto Sans", var(--font-geist-sans), sans-serif;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -97,7 +97,12 @@ body {
 }
 
 /* Heading font */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
 }
 
@@ -172,4 +177,3 @@ h1, h2, h3, h4, h5, h6 {
     @apply bg-background text-foreground;
   }
 }
-

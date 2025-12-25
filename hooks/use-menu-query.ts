@@ -1,21 +1,26 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { menuApi } from '@/lib/api/menu'
-import type { MenuItemDetailDTO, CategoryDTO, GetMenuParams, MenuListResponseDTO } from '@/lib/types/menu'
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { menuApi } from "@/lib/api/menu";
+import type {
+  MenuItemDetailDTO,
+  CategoryDTO,
+  GetMenuParams,
+  MenuListResponseDTO,
+} from "@/lib/types/menu";
 
 // Query keys factory
 export const menuQueryKeys = {
-  all: ['menu'] as const,
+  all: ["menu"] as const,
   list: (params?: GetMenuParams) =>
-    [...menuQueryKeys.all, 'list', params] as const,
+    [...menuQueryKeys.all, "list", params] as const,
   infinite: (params?: GetMenuParams) =>
-    [...menuQueryKeys.all, 'infinite', params] as const,
-  detail: (id: string) => [...menuQueryKeys.all, 'detail', id] as const,
-  categories: () => [...menuQueryKeys.all, 'categories'] as const,
-  chefPicks: () => [...menuQueryKeys.all, 'chefPicks'] as const,
-}
+    [...menuQueryKeys.all, "infinite", params] as const,
+  detail: (id: string) => [...menuQueryKeys.all, "detail", id] as const,
+  categories: () => [...menuQueryKeys.all, "categories"] as const,
+  chefPicks: () => [...menuQueryKeys.all, "chefPicks"] as const,
+};
 
 interface UseMenuQueryOptions {
-  enabled?: boolean
+  enabled?: boolean;
 }
 
 /**
@@ -23,16 +28,16 @@ interface UseMenuQueryOptions {
  */
 export function useMenuQuery(
   params: GetMenuParams = {},
-  options: UseMenuQueryOptions = {}
+  options: UseMenuQueryOptions = {},
 ) {
-  const { enabled = true } = options
+  const { enabled = true } = options;
 
   return useQuery<MenuListResponseDTO>({
     queryKey: menuQueryKeys.list(params),
     queryFn: () => menuApi.getMenu(params),
     enabled,
     staleTime: 60 * 1000, // 1 minute
-  })
+  });
 }
 
 /**
@@ -40,10 +45,10 @@ export function useMenuQuery(
  * Loads 20 items per page, loads more when user scrolls down
  */
 export function useInfiniteMenuQuery(
-  params: Omit<GetMenuParams, 'page'> = {},
-  options: UseMenuQueryOptions = {}
+  params: Omit<GetMenuParams, "page"> = {},
+  options: UseMenuQueryOptions = {},
 ) {
-  const { enabled = true } = options
+  const { enabled = true } = options;
 
   return useInfiniteQuery<MenuListResponseDTO>({
     queryKey: menuQueryKeys.infinite(params),
@@ -52,33 +57,31 @@ export function useInfiniteMenuQuery(
         ...params,
         page: pageParam as number,
         limit: params.limit || 20, // Default limit 20
-      })
+      });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const { page, total_pages } = lastPage.data.pagination
+      const { page, total_pages } = lastPage.data.pagination;
       // Return next page number or undefined if no more pages
-      return page < total_pages ? page + 1 : undefined
+      return page < total_pages ? page + 1 : undefined;
     },
     enabled,
     staleTime: 60 * 1000, // 1 minute
-  })
+  });
 }
 
 /**
  * Hook to fetch categories
  */
-export function useCategoriesQuery(
-  options: UseMenuQueryOptions = {}
-) {
-  const { enabled = true } = options
+export function useCategoriesQuery(options: UseMenuQueryOptions = {}) {
+  const { enabled = true } = options;
 
   return useQuery<CategoryDTO[]>({
     queryKey: menuQueryKeys.categories(),
     queryFn: () => menuApi.getCategories(),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes - categories change rarely
-  })
+  });
 }
 
 /**
@@ -86,38 +89,36 @@ export function useCategoriesQuery(
  */
 export function useMenuItemQuery(
   id: string | null,
-  options: UseMenuQueryOptions = {}
+  options: UseMenuQueryOptions = {},
 ) {
-  const { enabled = true } = options
+  const { enabled = true } = options;
 
   return useQuery<MenuItemDetailDTO>({
     queryKey: menuQueryKeys.detail(id!),
     queryFn: () => menuApi.getMenuItem(id!),
     enabled: enabled && Boolean(id),
     staleTime: 60 * 1000, // 1 minute
-  })
+  });
 }
 
 /**
  * Hook to fetch chef recommendations (chef picks)
  * Returns items marked as chef recommendations, sorted by popularity
  */
-export function useChefPicksQuery(
-  options: UseMenuQueryOptions = {}
-) {
-  const { enabled = true } = options
+export function useChefPicksQuery(options: UseMenuQueryOptions = {}) {
+  const { enabled = true } = options;
 
   return useQuery<MenuListResponseDTO>({
     queryKey: menuQueryKeys.chefPicks(),
-    queryFn: () => menuApi.getMenu({
-      is_chef_recommendation: true,
-      status: 'available',
-      limit: 10, // Limit to top 10 chef picks
-      sort_by: 'popularityScore',
-      sort_order: 'desc',
-    }),
+    queryFn: () =>
+      menuApi.getMenu({
+        is_chef_recommendation: true,
+        status: "available",
+        limit: 10, // Limit to top 10 chef picks
+        sort_by: "popularityScore",
+        sort_order: "desc",
+      }),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes - chef picks change rarely
-  })
+  });
 }
-

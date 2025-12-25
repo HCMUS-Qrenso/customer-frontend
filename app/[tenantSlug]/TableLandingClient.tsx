@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { setQrToken } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { TableHeroCard } from "@/components/TableHeroCard";
@@ -10,6 +9,7 @@ import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { MapPin, AlertTriangle, CircleX } from "lucide-react";
 
 interface TableLandingClientProps {
@@ -30,7 +30,9 @@ function TokenError({ message }: { message?: string }) {
         Không thể tải menu
       </h1>
       <p className="max-w-sm text-slate-500 dark:text-slate-400">
-        {message == 'Unauthorized' ? 'Mã QR bạn quét đã hết hạn hoặc không hợp lệ. Vui lòng quét lại mã QR tại bàn.' : message}
+        {message == "Unauthorized"
+          ? "Mã QR bạn quét đã hết hạn hoặc không hợp lệ. Vui lòng quét lại mã QR tại bàn."
+          : message}
       </p>
     </div>
   );
@@ -43,7 +45,9 @@ function InvalidTokenError() {
       <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 shadow-sm ring-1 ring-red-100 dark:ring-red-500/20">
         <AlertTriangle className="size-10" />
       </div>
-      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">Mã QR không hợp lệ</h1>
+      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">
+        Mã QR không hợp lệ
+      </h1>
       <p className="max-w-sm text-slate-500 dark:text-slate-400">
         Mã QR bạn quét không đúng định dạng. Vui lòng quét lại mã QR tại bàn.
       </p>
@@ -58,7 +62,9 @@ function MissingTokenError() {
       <div className="mb-6 flex size-20 items-center justify-center rounded-3xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 shadow-sm ring-1 ring-amber-100 dark:ring-amber-500/20">
         <AlertTriangle className="size-10" />
       </div>
-      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">Không tìm thấy mã QR</h1>
+      <h1 className="mb-2 font-display text-2xl font-bold text-slate-900 dark:text-white">
+        Không tìm thấy mã QR
+      </h1>
       <p className="max-w-sm text-slate-500 dark:text-slate-400">
         Vui lòng quét mã QR tại bàn để truy cập menu.
       </p>
@@ -71,8 +77,12 @@ function LoadingSkeleton() {
   return (
     <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
       {/* Background Pattern */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" 
-           style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]"
+        style={{
+          backgroundImage: "radial-gradient(#0f172a 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
       />
 
       {/* Header skeleton */}
@@ -121,11 +131,7 @@ function TableLandingContent({
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
   // Store the QR token for API requests
-  useEffect(() => {
-    if (token && tableContext) {
-      setQrToken(token);
-    }
-  }, [token, tableContext]);
+  useQrToken(tableContext ? token : undefined);
 
   // No token provided
   if (!token) {
@@ -134,7 +140,7 @@ function TableLandingContent({
 
   // Loading state
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <PageLoadingSkeleton />;
   }
 
   // Token expired or invalid (API returned error) or table under maintenance
@@ -158,8 +164,12 @@ function TableLandingContent({
   return (
     <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
       {/* Background Pattern */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" 
-           style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]"
+        style={{
+          backgroundImage: "radial-gradient(#0f172a 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
       />
 
       {/* Header */}
@@ -170,7 +180,7 @@ function TableLandingContent({
           </h1>
           <div className="flex items-center gap-1 text-sm font-medium text-slate-500 dark:text-slate-400">
             <MapPin className="size-4" />
-            <span>{tableContext.zoneName || 'Restaurant'}</span>
+            <span>{tableContext.zoneName || "Restaurant"}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -220,7 +230,11 @@ export function TableLandingClient({
 }: TableLandingClientProps) {
   return (
     <LanguageProvider>
-      <TableLandingContent tenantSlug={tenantSlug} tableId={tableId} token={token} />
+      <TableLandingContent
+        tenantSlug={tenantSlug}
+        tableId={tableId}
+        token={token}
+      />
     </LanguageProvider>
   );
 }

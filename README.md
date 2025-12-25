@@ -19,16 +19,16 @@ A modern, mobile-first customer-facing application for restaurant QR code orderi
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript 5 |
-| UI Library | React 19 |
-| Styling | Tailwind CSS 4 |
-| State Management | Zustand, React Query |
-| UI Components | shadcn/ui, Radix UI |
-| Icons | Lucide React |
-| Theming | next-themes |
+| Category         | Technology              |
+| ---------------- | ----------------------- |
+| Framework        | Next.js 16 (App Router) |
+| Language         | TypeScript 5            |
+| UI Library       | React 19                |
+| Styling          | Tailwind CSS 4          |
+| State Management | Zustand, React Query    |
+| UI Components    | shadcn/ui, Radix UI     |
+| Icons            | Lucide React            |
+| Theming          | next-themes             |
 
 ## Project Structure
 
@@ -128,6 +128,7 @@ CSS variables are defined in `globals.css` for consistent theming.
 ## Internationalization
 
 Supported languages:
+
 - 🇻🇳 Vietnamese (vi) - Default
 - 🇺🇸 English (en)
 
@@ -135,12 +136,12 @@ Translations are managed in `lib/i18n/translations.ts`.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Create production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
+| Command         | Description              |
+| --------------- | ------------------------ |
+| `npm run dev`   | Start development server |
+| `npm run build` | Create production build  |
+| `npm run start` | Start production server  |
+| `npm run lint`  | Run ESLint               |
 
 ## License
 

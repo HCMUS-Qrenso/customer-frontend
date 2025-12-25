@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { useLanguage } from '@/lib/i18n/context';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users, CheckCircle2, AlertTriangle, UtensilsCrossed } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useLanguage } from "@/lib/i18n/context";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  CheckCircle2,
+  AlertTriangle,
+  UtensilsCrossed,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TableHeroCardProps {
   tableNumber: string;
@@ -22,7 +27,8 @@ export function TableHeroCard({
 }: TableHeroCardProps) {
   const { t } = useLanguage();
 
-  const defaultCover = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80';
+  const defaultCover =
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80";
 
   return (
     <Card className="relative overflow-hidden gap-0 rounded-3xl border-0 py-0 shadow-xl shadow-slate-200/50 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-700">
@@ -34,11 +40,11 @@ export function TableHeroCard({
         />
         {/* Modern Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        
+
         {/* Floating Glass Badges - Only capacity badge now */}
         <div className="absolute bottom-4 left-4 flex items-center gap-2">
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className="gap-1.5 border-white/10 bg-black/40 px-3 py-1.5 text-xs font-semibold text-white shadow-sm backdrop-blur-md"
           >
             <Users className="size-3.5" />
@@ -74,15 +80,21 @@ export function TableHeroCard({
             <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-500" />
           )}
           <div>
-            <p className={cn(
-              "text-sm font-semibold",
-              isActive ? "text-slate-900 dark:text-white" : "text-amber-900 dark:text-amber-400"
-            )}>
-              {isActive ? t.table.activeDescription : t.table.inactiveDescription}
+            <p
+              className={cn(
+                "text-sm font-semibold",
+                isActive
+                  ? "text-slate-900 dark:text-white"
+                  : "text-amber-900 dark:text-amber-400",
+              )}
+            >
+              {isActive
+                ? t.table.activeDescription
+                : t.table.inactiveDescription}
             </p>
             <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-              {isActive 
-                ? "Scan valid. You can start ordering immediately." 
+              {isActive
+                ? "Scan valid. You can start ordering immediately."
                 : "Vui lòng liên hệ nhân viên để được hỗ trợ mở bàn."}
             </p>
           </div>

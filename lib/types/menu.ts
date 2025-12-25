@@ -16,7 +16,7 @@ export interface CategoryDTO {
 // Modifier DTOs (from GET /menu/:id response)
 // ============================================
 
-export type ModifierGroupType = 'single_choice' | 'multiple_choice';
+export type ModifierGroupType = "single_choice" | "multiple_choice";
 
 export interface ModifierDTO {
   id: string;
@@ -41,7 +41,7 @@ export interface ModifierGroupDTO {
 // Menu Item DTOs (from GET /menu response)
 // ============================================
 
-export type MenuItemStatus = 'available' | 'unavailable' | 'sold_out';
+export type MenuItemStatus = "available" | "unavailable" | "sold_out";
 
 export interface MenuItemCategoryDTO {
   id: string;
@@ -53,6 +53,7 @@ export interface MenuItemImageDTO {
   id: string;
   image_url: string;
   display_order: number;
+  is_primary: boolean;
 }
 
 // Menu item from list (GET /menu)
@@ -83,10 +84,10 @@ export interface NutritionalInfoDTO {
 // Menu item detail (GET /menu/:id) - includes modifier_groups
 export interface MenuItemDetailDTO extends MenuItemDTO {
   modifier_groups?: ModifierGroupDTO[];
-  preparation_time?: number;     // in minutes
+  preparation_time?: number; // in minutes
   nutritional_info?: NutritionalInfoDTO;
-  popularity_score?: number;     // 0-100
-  allergen_info?: string;        // free text allergen info
+  popularity_score?: number; // 0-100
+  allergen_info?: string; // free text allergen info
   order_count?: number;
   review_count?: number;
 }
@@ -138,8 +139,10 @@ export interface CartSummaryDTO {
 export interface CartItemDTO {
   menuItemId: string;
   menuItemName: string;
+  menuItemNameEn?: string;
   quantity: number;
   basePrice: number;
+  image?: string;
   selectedModifiers: {
     groupId: string;
     groupName: string;
@@ -162,15 +165,15 @@ export interface GetMenuParams {
   category_id?: string;
   status?: MenuItemStatus;
   is_chef_recommendation?: boolean;
-  sort_by?: 'createdAt' | 'name' | 'basePrice' | 'popularityScore';
-  sort_order?: 'asc' | 'desc';
+  sort_by?: "createdAt" | "name" | "basePrice" | "popularityScore";
+  sort_order?: "asc" | "desc";
 }
 
 // ============================================
 // Customer Context
 // ============================================
 
-export type Language = 'vi' | 'en';
+export type Language = "vi" | "en";
 
 export interface CustomerContext {
   tenantSlug: string;
@@ -178,4 +181,7 @@ export interface CustomerContext {
   token: string;
 }
 
-export type CustomerContextError = 'missing_params' | 'invalid_table' | 'inactive';
+export type CustomerContextError =
+  | "missing_params"
+  | "invalid_table"
+  | "inactive";
