@@ -47,7 +47,7 @@ export function ChefPicksCarousel({
           return (
             <div key={item.id} className="relative">
               {isDisabled ? (
-                <div className="flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm opacity-70 md:w-72">
+                <div className="flex w-64 shrink-0 h-full snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm opacity-70 md:w-72">
                   <div className="relative h-40 w-full overflow-hidden">
                     {hasImage ? (
                       <div
@@ -107,7 +107,7 @@ export function ChefPicksCarousel({
               ) : (
                 <Link
                   href={`/${tenantSlug}/menu/${item.id}?table=${tableCode}&token=${token}`}
-                  className="group flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
+                  className="group flex w-64 shrink-0 h-full snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
                 >
                   <div className="relative h-40 w-full overflow-hidden">
                     {hasImage ? (
