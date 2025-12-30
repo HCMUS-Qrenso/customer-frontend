@@ -3,17 +3,25 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Plus, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { CartItemDTO, MenuItemDTO } from "@/lib/types/menu";
+import { MenuItemDTO } from "@/lib/types/menu";
 import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
-import { mockCartItems, mockUpsellItems } from "@/lib/mocks";
+import { mockUpsellItems } from "@/lib/mocks";
 import { CartItemCard } from "@/components/cart/CartItemCard";
 import { PricingSummaryCard } from "@/components/cart/PricingSummaryCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { useCartStore } from "@/lib/stores/cart-store";
+import { orderApi } from "@/lib/api/order";
+import { tableSessionApi } from "@/lib/api/table-session";
+import {
+  setSessionToken,
+  getSessionToken,
+  hasActiveSession,
+} from "@/lib/stores/qr-token-store";
 
 interface CartClientProps {
   tenantSlug: string;
@@ -24,7 +32,16 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
-  const [cartItems, setCartItems] = useState<CartItemDTO[]>(mockCartItems);
+  
+  // Use Zustand cart store instead of local state
+  const cartItems = useCartStore((state) => state.items);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  // Loading and error states for order creation
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Store QR token for API requests
   useQrToken(token);
@@ -32,36 +49,72 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
   const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;
 
-  const updateQuantity = (menuItemId: string, delta: number) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          item.menuItemId === menuItemId
-            ? {
-                ...item,
-                quantity: Math.max(0, item.quantity + delta),
-                totalPrice:
-                  Math.max(0, item.quantity + delta) *
-                  (item.basePrice +
-                    item.selectedModifiers.reduce(
-                      (sum, m) => sum + m.price,
-                      0,
-                    )),
-              }
-            : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
+  // Handle quantity update
+  const handleUpdateQuantity = (menuItemId: string, delta: number) => {
+    const item = cartItems.find((i) => i.menuItemId === menuItemId);
+    if (item) {
+      updateQuantity(menuItemId, Math.max(0, item.quantity + delta));
+    }
   };
 
-  const removeItem = (menuItemId: string) => {
-    setCartItems((prev) =>
-      prev.filter((item) => item.menuItemId !== menuItemId),
-    );
+  // Handle remove item
+  const handleRemoveItem = (menuItemId: string) => {
+    removeItem(menuItemId);
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  // Handle clear cart
+  const handleClearCart = () => {
+    clearCart();
+  };
+
+  /**
+   * Handle place order flow:
+   * 1. Start session if not exists (get session token)
+   * 2. Create order with cart items
+   * 3. Clear cart and redirect to order page
+   */
+  const handlePlaceOrder = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Step 1: Ensure we have a session
+      let sessionToken = getSessionToken();
+      if (!sessionToken) {
+        console.log("[Cart] No session token, starting new session...");
+        const sessionResult = await tableSessionApi.startSession({
+          tenantSlug,
+          tableCode: tableId || "",
+          preferredLanguage: "vi",
+        });
+        sessionToken = sessionResult.sessionToken;
+        if (sessionToken) {
+          setSessionToken(sessionToken);
+          console.log("[Cart] Session started, token saved");
+        } else {
+          throw new Error("Failed to start session");
+        }
+      }
+
+      // Step 2: Create order
+      console.log("[Cart] Creating order with", cartItems.length, "items");
+      const orderResult = await orderApi.createOrder(cartItems);
+      
+      if (orderResult.success && orderResult.data) {
+        console.log("[Cart] Order created:", orderResult.data.orderNumber);
+        
+        // Step 3: Clear cart and redirect
+        clearCart();
+        router.push(orderHref);
+      } else {
+        throw new Error(orderResult.message || "Failed to create order");
+      }
+    } catch (err: any) {
+      console.error("[Cart] Order error:", err);
+      setError(err.message || "Đã có lỗi xảy ra. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Calculate totals
@@ -108,14 +161,22 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
         maxWidth="6xl"
         rightContent={
           <button
-            onClick={clearCart}
-            className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
+            onClick={handleClearCart}
+            disabled={isLoading}
+            className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
           >
             <Trash2 className="size-4" />
             <span className="hidden sm:inline">{t.cart.clearAll}</span>
           </button>
         }
       />
+
+      {/* Error message */}
+      {error && (
+        <div className="mx-4 mt-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-grow w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32 lg:pb-6">
@@ -124,12 +185,12 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
           <div className="flex flex-col gap-4">
             {cartItems.map((item) => (
               <CartItemCard
-                key={item.menuItemId}
+                key={`${item.menuItemId}-${item.selectedModifiers?.map(m => m.modifierId).join(',')}`}
                 item={item}
                 onUpdateQuantity={(delta) =>
-                  updateQuantity(item.menuItemId, delta)
+                  handleUpdateQuantity(item.menuItemId, delta)
                 }
-                onRemove={() => removeItem(item.menuItemId)}
+                onRemove={() => handleRemoveItem(item.menuItemId)}
               />
             ))}
           </div>
@@ -178,7 +239,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             serviceCharge={calculations.serviceCharge}
             tax={calculations.tax}
             total={calculations.total}
-            onPlaceOrder={() => router.push(orderHref)}
+            onPlaceOrder={handlePlaceOrder}
           />
         </div>
       </main>
@@ -195,10 +256,18 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             </span>
           </div>
           <Button
-            onClick={() => router.push(orderHref)}
-            className="flex-[2] h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
+            onClick={handlePlaceOrder}
+            disabled={isLoading}
+            className="flex-[2] h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
-            <span>{t.cart.placeOrder}</span>
+            {isLoading ? (
+              <>
+                <Loader2 className="size-5 animate-spin" />
+                <span>Đang xử lý...</span>
+              </>
+            ) : (
+              <span>{t.cart.placeOrder}</span>
+            )}
           </Button>
         </div>
       </MobileStickyBar>
