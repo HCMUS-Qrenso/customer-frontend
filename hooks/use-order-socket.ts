@@ -88,6 +88,26 @@ export function useOrderSocket(
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const reconnectCountRef = useRef(0);
+  
+  // Use refs for callbacks to avoid dependency changes causing reconnect loops
+  const callbacksRef = useRef({
+    onOrderUpdated,
+    onItemStatusChanged,
+    onConnected,
+    onDisconnected,
+    onError,
+  });
+  
+  // Update refs when callbacks change (without causing re-renders)
+  useEffect(() => {
+    callbacksRef.current = {
+      onOrderUpdated,
+      onItemStatusChanged,
+      onConnected,
+      onDisconnected,
+      onError,
+    };
+  }, [onOrderUpdated, onItemStatusChanged, onConnected, onDisconnected, onError]);
 
   /**
    * Sync order state via REST API
@@ -106,7 +126,7 @@ export function useOrderSocket(
       if (response.success && response.data) {
         console.log('[OrderSocket] REST sync complete, order:', response.data.orderNumber);
         // Notify listeners with the synced state
-        onOrderUpdated?.({
+        callbacksRef.current.onOrderUpdated?.({
           id: response.data.id,
           orderNumber: response.data.orderNumber,
           status: response.data.status,
@@ -120,7 +140,7 @@ export function useOrderSocket(
     } finally {
       setIsSyncing(false);
     }
-  }, [orderId, syncOnReconnect, onOrderUpdated]);
+  }, [orderId, syncOnReconnect]);
 
   const connect = useCallback(() => {
     const sessionToken = getSessionToken();
@@ -161,7 +181,7 @@ export function useOrderSocket(
         syncOrderState();
       }
       
-      onConnected?.();
+      callbacksRef.current.onConnected?.();
 
       // Join order-specific room if orderId is provided
       if (orderId) {
@@ -173,46 +193,46 @@ export function useOrderSocket(
     socket.on('disconnect', (reason) => {
       console.log('[OrderSocket] Disconnected:', reason);
       setIsConnected(false);
-      onDisconnected?.();
+      callbacksRef.current.onDisconnected?.();
     });
 
     socket.on('connect_error', (error) => {
       console.error('[OrderSocket] Connection error:', error.message);
-      onError?.(error);
+      callbacksRef.current.onError?.(error);
     });
 
     // Order updated event (full order data)
     socket.on('order:updated', (event: OrderUpdateEvent) => {
       console.log('[OrderSocket] Order updated:', event);
-      onOrderUpdated?.(event.data);
+      callbacksRef.current.onOrderUpdated?.(event.data);
     });
 
     // Order status changed
     socket.on('order:status', (event: OrderUpdateEvent) => {
       console.log('[OrderSocket] Order status:', event);
-      onOrderUpdated?.(event.data);
+      callbacksRef.current.onOrderUpdated?.(event.data);
     });
 
     // Items added to order
     socket.on('order:items:added', (event: OrderUpdateEvent) => {
       console.log('[OrderSocket] Items added:', event);
-      onOrderUpdated?.(event.data);
+      callbacksRef.current.onOrderUpdated?.(event.data);
     });
 
     // Item status changed (for individual item updates)
     socket.on('item:status', (event: ItemStatusEvent) => {
       console.log('[OrderSocket] Item status:', event);
-      onItemStatusChanged?.(event.data);
+      callbacksRef.current.onItemStatusChanged?.(event.data);
     });
 
     // Item ready notification
     socket.on('item:ready', (event: ItemStatusEvent) => {
       console.log('[OrderSocket] Item ready:', event);
-      onItemStatusChanged?.(event.data);
+      callbacksRef.current.onItemStatusChanged?.(event.data);
     });
 
     socketRef.current = socket;
-  }, [orderId, enabled, syncOnReconnect, syncOrderState, onConnected, onDisconnected, onError, onOrderUpdated, onItemStatusChanged]);
+  }, [orderId, enabled, syncOnReconnect, syncOrderState]);
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {
@@ -232,13 +252,14 @@ export function useOrderSocket(
   }, [disconnect, connect]);
 
   // Connect on mount, disconnect on unmount
+  // Only re-run when orderId, enabled, or syncOnReconnect changes
   useEffect(() => {
     reconnectCountRef.current = 0; // Reset reconnect count
     connect();
     return () => {
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, [orderId, enabled, syncOnReconnect]);
 
   // Join order room when orderId changes
   useEffect(() => {

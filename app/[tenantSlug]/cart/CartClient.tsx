@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Plus, Trash2, ArrowLeft, Loader2, Info } from "lucide-react";
@@ -18,6 +18,7 @@ import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { orderApi } from "@/lib/api/order";
 import { tableSessionApi } from "@/lib/api/table-session";
+import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import {
   setSessionToken,
   getSessionToken,
@@ -45,8 +46,19 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
   // Store QR token for API requests
   useQrToken(token, tableId);
+
+  // Decode token to get table number
+  const tableNumber = useMemo(() => {
+    if (!token) return null;
+    const payload = decodeQrToken(token);
+    return payload?.tableNumber || null;
+  }, [token]);
+
+  // Header subtitle with table number
+  const headerSubtitle = tableNumber ? `${tenantSlug} • Bàn ${tableNumber}` : tenantSlug;
 
   // Fetch top 5 popular items for upsell
   const { data: popularItemsData, isLoading: popularLoading } = useMenuQuery({
@@ -64,7 +76,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   }, [popularItemsData, cartItems]);
 
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;
+  const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
+
+
 
   // Handle quantity update
   const handleUpdateQuantity = (menuItemId: string, delta: number) => {
@@ -200,7 +214,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col transition-colors">
-        <PageHeader title={t.cart.title} backHref={menuHref} />
+        <PageHeader title={t.cart.title} subtitle={headerSubtitle} backHref={menuHref} />
 
         {/* Empty State */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -226,8 +240,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col transition-colors">
       <PageHeader
         title={t.cart.title}
+        subtitle={headerSubtitle}
         backHref={menuHref}
-        maxWidth="6xl"
+        maxWidth="full"
         rightContent={
           <button
             onClick={handleClearCart}
@@ -248,7 +263,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       )}
 
       {/* Main Content */}
-      <main className="flex-grow w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32 lg:pb-6">
+      <main className="grow w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32 lg:pb-6">
         {/* Left: Cart Items */}
         <div className="lg:col-span-7 flex flex-col gap-6">
           <div className="flex flex-col gap-4">

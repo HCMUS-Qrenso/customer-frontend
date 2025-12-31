@@ -39,7 +39,7 @@ function CheckoutResultContent({
   useQrToken(token);
 
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;
+  const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
 
   // Failed state
   if (!result.success) {

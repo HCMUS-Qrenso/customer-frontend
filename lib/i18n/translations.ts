@@ -136,11 +136,13 @@ export interface Translations {
     live: string;
     requestBill: string;
     addMoreItems: string;
+    trackOrder: string;
   };
   // Track Page
   track: {
     liveUpdate: string;
     createdAt: string;
+    pending: string;
     accepted: string;
     cooking: string;
     ready: string;
@@ -295,11 +297,13 @@ export const translations: Record<Language, Translations> = {
       live: "Trực tiếp",
       requestBill: "Yêu cầu hoá đơn",
       addMoreItems: "Thêm món",
+      trackOrder: "Theo dõi",
     },
     // Track
     track: {
       liveUpdate: "Cập nhật trực tiếp",
       createdAt: "Tạo lúc",
+      pending: "Đang chờ",
       accepted: "Đã nhận",
       cooking: "Đang nấu",
       ready: "Sẵn sàng",
@@ -451,11 +455,13 @@ export const translations: Record<Language, Translations> = {
       live: "Live",
       requestBill: "Request Bill",
       addMoreItems: "Add More Items",
+      trackOrder: "Track Order",
     },
     // Track
     track: {
       liveUpdate: "Live Update",
       createdAt: "Created",
+      pending: "Pending",
       accepted: "Accepted",
       cooking: "Cooking",
       ready: "Ready",

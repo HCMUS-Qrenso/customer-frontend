@@ -1,9 +1,10 @@
 "use client";
 
-import { Check, CookingPot, Bell, CheckCircle, Info } from "lucide-react";
+import { Check, CookingPot, Bell, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
 
-type OrderStatus = "accepted" | "preparing" | "ready" | "served";
+// Order status from API
+type OrderStatus = "pending" | "accepted" | "in_progress" | "ready" | "served" | "completed" | "cancelled" | "rejected";
 
 interface OrderStatusStepperProps {
   currentStatus: OrderStatus;
@@ -12,29 +13,45 @@ interface OrderStatusStepperProps {
 export function OrderStatusStepper({ currentStatus }: OrderStatusStepperProps) {
   const { t } = useLanguage();
 
-  const steps: { id: OrderStatus; label: string; icon: React.ReactNode }[] = [
-    {
-      id: "accepted",
-      label: t.track.accepted,
-      icon: <Check className="size-3.5" strokeWidth={3} />,
-    },
-    {
-      id: "preparing",
-      label: t.track.cooking,
-      icon: <CookingPot className="size-3.5" />,
-    },
-    { id: "ready", label: t.track.ready, icon: <Bell className="size-3.5" /> },
-    {
-      id: "served",
-      label: t.track.served,
-      icon: <CheckCircle className="size-3.5" />,
-    },
+  const steps = [
+    { id: "accepted", icon: Check },
+    { id: "preparing", icon: CookingPot },
+    { id: "ready", icon: Bell },
+    { id: "served", icon: CheckCircle },
   ];
 
-  const statusOrder = ["accepted", "preparing", "ready", "served"];
-  const currentIndex = statusOrder.indexOf(currentStatus);
+  // Map API status to stepper position
+  const getStepperStatus = (apiStatus: OrderStatus): string => {
+    switch (apiStatus) {
+      case "pending": return "pending";
+      case "accepted": return "accepted";
+      case "in_progress": return "preparing";
+      case "ready": return "ready";
+      case "served": return "served";
+      case "completed": return "served";
+      case "cancelled":
+      case "rejected": return "cancelled";
+      default: return "pending";
+    }
+  };
 
-  const getStepState = (stepId: OrderStatus) => {
+  const getStatusLabel = (apiStatus: OrderStatus): string => {
+    switch (apiStatus) {
+      case "pending": return t.track.pending;
+      case "accepted": return t.track.accepted;
+      case "in_progress": return t.track.cooking;
+      case "ready": return t.track.ready;
+      case "served":
+      case "completed": return t.track.served;
+      default: return "";
+    }
+  };
+
+  const stepperStatus = getStepperStatus(currentStatus);
+  const statusOrder = ["pending", "accepted", "preparing", "ready", "served"];
+  const currentIndex = statusOrder.indexOf(stepperStatus);
+
+  const getStepState = (stepId: string) => {
     const stepIndex = statusOrder.indexOf(stepId);
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "active";
@@ -42,49 +59,56 @@ export function OrderStatusStepper({ currentStatus }: OrderStatusStepperProps) {
   };
 
   return (
-    <div className="p-4 bg-gray-100 dark:bg-slate-800/50 rounded-b-2xl">
-      {/* Stepper */}
-      <div className="flex items-center justify-between relative">
-        {/* Line background */}
-        <div className="absolute top-3 left-0 w-full h-0.5 bg-gray-200 dark:bg-slate-600 -z-10" />
-
-        {steps.map((step) => {
-          const state = getStepState(step.id);
-          return (
-            <div key={step.id} className="flex flex-col items-center gap-2">
-              <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center z-10 shadow-sm ${
-                  state === "completed"
-                    ? "bg-emerald-500 text-white"
-                    : state === "active"
-                      ? "bg-emerald-500 text-white ring-4 ring-emerald-200 dark:ring-emerald-500/30 animate-pulse"
-                      : "bg-gray-200 dark:bg-slate-600 text-gray-400"
-                }`}
-              >
-                {step.icon}
-              </div>
-              <span
-                className={`text-[10px] font-medium uppercase ${
-                  state === "active"
-                    ? "text-slate-900 dark:text-white font-bold"
-                    : state === "completed"
-                      ? "text-slate-600 dark:text-slate-400"
-                      : "text-gray-400"
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
-          );
-        })}
+    <div className="py-4">
+      {/* Status Chip - Prominent */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
+            {getStatusLabel(currentStatus)}
+          </span>
+        </span>
       </div>
 
-      {/* Status Message */}
-      <div className="mt-4 flex items-start gap-3 p-3 bg-emerald-100 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
-        <Info className="size-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-        <p className="text-sm text-emerald-800 dark:text-emerald-200">
-          {t.track.preparingMessage}
-        </p>
+      {/* Minimal Stepper - Dots with line */}
+      <div className="flex items-center justify-center px-8">
+        <div className="flex items-center gap-0 w-full max-w-xs">
+          {steps.map((step, index) => {
+            const state = getStepState(step.id);
+            const Icon = step.icon;
+            const isLast = index === steps.length - 1;
+
+            return (
+              <div key={step.id} className="flex items-center flex-1 last:flex-none">
+                {/* Icon circle */}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                    state === "completed"
+                      ? "bg-emerald-500 text-white"
+                      : state === "active"
+                        ? "bg-emerald-500 text-white ring-2 ring-emerald-300 dark:ring-emerald-500/50"
+                        : "bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500"
+                  }`}
+                >
+                  <Icon className="size-4" strokeWidth={2.5} />
+                </div>
+
+                {/* Connecting line */}
+                {!isLast && (
+                  <div className="flex-1 h-0.5 mx-1">
+                    <div
+                      className={`h-full transition-all ${
+                        state === "completed" || state === "active"
+                          ? "bg-emerald-500"
+                          : "bg-gray-200 dark:bg-slate-700"
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

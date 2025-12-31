@@ -42,6 +42,7 @@ export interface OrderItemResponse {
     name: string;
     priceAdjustment: number;
   }[];
+  createdAt: string; // When this item was added to the order
 }
 
 export interface OrderResponse {

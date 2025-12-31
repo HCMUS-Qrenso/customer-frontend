@@ -1,19 +1,19 @@
-import { OrderTrackingClient } from "./OrderTrackingClient";
+import { MyOrderClient } from "./MyOrderClient";
 
-interface TrackPageProps {
+interface MyOrderPageProps {
   params: Promise<{ tenantSlug: string }>;
   searchParams: Promise<{ table?: string; token?: string }>;
 }
 
-export default async function TrackPage({
+export default async function MyOrderPage({
   params,
   searchParams,
-}: TrackPageProps) {
+}: MyOrderPageProps) {
   const { tenantSlug } = await params;
   const { table, token } = await searchParams;
 
   return (
-    <OrderTrackingClient
+    <MyOrderClient
       tenantSlug={tenantSlug}
       tableId={table}
       token={token}

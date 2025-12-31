@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ShoppingCart, Search, AlertTriangle, Loader2 } from "lucide-react";
+import { ShoppingCart, Search, AlertTriangle, Loader2, ClipboardList } from "lucide-react";
 import { MenuItemDTO, CartItemDTO } from "@/lib/types/menu";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
@@ -17,6 +17,7 @@ import { useQrToken } from "@/hooks/use-qr-token";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { formatVND } from "@/lib/format";
+import { orderApi } from "@/lib/api/order";
 import { ChefPicksCarousel } from "@/components/menu/ChefPicksCarousel";
 import { MenuItemCard } from "@/components/menu/MenuItemCard";
 import { MenuSearchBar } from "@/components/menu/MenuSearchBar";
@@ -47,6 +48,10 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string>("popularityScore");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  
+  // Active order state
+  const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>(null);
+  const [isCheckingOrder, setIsCheckingOrder] = useState(true);
 
   // Use props or fallback to persisted values from sessionStorage
   const tableId = propsTableId || getTableId() || undefined;
@@ -67,6 +72,27 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
     const payload = decodeQrToken(token);
     return payload?.tableNumber || null;
   }, [token]);
+
+  // URLs
+  const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
+
+  // Check for active order on mount
+  useEffect(() => {
+    const checkActiveOrder = async () => {
+      try {
+        const result = await orderApi.getMyOrder();
+        if (result.success && result.data) {
+          setActiveOrderNumber(result.data.orderNumber);
+        }
+      } catch (err) {
+        // No active order - that's fine
+        console.log('[Menu] No active order found');
+      } finally {
+        setIsCheckingOrder(false);
+      }
+    };
+    checkActiveOrder();
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -243,6 +269,37 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto">
+        {/* Active Order Banner - Show when user has an active order */}
+        {!isCheckingOrder && activeOrderNumber && (
+          <div className="mx-4 mt-4 p-3 sm:p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+            <div className="flex items-center justify-between gap-3">
+              {/* Info section */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-800">
+                  <ClipboardList className="size-4 sm:size-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-sm sm:text-base">
+                    Bạn đang có đơn hàng
+                  </p>
+                  <p className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 truncate">
+                    Đơn #{activeOrderNumber}
+                  </p>
+                </div>
+              </div>
+              {/* Button */}
+              <Link href={orderHref} className="shrink-0">
+                <Button
+                  size="sm"
+                  className="bg-emerald-500 text-white hover:bg-emerald-600"
+                >
+                  Xem đơn
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Chef Picks Carousel - Only show when not searching and no category selected */}
         {!searchQuery && !selectedCategory && chefPicks.length > 0 && (
           <ChefPicksCarousel
