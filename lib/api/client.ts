@@ -1,13 +1,18 @@
 import axios, { type AxiosInstance, type AxiosError } from "axios";
 import { ApiError } from "@/lib/utils/error-handler";
-import { getQrToken } from "@/lib/stores/qr-token-store";
+import { getQrToken, getSessionToken } from "@/lib/stores/qr-token-store";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 /**
  * Axios client for customer-frontend
- * For GUEST users: Uses QR token as Bearer token in Authorization header
- * For CUSTOMER users (authenticated): Will use x-qr-token header (to be implemented)
+ * 
+ * Token Priority:
+ * 1. Session token (from POST /tables/session/start) - for order operations
+ * 2. QR token (from URL scan) - for menu viewing
+ * 
+ * The session token is preferred because it's issued after the customer
+ * explicitly starts a session, while QR token is just from scanning.
  */
 const apiClient: AxiosInstance = axios.create({
   baseURL,
@@ -20,10 +25,16 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor - add Bearer token for API requests
 apiClient.interceptors.request.use(
   (config) => {
-    // Get QR token from store and add as Bearer token
-    const qrToken = getQrToken();
-    if (qrToken) {
-      config.headers.Authorization = `Bearer ${qrToken}`;
+    // Only add token if Authorization header is not already set
+    if (!config.headers.Authorization) {
+      // Prioritize session token over QR token
+      const sessionToken = getSessionToken();
+      const qrToken = getQrToken();
+      const token = sessionToken || qrToken;
+      
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

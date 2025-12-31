@@ -58,8 +58,31 @@ export interface StartSessionRequest {
   partySize?: number;
 }
 
+export interface StartSessionResponseData {
+  session_id: string;
+  session_token: string;
+  is_join: boolean;
+  table: {
+    id: string;
+    number: string;
+    capacity: number;
+    zone: string | null;
+  };
+  tenant: {
+    slug: string;
+    name: string;
+  };
+  started_at: string;
+  guest_name?: string;
+  guest_count: number;
+  expires_at?: string;
+  has_active_order: boolean;
+}
+
 export interface StartSessionResponse {
-  sessionToken: string;
+  success: boolean;
+  message: string;
+  data: StartSessionResponseData;
 }
 
 // ============================================

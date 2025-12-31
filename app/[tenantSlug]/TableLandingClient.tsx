@@ -130,8 +130,8 @@ function TableLandingContent({
   // Verify token and get table context from API
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
-  // Store the QR token for API requests
-  useQrToken(tableContext ? token : undefined);
+  // Store the QR token and tableId for API requests and navigation
+  useQrToken(tableContext ? token : undefined, tableContext ? tableId : undefined);
 
   // No token provided
   if (!token) {

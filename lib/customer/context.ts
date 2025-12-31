@@ -1,4 +1,5 @@
 import type { CustomerContext, CustomerContextError } from "@/lib/types/menu";
+import { getTableId, getQrToken } from "@/lib/stores/qr-token-store";
 
 interface GetCustomerContextParams {
   tenantSlug: string;
@@ -15,14 +16,17 @@ type CustomerContextResult =
 
 /**
  * Validates and extracts customer context from URL params
- * Used by customer-facing pages to ensure valid session
+ * Falls back to sessionStorage if URL params are missing
  */
 export function getCustomerContext(
   params: GetCustomerContextParams,
   searchParams: GetCustomerContextSearchParams,
 ): CustomerContextResult {
   const { tenantSlug } = params;
-  const { table, token } = searchParams;
+  
+  // Try URL params first, then fallback to sessionStorage
+  const table = searchParams.table || getTableId();
+  const token = searchParams.token || getQrToken();
 
   // Check required params
   if (!table || !token) {
@@ -46,17 +50,29 @@ export function getCustomerContext(
   };
 }
 
+interface CustomerHrefCtx {
+  table?: string;
+  token?: string;
+}
+
 /**
  * Builds a URL with customer context params
+ * Falls back to sessionStorage values if ctx params are undefined
  */
 export function customerHref(
   tenantSlug: string,
   path: "menu" | "cart" | "item",
-  ctx: { table: string; token: string },
+  ctx?: CustomerHrefCtx,
   itemId?: string,
 ): string {
   const base = `/${tenantSlug}`;
-  const params = `?table=${ctx.table}&token=${ctx.token}`;
+  
+  // Use ctx values or fallback to sessionStorage
+  const table = ctx?.table || getTableId() || "";
+  const token = ctx?.token || getQrToken() || "";
+  
+  // Only add params if we have valid values
+  const params = table && token ? `?table=${table}&token=${token}` : "";
 
   switch (path) {
     case "menu":

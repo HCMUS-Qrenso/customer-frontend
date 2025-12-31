@@ -1,30 +1,44 @@
 /**
  * QR Token Store
  * Manages QR token and Session token for guest users
- * QR token: from URL, used for menu access
- * Session token: from API, used for order operations
+ * QR token: from URL, used for menu access (persisted to sessionStorage)
+ * Session token: from API, used for order operations (persisted to localStorage)
  */
 
 let qrToken: string | null = null;
+let tableId: string | null = null;
 let sessionToken: string | null = null;
 
 // ============================================
-// QR Token (from URL)
+// QR Token (from URL, persisted to sessionStorage)
 // ============================================
 
+const QR_TOKEN_KEY = 'qrenso_qr_token';
+const TABLE_ID_KEY = 'qrenso_table_id';
+
 /**
- * Store the QR token from URL
+ * Store the QR token from URL (persisted to sessionStorage)
  * @param token - The JWT token from QR code scan
  */
 export function setQrToken(token: string | null): void {
   qrToken = token;
+  if (typeof window !== 'undefined') {
+    if (token) {
+      sessionStorage.setItem(QR_TOKEN_KEY, token);
+    } else {
+      sessionStorage.removeItem(QR_TOKEN_KEY);
+    }
+  }
 }
 
 /**
- * Get the current QR token
+ * Get the current QR token (from memory or sessionStorage)
  * @returns The stored QR token or null
  */
 export function getQrToken(): string | null {
+  if (!qrToken && typeof window !== 'undefined') {
+    qrToken = sessionStorage.getItem(QR_TOKEN_KEY);
+  }
   return qrToken;
 }
 
@@ -33,6 +47,48 @@ export function getQrToken(): string | null {
  */
 export function clearQrToken(): void {
   qrToken = null;
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem(QR_TOKEN_KEY);
+  }
+}
+
+// ============================================
+// Table ID (from URL, persisted to sessionStorage)
+// ============================================
+
+/**
+ * Store the table ID from URL (persisted to sessionStorage)
+ * @param id - The table ID from URL params
+ */
+export function setTableId(id: string | null): void {
+  tableId = id;
+  if (typeof window !== 'undefined') {
+    if (id) {
+      sessionStorage.setItem(TABLE_ID_KEY, id);
+    } else {
+      sessionStorage.removeItem(TABLE_ID_KEY);
+    }
+  }
+}
+
+/**
+ * Get the current table ID (from memory or sessionStorage)
+ */
+export function getTableId(): string | null {
+  if (!tableId && typeof window !== 'undefined') {
+    tableId = sessionStorage.getItem(TABLE_ID_KEY);
+  }
+  return tableId;
+}
+
+/**
+ * Clear the table ID
+ */
+export function clearTableId(): void {
+  tableId = null;
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem(TABLE_ID_KEY);
+  }
 }
 
 // ============================================
@@ -100,5 +156,6 @@ export function hasActiveSession(): boolean {
  */
 export function clearAllTokens(): void {
   clearQrToken();
+  clearTableId();
   clearSessionToken();
 }

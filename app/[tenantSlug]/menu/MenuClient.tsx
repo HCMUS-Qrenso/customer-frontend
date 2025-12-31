@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingCart, Search, AlertTriangle, Loader2 } from "lucide-react";
-import { MenuItemDTO, CartSummaryDTO } from "@/lib/types/menu";
+import { MenuItemDTO, CartItemDTO } from "@/lib/types/menu";
+import { useCartStore } from "@/lib/stores/cart-store";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import {
   useInfiniteMenuQuery,
@@ -13,6 +14,7 @@ import {
   useChefPicksQuery,
 } from "@/hooks/use-menu-query";
 import { useQrToken } from "@/hooks/use-qr-token";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { formatVND } from "@/lib/format";
 import { ChefPicksCarousel } from "@/components/menu/ChefPicksCarousel";
@@ -38,7 +40,7 @@ function LoadingMore() {
   );
 }
 
-function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
+function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: MenuClientProps) {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -46,8 +48,15 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
   const [sortBy, setSortBy] = useState<string>("popularityScore");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // Mock cart state
-  const [cart, setCart] = useState<CartSummaryDTO>({ count: 0, subtotal: 0 });
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
+
+  // Cart state from Zustand store (persisted to localStorage)
+  const addToCart = useCartStore((state) => state.addItem);
+  const cartItems = useCartStore((state) => state.items);
+  const cartItemCount = useCartStore((state) => state.getItemCount());
+  const cartSubtotal = useCartStore((state) => state.getSubtotal());
 
   // Ref for infinite scroll trigger
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -67,8 +76,8 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Store QR token for API requests
-  useQrToken(token);
+  // Store QR token and tableId for API requests (persisted to sessionStorage)
+  useQrToken(token, tableId);
 
   // Fetch categories
   const { data: categories, isLoading: categoriesLoading } =
@@ -132,12 +141,25 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
     return () => observer.disconnect();
   }, [handleObserver]);
 
-  // Quick add to cart handler
+  // Quick add to cart handler - creates CartItemDTO and adds to store
   const handleQuickAdd = (item: MenuItemDTO) => {
-    setCart((prev) => ({
-      count: prev.count + 1,
-      subtotal: prev.subtotal + item.base_price,
-    }));
+    // API returns base_price as string, need to convert to number for calculations
+    const basePrice =
+      typeof item.base_price === "string"
+        ? parseInt(item.base_price, 10)
+        : item.base_price;
+
+    const cartItem: CartItemDTO = {
+      menuItemId: item.id,
+      menuItemName: item.name,
+      quantity: 1,
+      basePrice: basePrice,
+      image: item.images?.[0]?.image_url,
+      selectedModifiers: [],
+      notes: undefined,
+      totalPrice: basePrice,
+    };
+    addToCart(cartItem);
   };
 
   // Handle category change - reset pagination
@@ -169,11 +191,11 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
         backHref={`/${tenantSlug}?table=${tableId}&token=${token}`}
         rightContent={
           <Link
-            href={`/${tenantSlug}/cart`}
+            href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}
             className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
           >
             <ShoppingCart className="size-5" />
-            {cart.count > 0 && (
+            {cartItemCount > 0 && (
               <LiveIndicator size="sm" className="absolute right-1 top-1" />
             )}
           </Link>
@@ -297,15 +319,45 @@ function MenuContent({ tenantSlug, tableId, token }: MenuClientProps) {
       </main>
 
       {/* Sticky Cart Bar */}
-      {cart.count > 0 && (
+      {cartItemCount > 0 && (
         <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[480px] -translate-x-1/2 px-4 pb-[calc(env(safe-area-inset-bottom,16px)+16px)] lg:max-w-2xl">
-          <Link href={`/${tenantSlug}/cart`}>
-            <Button className="flex h-14 w-full items-center justify-between rounded-full bg-emerald-500 px-5 text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 active:scale-[0.98]">
+          <Link href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}>
+            <Button className="flex h-14 w-full items-center justify-between rounded-full bg-emerald-500 px-4 text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 active:scale-[0.98]">
               <div className="flex items-center gap-3">
-                <span className="flex size-7 items-center justify-center rounded-full bg-emerald-950/20 text-sm font-bold">
-                  {cart.count}
-                </span>
-                <span className="font-bold">{formatVND(cart.subtotal)}</span>
+                {/* Stacked Avatars */}
+                <div className="flex items-center">
+                  {cartItems.slice(0, 5).map((item, index) => (
+                    <div
+                      key={item.menuItemId}
+                      className="relative size-8 rounded-full border-2 border-emerald-500 bg-white overflow-hidden"
+                      style={{
+                        marginLeft: index === 0 ? 0 : -12,
+                        zIndex: 10 - index,
+                      }}
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.menuItemName}
+                          className="size-full object-cover"
+                        />
+                      ) : (
+                        <div className="size-full bg-emerald-200 flex items-center justify-center text-emerald-700 text-xs font-bold">
+                          {item.menuItemName.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {cartItems.length > 5 && (
+                    <div
+                      className="relative size-8 rounded-full border-2 border-emerald-500 bg-emerald-700 flex items-center justify-center text-white text-xs font-bold"
+                      style={{ marginLeft: -12, zIndex: 5 }}
+                    >
+                      +{cartItems.length - 5}
+                    </div>
+                  )}
+                </div>
+                <span className="font-bold">{formatVND(cartSubtotal)}</span>
               </div>
 
               <div className="flex items-center gap-2 font-bold">

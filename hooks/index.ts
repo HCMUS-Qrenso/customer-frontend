@@ -16,3 +16,5 @@ export {
 } from "./use-menu-query";
 
 export { useOrderSocket, type UseOrderSocketOptions } from "./use-order-socket";
+
+export { useSessionGuard } from "./use-session-guard";

@@ -1,11 +1,17 @@
 /**
  * Order WebSocket Hook
  * Connect to WebSocket for real-time order updates using Socket.IO
+ * 
+ * Features:
+ * - Automatic reconnection with exponential backoff
+ * - REST fallback on reconnect to sync state
+ * - Order room management
  */
 
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { getSessionToken } from '@/lib/stores/qr-token-store';
+import { orderApi } from '@/lib/api/order';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3000';
 const WS_NAMESPACE = '/orders';
@@ -45,13 +51,19 @@ export interface UseOrderSocketOptions {
   onConnected?: () => void;
   onDisconnected?: () => void;
   onError?: (error: Error) => void;
+  /** Enable REST sync on reconnect (default: true) */
+  syncOnReconnect?: boolean;
   enabled?: boolean;
 }
 
 export interface UseOrderSocketReturn {
   isConnected: boolean;
+  /** Whether we're syncing state via REST */
+  isSyncing: boolean;
   disconnect: () => void;
   reconnect: () => void;
+  /** Manually sync order state via REST */
+  syncOrderState: () => Promise<void>;
 }
 
 // ============================================
@@ -68,11 +80,47 @@ export function useOrderSocket(
     onConnected,
     onDisconnected,
     onError,
+    syncOnReconnect = true,
     enabled = true,
   } = options;
 
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const reconnectCountRef = useRef(0);
+
+  /**
+   * Sync order state via REST API
+   * Called on reconnect to ensure we have the latest state
+   */
+  const syncOrderState = useCallback(async () => {
+    if (!orderId && !syncOnReconnect) return;
+
+    setIsSyncing(true);
+    console.log('[OrderSocket] Syncing order state via REST...');
+
+    try {
+      // Get current order state from REST API
+      const response = await orderApi.getMyOrder();
+      
+      if (response.success && response.data) {
+        console.log('[OrderSocket] REST sync complete, order:', response.data.orderNumber);
+        // Notify listeners with the synced state
+        onOrderUpdated?.({
+          id: response.data.id,
+          orderNumber: response.data.orderNumber,
+          status: response.data.status,
+          items: response.data.items,
+          totalAmount: response.data.totalAmount,
+        });
+      }
+    } catch (error) {
+      console.error('[OrderSocket] REST sync failed:', error);
+      // Don't propagate error - socket might still work
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [orderId, syncOnReconnect, onOrderUpdated]);
 
   const connect = useCallback(() => {
     const sessionToken = getSessionToken();
@@ -95,13 +143,24 @@ export function useOrderSocket(
       query: { sessionToken },
       transports: ['websocket', 'polling'],
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 10,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
     });
 
     socket.on('connect', () => {
       console.log('[OrderSocket] Connected, socket.id=', socket.id);
       setIsConnected(true);
+      
+      // If this is a reconnect (not first connect), sync state via REST
+      const isReconnect = reconnectCountRef.current > 0;
+      reconnectCountRef.current++;
+      
+      if (isReconnect && syncOnReconnect) {
+        console.log('[OrderSocket] Reconnected, syncing state via REST...');
+        syncOrderState();
+      }
+      
       onConnected?.();
 
       // Join order-specific room if orderId is provided
@@ -134,6 +193,12 @@ export function useOrderSocket(
       onOrderUpdated?.(event.data);
     });
 
+    // Items added to order
+    socket.on('order:items:added', (event: OrderUpdateEvent) => {
+      console.log('[OrderSocket] Items added:', event);
+      onOrderUpdated?.(event.data);
+    });
+
     // Item status changed (for individual item updates)
     socket.on('item:status', (event: ItemStatusEvent) => {
       console.log('[OrderSocket] Item status:', event);
@@ -147,7 +212,7 @@ export function useOrderSocket(
     });
 
     socketRef.current = socket;
-  }, [orderId, enabled, onConnected, onDisconnected, onError, onOrderUpdated, onItemStatusChanged]);
+  }, [orderId, enabled, syncOnReconnect, syncOrderState, onConnected, onDisconnected, onError, onOrderUpdated, onItemStatusChanged]);
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {
@@ -168,6 +233,7 @@ export function useOrderSocket(
 
   // Connect on mount, disconnect on unmount
   useEffect(() => {
+    reconnectCountRef.current = 0; // Reset reconnect count
     connect();
     return () => {
       disconnect();
@@ -182,9 +248,26 @@ export function useOrderSocket(
     }
   }, [orderId]);
 
+  // Sync state on visibility change (user comes back to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isConnected && syncOnReconnect) {
+        console.log('[OrderSocket] Tab became visible, syncing state...');
+        syncOrderState();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isConnected, syncOnReconnect, syncOrderState]);
+
   return {
     isConnected,
+    isSyncing,
     disconnect,
     reconnect,
+    syncOrderState,
   };
 }

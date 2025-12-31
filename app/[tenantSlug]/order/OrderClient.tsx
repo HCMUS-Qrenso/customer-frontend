@@ -66,8 +66,8 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  // Store QR token
-  useQrToken(token);
+  // Store QR token and table ID
+  useQrToken(token, tableId);
 
   // URLs
   const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
@@ -89,7 +89,16 @@ function OrderContent({ tenantSlug, tableId, token }: OrderClientProps) {
       }
     } catch (err: any) {
       console.error('[Order] Fetch error:', err);
-      setError(err.message || 'Failed to load order');
+      
+      // Handle Forbidden error (session expired or missing)
+      if (err.statusCode === 403 || err.message?.includes('Forbidden')) {
+        setError('Phiên làm việc đã hết hạn. Vui lòng quét lại mã QR hoặc quay lại menu.');
+      } else if (err.statusCode === 404 || err.message?.includes('not found')) {
+        // No order found - this is expected if customer hasn't ordered yet
+        setOrder(null);
+      } else {
+        setError(err.message || 'Không thể tải thông tin đơn hàng');
+      }
     } finally {
       setIsLoading(false);
     }
