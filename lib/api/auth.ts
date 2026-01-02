@@ -53,7 +53,7 @@ export const authApi = {
   signup: async (payload: SignupRequest): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/signup",
-      payload
+      payload,
     );
     return data;
   },
@@ -103,7 +103,7 @@ export const authApi = {
   forgotPassword: async (email: string): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/forgot-password",
-      { email }
+      { email },
     );
     return data;
   },
@@ -115,7 +115,7 @@ export const authApi = {
   resetPassword: async (
     token: string,
     email: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/reset-password",
@@ -123,7 +123,7 @@ export const authApi = {
         token,
         email,
         newPassword,
-      }
+      },
     );
     return data;
   },
@@ -134,14 +134,14 @@ export const authApi = {
    */
   verifyEmail: async (
     email: string,
-    token: string
+    token: string,
   ): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/verify-email",
       {
         email,
         token,
-      }
+      },
     );
     return data;
   },
@@ -152,16 +152,15 @@ export const authApi = {
    */
   resendEmail: async (
     email: string,
-    type: "email_verification" | "password_reset"
+    type: "email_verification" | "password_reset",
   ): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/resend-email",
       {
         email,
         type,
-      }
+      },
     );
     return data;
   },
 };
-

@@ -3,12 +3,12 @@
  * Types for order tracking page with batch-based item grouping
  */
 
-export type OrderItemStatus = 
-  | 'pending'
-  | 'preparing'
-  | 'ready'
-  | 'served'
-  | 'cancelled';
+export type OrderItemStatus =
+  | "pending"
+  | "preparing"
+  | "ready"
+  | "served"
+  | "cancelled";
 
 export interface OrderTrackingItem {
   id: string;
@@ -27,6 +27,5 @@ export interface OrderBatch {
   addedAt: string;
   addedAtFormatted: string;
   items: OrderTrackingItem[];
-  status: 'pending' | 'preparing' | 'ready' | 'served';
+  status: "pending" | "preparing" | "ready" | "served";
 }
-

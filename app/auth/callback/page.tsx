@@ -10,8 +10,10 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuthStore();
-  
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function AuthCallbackPage() {
         console.error("OAuth callback error:", err);
         setStatus("error");
         setErrorMessage(err.message || "Đăng nhập thất bại. Vui lòng thử lại.");
-        
+
         // Clear any partial auth state
         useAuthStore.getState().logout();
 
@@ -121,4 +123,3 @@ export default function AuthCallbackPage() {
     </div>
   );
 }
-

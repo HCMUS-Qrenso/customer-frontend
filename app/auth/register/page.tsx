@@ -3,7 +3,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock, User, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Loader2,
+  ArrowLeft,
+  CheckCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,9 +60,10 @@ function RegisterContent() {
     const hasLowerCase = /[a-z]/.test(pwd);
     const hasNumber = /[0-9]/.test(pwd);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
-    
+
     return {
-      isValid: hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecial,
+      isValid:
+        hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecial,
       hasMinLength,
       hasUpperCase,
       hasLowerCase,
@@ -79,13 +89,13 @@ function RegisterContent() {
       setError(t.auth.passwordRequired);
       return;
     }
-    
+
     const passwordStrength = checkPasswordStrength(password);
     if (!passwordStrength.isValid) {
       setError(t.auth.passwordRequirements);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError(t.auth.passwordMismatch);
       return;
@@ -94,7 +104,7 @@ function RegisterContent() {
     try {
       setIsLoading(true);
       await authApi.signup({ fullName, email, password });
-      
+
       // Show success message
       setIsSuccess(true);
     } catch (err: any) {
@@ -122,7 +132,9 @@ function RegisterContent() {
             <p className="text-slate-500 dark:text-slate-400 mb-6">
               {t.auth.registerSuccess}
             </p>
-            <Link href={`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`}>
+            <Link
+              href={`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`}
+            >
               <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl">
                 {t.auth.login}
               </Button>
@@ -219,7 +231,11 @@ function RegisterContent() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
                 </button>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -246,7 +262,11 @@ function RegisterContent() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -306,4 +326,3 @@ export default function RegisterPage() {
     </LanguageProvider>
   );
 }
-

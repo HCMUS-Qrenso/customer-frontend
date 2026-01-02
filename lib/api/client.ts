@@ -40,21 +40,23 @@ apiClient.interceptors.request.use(
     // 1. Authorization header: ONLY for identity (authenticated users)
     // This is separate from table session - a user can be logged in without being at a table
     // NEVER use sessionToken or qrToken in Authorization header
-    if (accessToken) {
+    if (accessToken && typeof accessToken === "string") {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     // 2. x-table-session-token: REQUIRED for order operations
     // This is the same for both guest and authenticated users
     // Having a session token means user has started a table session
-    if (sessionToken) {
+    // Ensure we only set if token is a valid string (not null or undefined)
+    if (sessionToken && typeof sessionToken === "string") {
       config.headers["x-table-session-token"] = sessionToken;
     }
 
     // 3. x-qr-token: For menu viewing and session start
     // Used before session exists, or as fallback for table context
     // Only send if we don't have a session token (to avoid confusion)
-    if (qrToken && !sessionToken) {
+    // Ensure we only set if token is a valid string (not null or undefined)
+    if (qrToken && typeof qrToken === "string" && !sessionToken) {
       config.headers["x-qr-token"] = qrToken;
     }
 
@@ -62,7 +64,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor - centralized error handling
@@ -115,11 +117,11 @@ apiClient.interceptors.response.use(
         error.message ||
         "An error occurred",
       error.response?.status || 500,
-      error.response?.data
+      error.response?.data,
     );
 
     return Promise.reject(apiError);
-  }
+  },
 );
 
 export { apiClient };

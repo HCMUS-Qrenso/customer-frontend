@@ -25,10 +25,10 @@ const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalChecked, setInternalChecked] = React.useState(
-      defaultChecked ?? false
+      defaultChecked ?? false,
     );
 
     const isControlled = checked !== undefined;
@@ -58,7 +58,7 @@ const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         className={cn(
           "peer h-4 w-4 shrink-0 rounded-sm border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
           isChecked && "bg-emerald-500 border-emerald-500 text-white",
-          className
+          className,
         )}
         {...props}
       >
@@ -69,7 +69,7 @@ const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";

@@ -120,12 +120,15 @@ export type AuthErrorType =
 export function mapToAuthError(error: unknown): AuthErrorType {
   if (isApiError(error)) {
     const message = error.message.toLowerCase();
-    
+
     // Check for specific error messages
     if (message.includes("email") && message.includes("not found")) {
       return "invalid_credentials";
     }
-    if (message.includes("incorrect password") || message.includes("wrong password")) {
+    if (
+      message.includes("incorrect password") ||
+      message.includes("wrong password")
+    ) {
       return "invalid_credentials";
     }
     if (message.includes("inactive") || message.includes("disabled")) {
@@ -141,20 +144,23 @@ export function mapToAuthError(error: unknown): AuthErrorType {
       return "network_error";
     }
   }
-  
+
   if (error instanceof Error && error.message.includes("Network")) {
     return "network_error";
   }
-  
+
   return "unknown";
 }
 
 /**
  * Get user-friendly error message for auth errors
  */
-export function getAuthErrorMessage(error: unknown, lang: "vi" | "en" = "vi"): string {
+export function getAuthErrorMessage(
+  error: unknown,
+  lang: "vi" | "en" = "vi",
+): string {
   const errorType = mapToAuthError(error);
-  
+
   const messages: Record<AuthErrorType, Record<"vi" | "en", string>> = {
     invalid_credentials: {
       vi: "Email hoặc mật khẩu không đúng",
@@ -181,7 +187,7 @@ export function getAuthErrorMessage(error: unknown, lang: "vi" | "en" = "vi"): s
       en: "An error occurred. Please try again later",
     },
   };
-  
+
   return messages[errorType][lang];
 }
 
@@ -193,15 +199,18 @@ export function handleAuthError(
   options: {
     onSessionExpired?: () => void;
     onAccountIssue?: () => void;
-  } = {}
+  } = {},
 ): void {
   const errorType = mapToAuthError(error);
-  
+
   if (errorType === "session_expired" && options.onSessionExpired) {
     options.onSessionExpired();
   }
-  
-  if ((errorType === "account_inactive" || errorType === "email_not_verified") && options.onAccountIssue) {
+
+  if (
+    (errorType === "account_inactive" || errorType === "email_not_verified") &&
+    options.onAccountIssue
+  ) {
     options.onAccountIssue();
   }
 }

@@ -3,7 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { User, LogIn, UserPlus, LogOut, ChevronDown } from "lucide-react";
+import {
+  User,
+  LogIn,
+  UserPlus,
+  LogOut,
+  ChevronDown,
+  Package,
+} from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { authApi } from "@/lib/api/auth";
 import { useLanguage } from "@/lib/i18n/context";
@@ -17,8 +24,13 @@ export function UserAvatar({ className }: UserAvatarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { t } = useLanguage();
-  
-  const { user, isAuthenticated, logout: logoutStore, setLoading } = useAuthStore();
+
+  const {
+    user,
+    isAuthenticated,
+    logout: logoutStore,
+    setLoading,
+  } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -32,7 +44,10 @@ export function UserAvatar({ className }: UserAvatarProps) {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -58,7 +73,7 @@ export function UserAvatar({ className }: UserAvatarProps) {
     try {
       setIsLoggingOut(true);
       setLoading(true);
-      
+
       await authApi.logout();
     } catch (error) {
       // Logout might fail if token already expired, but we still want to clear local state
@@ -79,6 +94,15 @@ export function UserAvatar({ className }: UserAvatarProps) {
       .toUpperCase()
       .slice(0, 2);
   };
+
+  // Extract tenantSlug from pathname (format: /{tenantSlug}/...)
+  const getTenantSlug = () => {
+    const pathParts = pathname.split("/").filter(Boolean);
+    return pathParts.length > 0 ? pathParts[0] : null;
+  };
+
+  const tenantSlug = getTenantSlug();
+  const orderHistoryUrl = tenantSlug ? `/${tenantSlug}/my-orders` : null;
 
   // Login/Register URLs with return path
   const returnUrl = encodeURIComponent(buildReturnUrl());
@@ -107,7 +131,9 @@ export function UserAvatar({ className }: UserAvatarProps) {
                 {getInitials(user.fullName)}
               </div>
             )}
-            <ChevronDown className={`size-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+            <ChevronDown
+              className={`size-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
           </div>
         ) : (
           // Unauthenticated: Show user icon
@@ -135,13 +161,27 @@ export function UserAvatar({ className }: UserAvatarProps) {
 
               {/* Menu Items */}
               <div className="py-1">
+                {orderHistoryUrl && (
+                  <Link
+                    href={orderHistoryUrl}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                  >
+                    <Package className="size-4" />
+                    <span>Lịch sử đơn hàng</span>
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
                   className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                 >
                   <LogOut className="size-4" />
-                  <span>{isLoggingOut ? "Đang đăng xuất..." : (t?.auth?.logout || "Đăng xuất")}</span>
+                  <span>
+                    {isLoggingOut
+                      ? "Đang đăng xuất..."
+                      : t?.auth?.logout || "Đăng xuất"}
+                  </span>
                 </button>
               </div>
             </>
@@ -171,4 +211,3 @@ export function UserAvatar({ className }: UserAvatarProps) {
     </div>
   );
 }
-

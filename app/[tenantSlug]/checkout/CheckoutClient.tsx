@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
+import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { mockCheckoutBill as mockBill } from "@/lib/mocks";
 import type { BillDTO, PaymentMethod } from "@/lib/types/checkout";
 import { MethodPicker } from "@/components/checkout/MethodPicker";
@@ -22,17 +24,33 @@ interface CheckoutClientProps {
   token?: string;
 }
 
-function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
+function CheckoutContent({
+  tenantSlug,
+  tableId: propsTableId,
+  token: propsToken,
+}: CheckoutClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("e-wallet");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Store QR token
-  useQrToken(token);
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
 
-  const cartHref = `/${tenantSlug}/cart?table=${tableId}&token=${token}`;
-  const resultHref = `/${tenantSlug}/checkout/result?table=${tableId}&token=${token}`;
+  // Store QR token and tableId
+  useQrToken(token, tableId);
+
+  // Decode token to get table number
+  const tableNumber = useMemo(() => {
+    if (!token) return null;
+    const payload = decodeQrToken(token);
+    return payload?.tableNumber || null;
+  }, [token]);
+
+  // URLs (no need to include table/token params - they're in storage)
+  const cartHref = `/${tenantSlug}/cart`;
+  const resultHref = `/${tenantSlug}/checkout/result`;
 
   // Calculate fees
   const cardFee =
@@ -50,7 +68,9 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
     <div className="relative min-h-screen flex flex-col bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
       <PageHeader
         title={t.checkout.title}
-        subtitle={`${t.checkout.table} ${tableId}`}
+        subtitle={
+          tableNumber ? `${t.checkout.table} ${tableNumber}` : tenantSlug
+        }
         backHref={cartHref}
         rightContent={
           <div className="flex items-center gap-3">

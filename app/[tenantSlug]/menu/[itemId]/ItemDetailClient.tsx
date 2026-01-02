@@ -19,9 +19,9 @@ import { NutritionalInfo } from "@/components/menu/NutritionalInfo";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { ModifierGroup } from "@/components/menu/ModifierGroup";
 import { formatVND } from "@/lib/format";
-import { customerHref } from "@/lib/customer/context";
 import { useMenuItemQuery } from "@/hooks/use-menu-query";
-import { setQrToken, setTableId } from "@/lib/stores/qr-token-store";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { toast } from "sonner";
 import type { ModifierGroupDTO, CartItemDTO } from "@/lib/types/menu";
@@ -29,10 +29,16 @@ import type { ModifierGroupDTO, CartItemDTO } from "@/lib/types/menu";
 interface ItemDetailClientProps {
   tenantSlug: string;
   itemId: string;
-  ctx: { table: string; token: string };
+  tableId?: string;
+  token?: string;
 }
 
-function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
+function ItemDetailContent({
+  tenantSlug,
+  itemId,
+  tableId: propsTableId,
+  token: propsToken,
+}: ItemDetailClientProps) {
   const { t, lang } = useLanguage();
 
   const [quantity, setQuantity] = useState(1);
@@ -42,15 +48,16 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
   const [notes, setNotes] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
+
+  // Store QR token and tableId for API requests
+  useQrToken(token, tableId);
+
   // Cart state from Zustand store (shared across all pages)
   const addToCart = useCartStore((state) => state.addItem);
   const cartItemCount = useCartStore((state) => state.getItemCount());
-
-  // Store QR token and tableId to sessionStorage for navigation
-  useEffect(() => {
-    if (ctx.token) setQrToken(ctx.token);
-    if (ctx.table) setTableId(ctx.table);
-  }, [ctx.token, ctx.table]);
 
   // Fetch menu item detail
   const { data: item, isLoading, error } = useMenuItemQuery(itemId);
@@ -136,9 +143,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
       menuItemId: item.id,
       menuItemName: item.name,
       quantity,
-      basePrice: typeof item.base_price === "string"
-        ? parseInt(item.base_price, 10)
-        : item.base_price,
+      basePrice:
+        typeof item.base_price === "string"
+          ? parseInt(item.base_price, 10)
+          : item.base_price,
       image: item.images?.[0]?.image_url,
       selectedModifiers: cartModifiers,
       notes: notes || undefined,
@@ -158,10 +166,20 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
     setSelectedModifiers({});
     setNotes("");
     setIsAdding(false);
-  }, [item, isValid, isAdding, quantity, selectedModifiers, notes, totalPrice, addToCart]);
+  }, [
+    item,
+    isValid,
+    isAdding,
+    quantity,
+    selectedModifiers,
+    notes,
+    totalPrice,
+    addToCart,
+  ]);
 
-  const menuHref = customerHref(tenantSlug, "menu", ctx);
-  const cartHref = customerHref(tenantSlug, "cart", ctx);
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const cartHref = `/${tenantSlug}/cart`;
 
   // Error state
   if (error) {

@@ -13,6 +13,11 @@ import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { MapPin, AlertTriangle, CircleX } from "lucide-react";
+import {
+  setSessionToken,
+  getQrToken,
+  getTableId,
+} from "@/lib/stores/qr-token-store";
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -124,16 +129,34 @@ function LoadingSkeleton() {
 
 function TableLandingContent({
   tenantSlug,
-  tableId,
-  token,
+  tableId: propsTableId,
+  token: propsToken,
 }: TableLandingClientProps) {
   const { t } = useLanguage();
+
+  // Use props or fallback to persisted values from sessionStorage
+  // This handles the case when token is removed from URL after verification
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
+
+  // Store the QR token and tableId for API requests and navigation
+  // IMPORTANT: Always call useQrToken with token/tableId (not conditional on tableContext)
+  // This ensures tokens are restored from storage even when reloading page
+  useQrToken(token, tableId);
 
   // Verify token and get table context from API
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
-  // Store the QR token and tableId for API requests and navigation
-  useQrToken(tableContext ? token : undefined, tableContext ? tableId : undefined);
+  // Save session token when received from verify response
+  useEffect(() => {
+    if (tableContext?.session_token) {
+      setSessionToken(tableContext.session_token);
+      console.log(
+        "[TableLanding] Session token saved:",
+        tableContext.session_token.substring(0, 20) + "...",
+      );
+    }
+  }, [tableContext?.session_token]);
 
   // Save returnUrl for redirect after login
   useEffect(() => {
@@ -149,7 +172,7 @@ function TableLandingContent({
     }
   }, [tenantSlug, tableId, token, tableContext]);
 
-  // No token provided
+  // No token provided (neither from URL nor storage)
   if (!token) {
     return <MissingTokenError />;
   }

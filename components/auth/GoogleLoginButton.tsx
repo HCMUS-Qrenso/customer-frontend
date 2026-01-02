@@ -44,4 +44,3 @@ export function GoogleLoginButton({ className }: GoogleLoginButtonProps) {
     </button>
   );
 }
-

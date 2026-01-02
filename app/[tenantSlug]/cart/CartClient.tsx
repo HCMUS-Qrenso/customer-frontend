@@ -3,7 +3,14 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Plus, Trash2, ArrowLeft, Loader2, Info } from "lucide-react";
+import {
+  ShoppingCart,
+  Plus,
+  Trash2,
+  ArrowLeft,
+  Loader2,
+  Info,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
@@ -19,10 +26,7 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { orderApi } from "@/lib/api/order";
 import { tableSessionApi } from "@/lib/api/table-session";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
-import {
-  setSessionToken,
-  getSessionToken,
-} from "@/lib/stores/qr-token-store";
+import { setSessionToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { saveReturnUrl } from "@/lib/utils/return-url";
 
@@ -35,7 +39,7 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
-  
+
   // Use Zustand cart store
   const cartItems = useCartStore((state) => state.items);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
@@ -47,7 +51,6 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   // Loading and error states for order creation
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   // Store QR token for API requests
   useQrToken(token, tableId);
@@ -72,7 +75,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   }, [token]);
 
   // Header subtitle with table number
-  const headerSubtitle = tableNumber ? `${tenantSlug} • Bàn ${tableNumber}` : tenantSlug;
+  const headerSubtitle = tableNumber
+    ? `${tenantSlug} • Bàn ${tableNumber}`
+    : tenantSlug;
 
   // Fetch top 5 popular items for upsell
   const { data: popularItemsData, isLoading: popularLoading } = useMenuQuery({
@@ -86,13 +91,14 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
     if (!popularItemsData?.data?.menu_items) return [];
     // Filter out items already in cart
     const cartItemIds = new Set(cartItems.map((i) => i.menuItemId));
-    return popularItemsData.data.menu_items.filter((item) => !cartItemIds.has(item.id));
+    return popularItemsData.data.menu_items.filter(
+      (item) => !cartItemIds.has(item.id),
+    );
   }, [popularItemsData, cartItems]);
 
-  const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
-
-
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const orderHref = `/${tenantSlug}/my-order`;
 
   // Handle quantity update
   const handleUpdateQuantity = (menuItemId: string, delta: number) => {
@@ -159,12 +165,15 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
           tableCode: tableId || "",
           preferredLanguage: "vi",
         });
-        
+
         // Backend returns session_token in data object
         sessionToken = sessionResult.data?.session_token;
         if (sessionToken) {
           setSessionToken(sessionToken);
-          console.log("[Cart] Session started, token saved:", sessionToken.substring(0, 20) + "...");
+          console.log(
+            "[Cart] Session started, token saved:",
+            sessionToken.substring(0, 20) + "...",
+          );
         } else {
           console.error("[Cart] No session token in response:", sessionResult);
           throw new Error("Failed to start session - no token returned");
@@ -175,34 +184,51 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       let orderResult;
       try {
         // First, try to create a new order
-        console.log("[Cart] Attempting to create order with", cartItems.length, "items");
+        console.log(
+          "[Cart] Attempting to create order with",
+          cartItems.length,
+          "items",
+        );
         orderResult = await orderApi.createOrder(cartItems);
       } catch (createError: any) {
         // If error is "already has active order", get the order and add items
-        if (createError.message?.includes("already has an active order") || 
-            createError.message?.includes("active order")) {
-          console.log("[Cart] Table has active order, fetching order to add items...");
+        if (
+          createError.message?.includes("already has an active order") ||
+          createError.message?.includes("active order")
+        ) {
+          console.log(
+            "[Cart] Table has active order, fetching order to add items...",
+          );
           try {
             const existingOrder = await orderApi.getMyOrder();
             if (existingOrder.success && existingOrder.data) {
-              console.log("[Cart] Found order:", existingOrder.data.orderNumber, "- Adding items...");
-              orderResult = await orderApi.addItemsToOrder(existingOrder.data.id, cartItems);
+              console.log(
+                "[Cart] Found order:",
+                existingOrder.data.orderNumber,
+                "- Adding items...",
+              );
+              orderResult = await orderApi.addItemsToOrder(
+                existingOrder.data.id,
+                cartItems,
+              );
             } else {
               throw new Error("Không thể tìm thấy đơn hàng hiện tại");
             }
           } catch (addError: any) {
             console.error("[Cart] Failed to add items to order:", addError);
-            throw new Error("Không thể thêm món vào đơn hàng: " + addError.message);
+            throw new Error(
+              "Không thể thêm món vào đơn hàng: " + addError.message,
+            );
           }
         } else {
           // Re-throw other errors
           throw createError;
         }
       }
-      
+
       if (orderResult?.success && orderResult?.data) {
         console.log("[Cart] Order processed:", orderResult.data.orderNumber);
-        
+
         // Step 3: Clear cart and redirect
         clearCart();
         router.push(orderHref);
@@ -228,7 +254,11 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col transition-colors">
-        <PageHeader title={t.cart.title} subtitle={headerSubtitle} backHref={menuHref} />
+        <PageHeader
+          title={t.cart.title}
+          subtitle={headerSubtitle}
+          backHref={menuHref}
+        />
 
         {/* Empty State */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -286,13 +316,15 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
           <div className="flex flex-col gap-4">
             {cartItems.map((item) => (
               <CartItemCard
-                key={`${item.menuItemId}-${item.selectedModifiers?.map(m => m.modifierId).join(',')}`}
+                key={`${item.menuItemId}-${item.selectedModifiers?.map((m) => m.modifierId).join(",")}`}
                 item={item}
                 onUpdateQuantity={(delta) =>
                   handleUpdateQuantity(item.menuItemId, delta)
                 }
                 onRemove={() => handleRemoveItem(item.menuItemId)}
-                onUpdateNotes={(notes) => handleUpdateNotes(item.menuItemId, notes)}
+                onUpdateNotes={(notes) =>
+                  handleUpdateNotes(item.menuItemId, notes)
+                }
               />
             ))}
           </div>

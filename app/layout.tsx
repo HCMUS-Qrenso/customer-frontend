@@ -32,13 +32,13 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>{children}</QueryProvider>
-          <Toaster 
-            position="top-center" 
-            richColors 
+          <Toaster
+            position="top-center"
+            richColors
             closeButton
             toastOptions={{
               classNames: {
-                toast: 'font-sans',
+                toast: "font-sans",
               },
             }}
           />
@@ -47,4 +47,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -3,9 +3,9 @@
  * Zustand store for managing cart items with localStorage persistence
  */
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { CartItemDTO } from '@/lib/types/menu';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { CartItemDTO } from "@/lib/types/menu";
 
 interface CartState {
   items: CartItemDTO[];
@@ -14,8 +14,16 @@ interface CartState {
 interface CartActions {
   addItem: (item: CartItemDTO) => void;
   removeItem: (menuItemId: string, modifiersKey?: string) => void;
-  updateQuantity: (menuItemId: string, quantity: number, modifiersKey?: string) => void;
-  updateItemNotes: (menuItemId: string, notes: string, modifiersKey?: string) => void;
+  updateQuantity: (
+    menuItemId: string,
+    quantity: number,
+    modifiersKey?: string,
+  ) => void;
+  updateItemNotes: (
+    menuItemId: string,
+    notes: string,
+    modifiersKey?: string,
+  ) => void;
   clearCart: () => void;
   getItemCount: () => number;
   getSubtotal: () => number;
@@ -28,10 +36,11 @@ type CartStore = CartState & CartActions;
  * This allows same item with different modifiers to be separate cart entries
  */
 function getItemKey(item: CartItemDTO): string {
-  const modifiersKey = item.selectedModifiers
-    ?.map(m => m.modifierId)
-    .sort()
-    .join(',') || '';
+  const modifiersKey =
+    item.selectedModifiers
+      ?.map((m) => m.modifierId)
+      .sort()
+      .join(",") || "";
   return `${item.menuItemId}:${modifiersKey}`;
 }
 
@@ -39,7 +48,8 @@ function getItemKey(item: CartItemDTO): string {
  * Calculate total price for a cart item based on base price, modifiers, and quantity
  */
 function calculateItemTotal(item: CartItemDTO): number {
-  const modifiersTotal = item.selectedModifiers?.reduce((sum, m) => sum + m.price, 0) || 0;
+  const modifiersTotal =
+    item.selectedModifiers?.reduce((sum, m) => sum + m.price, 0) || 0;
   return (item.basePrice + modifiersTotal) * item.quantity;
 }
 
@@ -52,7 +62,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const newItemKey = getItemKey(newItem);
           const existingIndex = state.items.findIndex(
-            (item) => getItemKey(item) === newItemKey
+            (item) => getItemKey(item) === newItemKey,
           );
 
           if (existingIndex >= 0) {
@@ -63,7 +73,10 @@ export const useCartStore = create<CartStore>()(
             updatedItems[existingIndex] = {
               ...existingItem,
               quantity: newQuantity,
-              totalPrice: calculateItemTotal({ ...existingItem, quantity: newQuantity }),
+              totalPrice: calculateItemTotal({
+                ...existingItem,
+                quantity: newQuantity,
+              }),
             };
             return { items: updatedItems };
           }
@@ -113,7 +126,11 @@ export const useCartStore = create<CartStore>()(
                 ? `${menuItemId}:${modifiersKey}`
                 : menuItemId;
 
-              if (modifiersKey ? itemKey === targetKey : item.menuItemId === menuItemId) {
+              if (
+                modifiersKey
+                  ? itemKey === targetKey
+                  : item.menuItemId === menuItemId
+              ) {
                 return {
                   ...item,
                   quantity,
@@ -134,7 +151,11 @@ export const useCartStore = create<CartStore>()(
               ? `${menuItemId}:${modifiersKey}`
               : menuItemId;
 
-            if (modifiersKey ? itemKey === targetKey : item.menuItemId === menuItemId) {
+            if (
+              modifiersKey
+                ? itemKey === targetKey
+                : item.menuItemId === menuItemId
+            ) {
               return { ...item, notes };
             }
             return item;
@@ -155,11 +176,11 @@ export const useCartStore = create<CartStore>()(
       },
     }),
     {
-      name: 'qrenso-cart',
+      name: "qrenso_cart",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ items: state.items }),
-    }
-  )
+    },
+  ),
 );
 
 // ============================================
@@ -167,5 +188,7 @@ export const useCartStore = create<CartStore>()(
 // ============================================
 
 export const useCartItems = () => useCartStore((state) => state.items);
-export const useCartItemCount = () => useCartStore((state) => state.getItemCount());
-export const useCartSubtotal = () => useCartStore((state) => state.getSubtotal());
+export const useCartItemCount = () =>
+  useCartStore((state) => state.getItemCount());
+export const useCartSubtotal = () =>
+  useCartStore((state) => state.getSubtotal());

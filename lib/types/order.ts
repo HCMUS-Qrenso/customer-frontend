@@ -34,4 +34,3 @@ export interface OrderDTO {
   total: number;
   createdAt: string;
 }
-

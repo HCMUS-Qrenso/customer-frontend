@@ -13,8 +13,8 @@ let sessionToken: string | null = null;
 // QR Token (from URL, persisted to sessionStorage)
 // ============================================
 
-const QR_TOKEN_KEY = 'qrenso_qr_token';
-const TABLE_ID_KEY = 'qrenso_table_id';
+const QR_TOKEN_KEY = "qrenso_qr_token";
+const TABLE_ID_KEY = "qrenso_table_id";
 
 /**
  * Store the QR token from URL (persisted to sessionStorage)
@@ -22,7 +22,7 @@ const TABLE_ID_KEY = 'qrenso_table_id';
  */
 export function setQrToken(token: string | null): void {
   qrToken = token;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     if (token) {
       sessionStorage.setItem(QR_TOKEN_KEY, token);
     } else {
@@ -36,8 +36,12 @@ export function setQrToken(token: string | null): void {
  * @returns The stored QR token or null
  */
 export function getQrToken(): string | null {
-  if (!qrToken && typeof window !== 'undefined') {
-    qrToken = sessionStorage.getItem(QR_TOKEN_KEY);
+  // Always read from sessionStorage to ensure we have latest value
+  // This handles cases where sessionStorage is restored (e.g., browser back/forward)
+  if (typeof window !== "undefined") {
+    const stored = sessionStorage.getItem(QR_TOKEN_KEY);
+    qrToken = stored;
+    return stored;
   }
   return qrToken;
 }
@@ -47,7 +51,7 @@ export function getQrToken(): string | null {
  */
 export function clearQrToken(): void {
   qrToken = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     sessionStorage.removeItem(QR_TOKEN_KEY);
   }
 }
@@ -62,7 +66,7 @@ export function clearQrToken(): void {
  */
 export function setTableId(id: string | null): void {
   tableId = id;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     if (id) {
       sessionStorage.setItem(TABLE_ID_KEY, id);
     } else {
@@ -75,8 +79,12 @@ export function setTableId(id: string | null): void {
  * Get the current table ID (from memory or sessionStorage)
  */
 export function getTableId(): string | null {
-  if (!tableId && typeof window !== 'undefined') {
-    tableId = sessionStorage.getItem(TABLE_ID_KEY);
+  // Always read from sessionStorage to ensure we have latest value
+  // This handles cases where sessionStorage is restored (e.g., browser back/forward)
+  if (typeof window !== "undefined") {
+    const stored = sessionStorage.getItem(TABLE_ID_KEY);
+    tableId = stored;
+    return stored;
   }
   return tableId;
 }
@@ -86,7 +94,7 @@ export function getTableId(): string | null {
  */
 export function clearTableId(): void {
   tableId = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     sessionStorage.removeItem(TABLE_ID_KEY);
   }
 }
@@ -95,7 +103,7 @@ export function clearTableId(): void {
 // Session Token (from API, persisted to localStorage)
 // ============================================
 
-const SESSION_TOKEN_KEY = 'qrenso_session_token';
+const SESSION_TOKEN_KEY = "qrenso_session_token";
 
 /**
  * Store the session token (persisted to localStorage)
@@ -103,7 +111,7 @@ const SESSION_TOKEN_KEY = 'qrenso_session_token';
  */
 export function setSessionToken(token: string | null): void {
   sessionToken = token;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     if (token) {
       localStorage.setItem(SESSION_TOKEN_KEY, token);
     } else {
@@ -116,8 +124,12 @@ export function setSessionToken(token: string | null): void {
  * Get the current session token (from memory or localStorage)
  */
 export function getSessionToken(): string | null {
-  if (!sessionToken && typeof window !== 'undefined') {
-    sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+  // Always read from localStorage to ensure we have latest value
+  // This handles cases where localStorage is restored (e.g., browser back/forward)
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem(SESSION_TOKEN_KEY);
+    sessionToken = stored;
+    return stored;
   }
   return sessionToken;
 }
@@ -127,7 +139,7 @@ export function getSessionToken(): string | null {
  */
 export function clearSessionToken(): void {
   sessionToken = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     localStorage.removeItem(SESSION_TOKEN_KEY);
   }
 }

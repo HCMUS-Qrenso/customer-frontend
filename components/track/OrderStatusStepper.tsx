@@ -4,7 +4,15 @@ import { Check, CookingPot, Bell, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
 
 // Order status from API
-type OrderStatus = "pending" | "accepted" | "in_progress" | "ready" | "served" | "completed" | "cancelled" | "rejected";
+type OrderStatus =
+  | "pending"
+  | "accepted"
+  | "in_progress"
+  | "ready"
+  | "served"
+  | "completed"
+  | "cancelled"
+  | "rejected";
 
 interface OrderStatusStepperProps {
   currentStatus: OrderStatus;
@@ -23,27 +31,41 @@ export function OrderStatusStepper({ currentStatus }: OrderStatusStepperProps) {
   // Map API status to stepper position
   const getStepperStatus = (apiStatus: OrderStatus): string => {
     switch (apiStatus) {
-      case "pending": return "pending";
-      case "accepted": return "accepted";
-      case "in_progress": return "preparing";
-      case "ready": return "ready";
-      case "served": return "served";
-      case "completed": return "served";
+      case "pending":
+        return "pending";
+      case "accepted":
+        return "accepted";
+      case "in_progress":
+        return "preparing";
+      case "ready":
+        return "ready";
+      case "served":
+        return "served";
+      case "completed":
+        return "served";
       case "cancelled":
-      case "rejected": return "cancelled";
-      default: return "pending";
+      case "rejected":
+        return "cancelled";
+      default:
+        return "pending";
     }
   };
 
   const getStatusLabel = (apiStatus: OrderStatus): string => {
     switch (apiStatus) {
-      case "pending": return t.track.pending;
-      case "accepted": return t.track.accepted;
-      case "in_progress": return t.track.cooking;
-      case "ready": return t.track.ready;
+      case "pending":
+        return t.track.pending;
+      case "accepted":
+        return t.track.accepted;
+      case "in_progress":
+        return t.track.cooking;
+      case "ready":
+        return t.track.ready;
       case "served":
-      case "completed": return t.track.served;
-      default: return "";
+      case "completed":
+        return t.track.served;
+      default:
+        return "";
     }
   };
 
@@ -79,7 +101,10 @@ export function OrderStatusStepper({ currentStatus }: OrderStatusStepperProps) {
             const isLast = index === steps.length - 1;
 
             return (
-              <div key={step.id} className="flex items-center flex-1 last:flex-none">
+              <div
+                key={step.id}
+                className="flex items-center flex-1 last:flex-none"
+              >
                 {/* Icon circle */}
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${

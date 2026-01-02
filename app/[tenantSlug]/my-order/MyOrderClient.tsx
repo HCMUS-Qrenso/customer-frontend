@@ -26,6 +26,7 @@ interface MyOrderClientProps {
   tenantSlug: string;
   tableId?: string;
   token?: string;
+  orderId?: string; // For viewing order from history
 }
 
 /**
@@ -58,7 +59,12 @@ function transformOrderResponse(data: OrderResponse["data"]): OrderDTO | null {
   };
 }
 
-function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
+function MyOrderContent({
+  tenantSlug,
+  tableId,
+  token,
+  orderId,
+}: MyOrderClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
 
@@ -70,8 +76,8 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [copied, setCopied] = useState(false);
 
-  // Store QR token and table ID
-  useQrToken(token, tableId);
+  // Store QR token and table ID (only if not viewing from history)
+  useQrToken(orderId ? undefined : token, orderId ? undefined : tableId);
 
   // Decode token to get table number
   const tableNumber = useMemo(() => {
@@ -80,9 +86,11 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
     return payload?.tableNumber || null;
   }, [token]);
 
-  // URLs
-  const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const billHref = `/${tenantSlug}/bill?table=${tableId}&token=${token}`;
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const billHref = `/${tenantSlug}/bill`;
+  const ordersHistoryHref = `/${tenantSlug}/my-orders`;
+  const backHref = orderId ? ordersHistoryHref : menuHref;
 
   // Subtitle for header
   const headerSubtitle = tableNumber
@@ -102,7 +110,11 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
   const fetchOrder = useCallback(async () => {
     try {
       setError(null);
-      const result = await orderApi.getMyOrder();
+      // If orderId is provided, fetch specific order from history
+      // Otherwise, fetch current order from session
+      const result = orderId
+        ? await orderApi.getMyOrderById(orderId)
+        : await orderApi.getMyOrder();
 
       if (result.success && result.data) {
         const transformedOrder = transformOrderResponse(result.data);
@@ -128,21 +140,21 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [orderId]);
 
   // Initial fetch
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
 
-  // WebSocket for real-time updates
-  const { isConnected } = useOrderSocket(order?.id || null, {
+  // WebSocket for real-time updates (only for active orders, not history)
+  const { isConnected } = useOrderSocket(orderId ? null : order?.id || null, {
     onOrderUpdated: (data) => {
       console.log("[MyOrder] Order updated:", data);
       if (data.id === order?.id) {
         // Update status from WebSocket, no REST refetch needed
         setOrder((prev) =>
-          prev ? { ...prev, status: data.status as OrderStatus } : prev
+          prev ? { ...prev, status: data.status as OrderStatus } : prev,
         );
         setLastUpdated(new Date());
       }
@@ -156,9 +168,9 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
             items: batch.items.map((item) =>
               item.id === data.itemId
                 ? { ...item, status: data.status as OrderItemStatus }
-                : item
+                : item,
             ),
-          }))
+          })),
         );
         setLastUpdated(new Date());
       }
@@ -172,7 +184,7 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         <PageHeader
           title={t.order.title}
           subtitle={headerSubtitle}
-          onBack={() => router.push(menuHref)}
+          backHref={backHref}
           maxWidth="full"
         />
         <main className="px-4 py-6 max-w-[1400px] mx-auto space-y-4">
@@ -191,7 +203,7 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         <PageHeader
           title={t.order.title}
           subtitle={headerSubtitle}
-          onBack={() => router.push(menuHref)}
+          backHref={backHref}
           maxWidth="full"
         />
         <main className="flex-1 flex flex-col items-center justify-center py-16 px-6">
@@ -213,7 +225,7 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         <PageHeader
           title={t.order.title}
           subtitle={headerSubtitle}
-          onBack={() => router.push(menuHref)}
+          backHref={backHref}
           maxWidth="full"
         />
         <main className="flex-1 flex flex-col items-center justify-center py-16 px-6">
@@ -240,23 +252,25 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
       <PageHeader
         title={t.order.title}
         subtitle={headerSubtitle}
-        onBack={() => router.push(menuHref)}
+        backHref={backHref}
         maxWidth="full"
         rightContent={
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs">
-              {isConnected ? (
-                <>
-                  <Wifi className="size-3.5 text-emerald-500" />
-                  <span className="text-emerald-500">Live</span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="size-3.5 text-slate-400" />
-                  <span className="text-slate-400">Offline</span>
-                </>
-              )}
-            </div>
+            {!orderId && (
+              <div className="flex items-center gap-1.5 text-xs">
+                {isConnected ? (
+                  <>
+                    <Wifi className="size-3.5 text-emerald-500" />
+                    <span className="text-emerald-500">Live</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="size-3.5 text-slate-400" />
+                    <span className="text-slate-400">Offline</span>
+                  </>
+                )}
+              </div>
+            )}
             <UserAvatar />
           </div>
         }
@@ -304,15 +318,17 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         </div>
       </main>
 
-      {/* Sticky CTA - Single button */}
-      <MobileStickyBar>
-        <Link href={billHref} className="w-full">
-          <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2">
-            <Receipt className="size-5" />
-            {t.order.requestBill}
-          </Button>
-        </Link>
-      </MobileStickyBar>
+      {/* Sticky CTA - Only show for active orders, not history */}
+      {!orderId && (
+        <MobileStickyBar>
+          <Link href={billHref} className="w-full">
+            <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2">
+              <Receipt className="size-5" />
+              {t.order.requestBill}
+            </Button>
+          </Link>
+        </MobileStickyBar>
+      )}
     </div>
   );
 }

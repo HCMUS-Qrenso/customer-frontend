@@ -29,7 +29,7 @@ interface UseAuthReturn {
   login: (
     email: string,
     password: string,
-    rememberMe?: boolean
+    rememberMe?: boolean,
   ) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
@@ -85,7 +85,7 @@ export function useAuth(options: UseAuthOptions = {}): UseAuthReturn {
         setLoading(false);
       }
     },
-    [loginStore, setLoading]
+    [loginStore, setLoading],
   );
 
   /**

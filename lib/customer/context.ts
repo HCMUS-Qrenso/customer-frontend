@@ -23,7 +23,7 @@ export function getCustomerContext(
   searchParams: GetCustomerContextSearchParams,
 ): CustomerContextResult {
   const { tenantSlug } = params;
-  
+
   // Try URL params first, then fallback to sessionStorage
   const table = searchParams.table || getTableId();
   const token = searchParams.token || getQrToken();
@@ -56,34 +56,28 @@ interface CustomerHrefCtx {
 }
 
 /**
- * Builds a URL with customer context params
- * Falls back to sessionStorage values if ctx params are undefined
+ * Builds a URL without customer context params
+ * Table/token are stored in sessionStorage and don't need to be in URL
+ * This keeps URLs clean and secure (tokens are removed from URL anyway)
  */
 export function customerHref(
   tenantSlug: string,
   path: "menu" | "cart" | "item",
-  ctx?: CustomerHrefCtx,
+  _ctx?: CustomerHrefCtx, // Unused - kept for backward compatibility
   itemId?: string,
 ): string {
   const base = `/${tenantSlug}`;
-  
-  // Use ctx values or fallback to sessionStorage
-  const table = ctx?.table || getTableId() || "";
-  const token = ctx?.token || getQrToken() || "";
-  
-  // Only add params if we have valid values
-  const params = table && token ? `?table=${table}&token=${token}` : "";
 
+  // No need to add table/token params - they're in storage
+  // Pages will fallback to storage if URL params are missing
   switch (path) {
     case "menu":
-      return `${base}/menu${params}`;
+      return `${base}/menu`;
     case "cart":
-      return `${base}/cart${params}`;
+      return `${base}/cart`;
     case "item":
-      return itemId
-        ? `${base}/menu/${itemId}${params}`
-        : `${base}/menu${params}`;
+      return itemId ? `${base}/menu/${itemId}` : `${base}/menu`;
     default:
-      return `${base}${params}`;
+      return `${base}`;
   }
 }

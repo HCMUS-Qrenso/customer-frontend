@@ -3,7 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  Loader2,
+  ArrowLeft,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +20,11 @@ import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { authApi } from "@/lib/api/auth";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
-import { getReturnUrl, buildReturnUrlString, clearReturnUrl } from "@/lib/utils/return-url";
+import {
+  getReturnUrl,
+  buildReturnUrlString,
+  clearReturnUrl,
+} from "@/lib/utils/return-url";
 
 function LoginContent() {
   const router = useRouter();
@@ -28,9 +40,12 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(null);
 
   // Get returnUrl from URL params or localStorage
+  // searchParams.get() already decodes the value, so we don't need to decode again
   const urlReturnUrl = searchParams.get("returnUrl");
   const storedReturnUrl = getReturnUrl();
-  const returnUrl = urlReturnUrl || (storedReturnUrl ? buildReturnUrlString(storedReturnUrl) : "/");
+  const returnUrl =
+    urlReturnUrl ||
+    (storedReturnUrl ? buildReturnUrlString(storedReturnUrl) : "/");
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -63,13 +78,13 @@ function LoginContent() {
     try {
       setIsLoading(true);
       const response = await authApi.login({ email, password, rememberMe });
-      
+
       // Update auth store
       login(response.user, response.accessToken);
-      
+
       // Clear returnUrl from localStorage after successful login
       clearReturnUrl();
-      
+
       // Redirect to return URL
       router.push(returnUrl);
     } catch (err: any) {
@@ -157,7 +172,11 @@ function LoginContent() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -209,6 +228,30 @@ function LoginContent() {
           {/* Google Login */}
           <GoogleLoginButton />
 
+          {/* Guest Login Button */}
+          <Button
+            type="button"
+            onClick={() => {
+              // Extract tenantSlug from returnUrl if available, otherwise redirect to home
+              let redirectUrl = "/";
+              if (returnUrl && returnUrl !== "/") {
+                // Try to extract tenantSlug from returnUrl (format: /{tenantSlug}/...)
+                const match = returnUrl.match(/^\/([^/]+)/);
+                if (match) {
+                  redirectUrl = `/${match[1]}/menu`;
+                } else {
+                  redirectUrl = returnUrl;
+                }
+              }
+              router.push(redirectUrl);
+            }}
+            variant="outline"
+            className="w-full h-12 mt-3 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold rounded-xl"
+          >
+            <User className="size-4 mr-2" />
+            Tiếp tục với tư cách khách
+          </Button>
+
           {/* Register link */}
           <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
             {t.auth.noAccount}{" "}
@@ -232,4 +275,3 @@ export default function LoginPage() {
     </LanguageProvider>
   );
 }
-

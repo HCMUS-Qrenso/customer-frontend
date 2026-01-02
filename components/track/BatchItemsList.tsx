@@ -87,10 +87,12 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
                       {formatVND(item.price)}
                     </span>
                   </div>
-                  
+
                   {/* Status chip */}
                   <div className="flex items-center gap-1.5 mt-1">
-                    <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.color}`} />
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${statusInfo.color}`}
+                    />
                     <span className="text-xs text-slate-500 dark:text-slate-400">
                       {statusInfo.label}
                     </span>

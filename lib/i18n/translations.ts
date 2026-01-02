@@ -208,11 +208,13 @@ export const translations: Record<Language, Translations> = {
       loginButton: "Đăng nhập",
       registerButton: "Tạo tài khoản",
       loginSuccess: "Đăng nhập thành công!",
-      registerSuccess: "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+      registerSuccess:
+        "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
       loggingIn: "Đang đăng nhập...",
       registering: "Đang tạo tài khoản...",
       passwordMismatch: "Mật khẩu không khớp",
-      passwordRequirements: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+      passwordRequirements:
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
       emailRequired: "Vui lòng nhập email",
       passwordRequired: "Vui lòng nhập mật khẩu",
       fullNameRequired: "Vui lòng nhập họ tên",
@@ -396,11 +398,13 @@ export const translations: Record<Language, Translations> = {
       loginButton: "Sign in",
       registerButton: "Create account",
       loginSuccess: "Login successful!",
-      registerSuccess: "Registration successful! Please check your email to verify your account.",
+      registerSuccess:
+        "Registration successful! Please check your email to verify your account.",
       loggingIn: "Signing in...",
       registering: "Creating account...",
       passwordMismatch: "Passwords do not match",
-      passwordRequirements: "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
+      passwordRequirements:
+        "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
       emailRequired: "Please enter your email",
       passwordRequired: "Please enter your password",
       fullNameRequired: "Please enter your full name",

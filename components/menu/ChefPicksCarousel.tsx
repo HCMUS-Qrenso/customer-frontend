@@ -10,15 +10,11 @@ import { formatUSD } from "@/lib/format";
 interface ChefPicksCarouselProps {
   items: MenuItemDTO[];
   tenantSlug: string;
-  tableCode: string;
-  token: string;
 }
 
 export function ChefPicksCarousel({
   items,
   tenantSlug,
-  tableCode,
-  token,
 }: ChefPicksCarouselProps) {
   const { t } = useLanguage();
 
@@ -106,7 +102,7 @@ export function ChefPicksCarousel({
                 </div>
               ) : (
                 <Link
-                  href={`/${tenantSlug}/menu/${item.id}?table=${tableCode}&token=${token}`}
+                  href={`/${tenantSlug}/menu/${item.id}`}
                   className="group flex w-64 shrink-0 h-full snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
                 >
                   <div className="relative h-40 w-full overflow-hidden">

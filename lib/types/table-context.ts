@@ -11,6 +11,8 @@ export interface TableContextDTO {
   tenantName: string;
   tenantImage?: string;
   zoneName?: string;
+  session_token?: string; // Session token automatically created when verifying QR token
+  session_id?: string; // Session ID
 }
 
 /**

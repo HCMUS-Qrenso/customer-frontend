@@ -45,7 +45,9 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
               <span className="font-medium">
                 Giảm giá {order.voucherCode && `(${order.voucherCode})`}
               </span>
-              <span className="font-bold tabular-nums">-{formatVND(order.discount)}</span>
+              <span className="font-bold tabular-nums">
+                -{formatVND(order.discount)}
+              </span>
             </div>
           )}
         </div>

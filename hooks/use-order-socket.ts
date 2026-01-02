@@ -72,7 +72,7 @@ export interface UseOrderSocketReturn {
 
 export function useOrderSocket(
   orderId: string | null,
-  options: UseOrderSocketOptions = {}
+  options: UseOrderSocketOptions = {},
 ): UseOrderSocketReturn {
   const {
     onOrderUpdated,
@@ -132,7 +132,7 @@ export function useOrderSocket(
       if (response.success && response.data) {
         console.log(
           "[OrderSocket] REST sync complete, order:",
-          response.data.orderNumber
+          response.data.orderNumber,
         );
         // Notify listeners with the synced state
         callbacksRef.current.onOrderUpdated?.({
@@ -160,7 +160,7 @@ export function useOrderSocket(
         "[OrderSocket] Not connecting: enabled=",
         enabled,
         "hasToken=",
-        !!sessionToken
+        !!sessionToken,
       );
       return;
     }

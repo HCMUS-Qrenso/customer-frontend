@@ -4,7 +4,13 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ShoppingCart, Search, AlertTriangle, Loader2, ClipboardList } from "lucide-react";
+import {
+  ShoppingCart,
+  Search,
+  AlertTriangle,
+  Loader2,
+  ClipboardList,
+} from "lucide-react";
 import { MenuItemDTO, CartItemDTO } from "@/lib/types/menu";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
@@ -43,16 +49,22 @@ function LoadingMore() {
   );
 }
 
-function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: MenuClientProps) {
+function MenuContent({
+  tenantSlug,
+  tableId: propsTableId,
+  token: propsToken,
+}: MenuClientProps) {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string>("popularityScore");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  
+
   // Active order state
-  const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>(null);
+  const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>(
+    null,
+  );
   const [isCheckingOrder, setIsCheckingOrder] = useState(true);
 
   // Use props or fallback to persisted values from sessionStorage
@@ -75,8 +87,8 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
     return payload?.tableNumber || null;
   }, [token]);
 
-  // URLs
-  const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
+  // URLs (no need to include table/token params - they're in storage)
+  const orderHref = `/${tenantSlug}/my-order`;
 
   // Save returnUrl for redirect after login
   useEffect(() => {
@@ -85,7 +97,7 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
         tenantSlug,
         tableId,
         token,
-        path: '/menu',
+        path: "/menu",
       });
     }
   }, [tenantSlug, tableId, token]);
@@ -100,7 +112,7 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
         }
       } catch (err) {
         // No active order - that's fine
-        console.log('[Menu] No active order found');
+        console.log("[Menu] No active order found");
       } finally {
         setIsCheckingOrder(false);
       }
@@ -228,11 +240,11 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
       <PageHeader
         title={tenantSlug}
         subtitle={tableNumber ? `Bàn ${tableNumber}` : "Menu"}
-        backHref={`/${tenantSlug}?table=${tableId}&token=${token}`}
+        backHref={`/${tenantSlug}`}
         rightContent={
           <div className="flex items-center gap-2">
             <Link
-              href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}
+              href={`/${tenantSlug}/cart`}
               className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
             >
               <ShoppingCart className="size-5" />
@@ -319,12 +331,7 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
 
         {/* Chef Picks Carousel - Only show when not searching and no category selected */}
         {!searchQuery && !selectedCategory && chefPicks.length > 0 && (
-          <ChefPicksCarousel
-            items={chefPicks}
-            tenantSlug={tenantSlug}
-            tableCode={tableId || ""}
-            token={token || ""}
-          />
+          <ChefPicksCarousel items={chefPicks} tenantSlug={tenantSlug} />
         )}
         {menuLoading && items.length === 0 ? (
           // Initial loading skeleton
@@ -370,7 +377,7 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
                     key={item.id}
                     item={item}
                     onQuickAdd={handleQuickAdd}
-                    href={`/${tenantSlug}/menu/${item.id}?table=${tableId}&token=${token}`}
+                    href={`/${tenantSlug}/menu/${item.id}`}
                   />
                 ))}
               </div>
@@ -395,33 +402,46 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
       {/* Sticky Cart Bar */}
       {cartItemCount > 0 && (
         <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[480px] -translate-x-1/2 px-4 pb-[calc(env(safe-area-inset-bottom,16px)+16px)] lg:max-w-2xl">
-          <Link href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}>
+          <Link href={`/${tenantSlug}/cart`}>
             <Button className="flex h-14 w-full items-center justify-between rounded-full bg-emerald-500 px-4 text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-600 active:scale-[0.98]">
               <div className="flex items-center gap-3">
                 {/* Stacked Avatars */}
                 <div className="flex items-center">
-                  {cartItems.slice(0, 5).map((item, index) => (
-                    <div
-                      key={item.menuItemId}
-                      className="relative size-8 rounded-full border-2 border-emerald-500 bg-white overflow-hidden"
-                      style={{
-                        marginLeft: index === 0 ? 0 : -12,
-                        zIndex: 10 - index,
-                      }}
-                    >
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.menuItemName}
-                          className="size-full object-cover"
-                        />
-                      ) : (
-                        <div className="size-full bg-emerald-200 flex items-center justify-center text-emerald-700 text-xs font-bold">
-                          {item.menuItemName.charAt(0)}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  {cartItems.slice(0, 5).map((item, index) => {
+                    // Create unique key based on menuItemId and modifiers to avoid duplicate keys
+                    // Same item with different modifiers should have different keys
+                    const modifiersKey =
+                      item.selectedModifiers
+                        ?.map((m) => m.modifierId)
+                        .sort()
+                        .join(",") || "";
+                    const uniqueKey = modifiersKey
+                      ? `${item.menuItemId}-${modifiersKey}`
+                      : `${item.menuItemId}-${index}`;
+
+                    return (
+                      <div
+                        key={uniqueKey}
+                        className="relative size-8 rounded-full border-2 border-emerald-500 bg-white overflow-hidden"
+                        style={{
+                          marginLeft: index === 0 ? 0 : -12,
+                          zIndex: 10 - index,
+                        }}
+                      >
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.menuItemName}
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <div className="size-full bg-emerald-200 flex items-center justify-center text-emerald-700 text-xs font-bold">
+                            {item.menuItemName.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   {cartItems.length > 5 && (
                     <div
                       className="relative size-8 rounded-full border-2 border-emerald-500 bg-emerald-700 flex items-center justify-center text-white text-xs font-bold"

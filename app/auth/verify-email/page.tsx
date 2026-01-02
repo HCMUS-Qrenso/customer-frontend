@@ -14,7 +14,7 @@ function VerifyEmailContent() {
   const { t } = useLanguage();
 
   const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
+    "loading",
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -35,7 +35,7 @@ function VerifyEmailContent() {
         // Call API to verify email
         const response = await authApi.verifyEmail(
           decodeURIComponent(emailParam),
-          token
+          token,
         );
 
         setStatus("success");
@@ -44,7 +44,7 @@ function VerifyEmailContent() {
         setStatus("error");
         setErrorMessage(
           err.message ||
-            "Link xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."
+            "Link xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.",
         );
       }
     };

@@ -72,6 +72,50 @@ export interface OrderResponse {
   message?: string;
 }
 
+export interface OrderHistoryItem {
+  id: string;
+  orderNumber: string;
+  status: string;
+  priority: string;
+  paymentStatus: string;
+  table: {
+    id: string;
+    tableNumber: string;
+    zone?: { id: string; name: string };
+  };
+  tenant: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  items: {
+    id: string;
+    name: string;
+    quantity: number;
+    status: string;
+    subtotal: number;
+  }[];
+  itemCount: number;
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+  specialInstructions?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderHistoryResponse {
+  success: boolean;
+  data: OrderHistoryItem[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
 // ============================================
 // Helper Functions
 // ============================================
@@ -80,7 +124,7 @@ export interface OrderResponse {
  * Convert cart items to API payload format
  */
 function cartItemsToPayload(
-  cartItems: CartItemDTO[]
+  cartItems: CartItemDTO[],
 ): CreateOrderItemPayload[] {
   return cartItems.map((item) => ({
     menu_item_id: item.menuItemId,
@@ -104,7 +148,7 @@ export const orderApi = {
    */
   createOrder: async (
     cartItems: CartItemDTO[],
-    specialInstructions?: string
+    specialInstructions?: string,
   ): Promise<OrderResponse> => {
     const payload: CreateOrderPayload = {
       items: cartItemsToPayload(cartItems),
@@ -133,7 +177,7 @@ export const orderApi = {
    */
   addItemsToOrder: async (
     orderId: string,
-    cartItems: CartItemDTO[]
+    cartItems: CartItemDTO[],
   ): Promise<OrderResponse> => {
     const payload = {
       items: cartItemsToPayload(cartItems),
@@ -142,7 +186,7 @@ export const orderApi = {
     // apiClient interceptor automatically adds x-table-session-token header
     const { data } = await apiClient.post<OrderResponse>(
       `/orders/${orderId}/items`,
-      payload
+      payload,
     );
     return data;
   },
@@ -154,6 +198,41 @@ export const orderApi = {
   getOrder: async (orderId: string): Promise<OrderResponse> => {
     // apiClient interceptor automatically adds x-table-session-token header
     const { data } = await apiClient.get<OrderResponse>(`/orders/${orderId}`);
+    return data;
+  },
+
+  /**
+   * Get order by ID for authenticated customer (from order history)
+   * Requires JWT authentication (accessToken)
+   */
+  getMyOrderById: async (orderId: string): Promise<OrderResponse> => {
+    // apiClient interceptor automatically adds Authorization header with accessToken
+    const { data } = await apiClient.get<OrderResponse>(
+      `/orders/my-orders/${orderId}`,
+    );
+    return data;
+  },
+
+  /**
+   * Get order history for authenticated customer
+   * Requires JWT authentication (accessToken)
+   */
+  getMyOrders: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    payment_status?: string;
+    date_from?: string;
+    date_to?: string;
+    search?: string;
+    sort_by?: string;
+    sort_order?: "asc" | "desc";
+  }): Promise<OrderHistoryResponse> => {
+    // apiClient interceptor automatically adds Authorization header with accessToken
+    const { data } = await apiClient.get<OrderHistoryResponse>(
+      "/orders/my-orders",
+      { params },
+    );
     return data;
   },
 };

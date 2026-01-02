@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { getCustomerContext } from "@/lib/customer/context";
-import { InvalidSessionState } from "@/components/InvalidSessionState";
 import { ItemDetailClient } from "./ItemDetailClient";
 
 interface ItemDetailPageProps {
@@ -25,24 +23,15 @@ export default async function ItemDetailPage({
 }: ItemDetailPageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-
-  const ctxResult = getCustomerContext(
-    { tenantSlug: resolvedParams.tenantSlug },
-    resolvedSearchParams,
-  );
-
-  if (!ctxResult.success) {
-    return <InvalidSessionState type={ctxResult.error} />;
-  }
-
-  const { tenantSlug, tableId, token } = ctxResult.data;
-  const { itemId } = resolvedParams;
+  const { tenantSlug, itemId } = resolvedParams;
+  const { table, token } = resolvedSearchParams;
 
   return (
     <ItemDetailClient
       tenantSlug={tenantSlug}
       itemId={itemId}
-      ctx={{ table: tableId, token }}
+      tableId={table}
+      token={token}
     />
   );
 }
