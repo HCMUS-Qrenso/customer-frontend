@@ -7,6 +7,34 @@ export interface Translations {
   header: {
     currentTable: string;
   };
+  auth: {
+    login: string;
+    register: string;
+    logout: string;
+    loginTitle: string;
+    registerTitle: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    fullName: string;
+    rememberMe: string;
+    forgotPassword: string;
+    noAccount: string;
+    hasAccount: string;
+    orContinueWith: string;
+    googleLogin: string;
+    loginButton: string;
+    registerButton: string;
+    loginSuccess: string;
+    registerSuccess: string;
+    loggingIn: string;
+    registering: string;
+    passwordMismatch: string;
+    passwordRequirements: string;
+    emailRequired: string;
+    passwordRequired: string;
+    fullNameRequired: string;
+  };
   table: {
     active: string;
     activeDescription: string;
@@ -159,6 +187,35 @@ export const translations: Record<Language, Translations> = {
     // Header
     header: {
       currentTable: "Bàn hiện tại",
+    },
+    // Auth
+    auth: {
+      login: "Đăng nhập",
+      register: "Đăng ký",
+      logout: "Đăng xuất",
+      loginTitle: "Đăng nhập tài khoản",
+      registerTitle: "Tạo tài khoản mới",
+      email: "Email",
+      password: "Mật khẩu",
+      confirmPassword: "Xác nhận mật khẩu",
+      fullName: "Họ và tên",
+      rememberMe: "Ghi nhớ đăng nhập",
+      forgotPassword: "Quên mật khẩu?",
+      noAccount: "Chưa có tài khoản?",
+      hasAccount: "Đã có tài khoản?",
+      orContinueWith: "Hoặc tiếp tục với",
+      googleLogin: "Đăng nhập với Google",
+      loginButton: "Đăng nhập",
+      registerButton: "Tạo tài khoản",
+      loginSuccess: "Đăng nhập thành công!",
+      registerSuccess: "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+      loggingIn: "Đang đăng nhập...",
+      registering: "Đang tạo tài khoản...",
+      passwordMismatch: "Mật khẩu không khớp",
+      passwordRequirements: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+      emailRequired: "Vui lòng nhập email",
+      passwordRequired: "Vui lòng nhập mật khẩu",
+      fullNameRequired: "Vui lòng nhập họ tên",
     },
     // Table Info
     table: {
@@ -318,6 +375,35 @@ export const translations: Record<Language, Translations> = {
     // Header
     header: {
       currentTable: "Current Table",
+    },
+    // Auth
+    auth: {
+      login: "Login",
+      register: "Register",
+      logout: "Logout",
+      loginTitle: "Sign in to your account",
+      registerTitle: "Create a new account",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm password",
+      fullName: "Full name",
+      rememberMe: "Remember me",
+      forgotPassword: "Forgot password?",
+      noAccount: "Don't have an account?",
+      hasAccount: "Already have an account?",
+      orContinueWith: "Or continue with",
+      googleLogin: "Sign in with Google",
+      loginButton: "Sign in",
+      registerButton: "Create account",
+      loginSuccess: "Login successful!",
+      registerSuccess: "Registration successful! Please check your email to verify your account.",
+      loggingIn: "Signing in...",
+      registering: "Creating account...",
+      passwordMismatch: "Passwords do not match",
+      passwordRequirements: "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
+      emailRequired: "Please enter your email",
+      passwordRequired: "Please enter your password",
+      fullNameRequired: "Please enter your full name",
     },
     // Table Info
     table: {

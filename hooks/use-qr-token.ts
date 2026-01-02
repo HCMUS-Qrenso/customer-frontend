@@ -13,11 +13,17 @@ import {
  * Hook to store QR token and table ID from URL params
  * Persists to sessionStorage via qr-token-store
  * 
+ * SECURITY: Also removes token from URL to prevent leakage via:
+ * - Browser history
+ * - Referer headers to third-party resources
+ * - Server logs
+ * 
  * IMPORTANT: When a new QR token is scanned for a different table,
  * this hook will clear the old session token to prevent stale data.
  */
 export function useQrToken(token?: string, tableId?: string) {
   const hasInitialized = useRef(false);
+  const hasCleanedUrl = useRef(false);
 
   useEffect(() => {
     if (!token || !tableId) return;
@@ -46,5 +52,32 @@ export function useQrToken(token?: string, tableId?: string) {
     setTableId(tableId);
     
     hasInitialized.current = true;
+
+    // SECURITY: Remove token from URL immediately after storing
+    // This prevents token leakage via browser history, referer headers, etc.
+    if (!hasCleanedUrl.current && typeof window !== 'undefined') {
+      hasCleanedUrl.current = true;
+      
+      // Use setTimeout to ensure this runs after the component renders
+      // and token is securely stored
+      setTimeout(() => {
+        const url = new URL(window.location.href);
+        const hasToken = url.searchParams.has('token');
+        
+        if (hasToken) {
+          // Remove token from URL, keep other params like table
+          url.searchParams.delete('token');
+          
+          // Use replaceState to update URL without adding to history
+          window.history.replaceState(
+            window.history.state,
+            '',
+            url.pathname + url.search
+          );
+          
+          console.log('[useQrToken] Removed token from URL for security');
+        }
+      }, 0);
+    }
   }, [token, tableId]);
 }

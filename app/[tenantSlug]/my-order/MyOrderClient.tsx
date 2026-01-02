@@ -20,6 +20,7 @@ import { BatchItemsList } from "@/components/track/BatchItemsList";
 import { OrderSummaryCard } from "@/components/order/OrderSummaryCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 
 interface MyOrderClientProps {
   tenantSlug: string;
@@ -30,9 +31,9 @@ interface MyOrderClientProps {
 /**
  * Transform API response to frontend OrderDTO format
  */
-function transformOrderResponse(data: OrderResponse['data']): OrderDTO | null {
+function transformOrderResponse(data: OrderResponse["data"]): OrderDTO | null {
   if (!data) return null;
-  
+
   return {
     id: data.id,
     orderNumber: data.orderNumber,
@@ -43,7 +44,7 @@ function transformOrderResponse(data: OrderResponse['data']): OrderDTO | null {
       price: item.subtotal,
       quantity: item.quantity,
       image: item.menuItem.image,
-      modifiers: item.modifiers?.map(m => m.name).join(', '),
+      modifiers: item.modifiers?.map((m) => m.name).join(", "),
       note: item.specialInstructions,
       status: item.status as OrderStatus,
       addedAt: item.createdAt || new Date().toISOString(),
@@ -60,7 +61,7 @@ function transformOrderResponse(data: OrderResponse['data']): OrderDTO | null {
 function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
-  
+
   // State
   const [order, setOrder] = useState<OrderDTO | null>(null);
   const [batches, setBatches] = useState<OrderBatch[]>([]);
@@ -84,8 +85,8 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
   const billHref = `/${tenantSlug}/bill?table=${tableId}&token=${token}`;
 
   // Subtitle for header
-  const headerSubtitle = tableNumber 
-    ? `${tenantSlug} · Bàn ${tableNumber}` 
+  const headerSubtitle = tableNumber
+    ? `${tenantSlug} · Bàn ${tableNumber}`
     : tenantSlug;
 
   // Copy order number
@@ -102,7 +103,7 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
     try {
       setError(null);
       const result = await orderApi.getMyOrder();
-      
+
       if (result.success && result.data) {
         const transformedOrder = transformOrderResponse(result.data);
         setOrder(transformedOrder);
@@ -114,15 +115,15 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         setBatches([]);
       }
     } catch (err: any) {
-      console.error('[MyOrder] Fetch error:', err);
-      
-      if (err.statusCode === 403 || err.message?.includes('Forbidden')) {
-        setError('Phiên làm việc đã hết hạn. Vui lòng quét lại mã QR.');
+      console.error("[MyOrder] Fetch error:", err);
+
+      if (err.statusCode === 403 || err.message?.includes("Forbidden")) {
+        setError("Phiên làm việc đã hết hạn. Vui lòng quét lại mã QR.");
       } else if (err.statusCode === 404) {
         setOrder(null);
         setBatches([]);
       } else {
-        setError(err.message || 'Không thể tải thông tin đơn hàng');
+        setError(err.message || "Không thể tải thông tin đơn hàng");
       }
     } finally {
       setIsLoading(false);
@@ -137,15 +138,17 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
   // WebSocket for real-time updates
   const { isConnected } = useOrderSocket(order?.id || null, {
     onOrderUpdated: (data) => {
-      console.log('[MyOrder] Order updated:', data);
+      console.log("[MyOrder] Order updated:", data);
       if (data.id === order?.id) {
         // Update status from WebSocket, no REST refetch needed
-        setOrder((prev) => prev ? { ...prev, status: data.status as OrderStatus } : prev);
+        setOrder((prev) =>
+          prev ? { ...prev, status: data.status as OrderStatus } : prev
+        );
         setLastUpdated(new Date());
       }
     },
     onItemStatusChanged: (data) => {
-      console.log('[MyOrder] Item status changed:', data);
+      console.log("[MyOrder] Item status changed:", data);
       if (data.orderId === order?.id) {
         setBatches((prev) =>
           prev.map((batch) => ({
@@ -240,18 +243,21 @@ function MyOrderContent({ tenantSlug, tableId, token }: MyOrderClientProps) {
         onBack={() => router.push(menuHref)}
         maxWidth="full"
         rightContent={
-          <div className="flex items-center gap-1.5 text-xs">
-            {isConnected ? (
-              <>
-                <Wifi className="size-3.5 text-emerald-500" />
-                <span className="text-emerald-500">Live</span>
-              </>
-            ) : (
-              <>
-                <WifiOff className="size-3.5 text-slate-400" />
-                <span className="text-slate-400">Offline</span>
-              </>
-            )}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 text-xs">
+              {isConnected ? (
+                <>
+                  <Wifi className="size-3.5 text-emerald-500" />
+                  <span className="text-emerald-500">Live</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="size-3.5 text-slate-400" />
+                  <span className="text-slate-400">Offline</span>
+                </>
+              )}
+            </div>
+            <UserAvatar />
           </div>
         }
       />

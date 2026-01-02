@@ -18,12 +18,14 @@ import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { formatVND } from "@/lib/format";
 import { orderApi } from "@/lib/api/order";
+import { saveReturnUrl } from "@/lib/utils/return-url";
 import { ChefPicksCarousel } from "@/components/menu/ChefPicksCarousel";
 import { MenuItemCard } from "@/components/menu/MenuItemCard";
 import { MenuSearchBar } from "@/components/menu/MenuSearchBar";
 import { CategoryChips } from "@/components/menu/CategoryChips";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { LiveIndicator } from "@/components/shared/LiveIndicator";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -75,6 +77,18 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
 
   // URLs
   const orderHref = `/${tenantSlug}/my-order?table=${tableId}&token=${token}`;
+
+  // Save returnUrl for redirect after login
+  useEffect(() => {
+    if (tenantSlug && tableId && token) {
+      saveReturnUrl({
+        tenantSlug,
+        tableId,
+        token,
+        path: '/menu',
+      });
+    }
+  }, [tenantSlug, tableId, token]);
 
   // Check for active order on mount
   useEffect(() => {
@@ -216,15 +230,18 @@ function MenuContent({ tenantSlug, tableId: propsTableId, token: propsToken }: M
         subtitle={tableNumber ? `Bàn ${tableNumber}` : "Menu"}
         backHref={`/${tenantSlug}?table=${tableId}&token=${token}`}
         rightContent={
-          <Link
-            href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}
-            className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
-          >
-            <ShoppingCart className="size-5" />
-            {cartItemCount > 0 && (
-              <LiveIndicator size="sm" className="absolute right-1 top-1" />
-            )}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/${tenantSlug}/cart?table=${tableId}&token=${token}`}
+              className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+            >
+              <ShoppingCart className="size-5" />
+              {cartItemCount > 0 && (
+                <LiveIndicator size="sm" className="absolute right-1 top-1" />
+              )}
+            </Link>
+            <UserAvatar />
+          </div>
         }
         maxWidth="full"
         bottomBorder={false}

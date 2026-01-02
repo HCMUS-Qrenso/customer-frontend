@@ -14,6 +14,7 @@ import { CardPanel } from "@/components/checkout/CardPanel";
 import { OrderSummaryPanel } from "@/components/checkout/OrderSummaryPanel";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 
 interface CheckoutClientProps {
   tenantSlug: string;
@@ -52,11 +53,14 @@ function CheckoutContent({ tenantSlug, tableId, token }: CheckoutClientProps) {
         subtitle={`${t.checkout.table} ${tableId}`}
         backHref={cartHref}
         rightContent={
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 rounded-full text-emerald-600 dark:text-emerald-400 font-bold text-sm">
-            <Receipt className="size-4" />
-            <span>
-              {t.cart.total}: {formatVND(total)}
-            </span>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 rounded-full text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+              <Receipt className="size-4" />
+              <span>
+                {t.cart.total}: {formatVND(total)}
+              </span>
+            </div>
+            <UserAvatar />
           </div>
         }
       />

@@ -14,6 +14,7 @@ import { BillSummaryCard } from "@/components/bill/BillSummaryCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { OrderStatusCard } from "@/components/shared/OrderStatusCard";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 
 interface BillClientProps {
   tenantSlug: string;
@@ -37,6 +38,7 @@ function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
         title={t.bill.title}
         subtitle={`${tenantSlug} • ${t.checkout.table} ${tableId}`}
         onBack={() => router.back()}
+        rightContent={<UserAvatar />}
       />
 
       {/* Main Content */}

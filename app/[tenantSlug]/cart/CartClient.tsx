@@ -23,6 +23,8 @@ import {
   setSessionToken,
   getSessionToken,
 } from "@/lib/stores/qr-token-store";
+import { UserAvatar } from "@/components/auth/UserAvatar";
+import { saveReturnUrl } from "@/lib/utils/return-url";
 
 interface CartClientProps {
   tenantSlug: string;
@@ -49,6 +51,18 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
 
   // Store QR token for API requests
   useQrToken(token, tableId);
+
+  // Save returnUrl for redirect after login
+  useEffect(() => {
+    if (tenantSlug && tableId && token) {
+      saveReturnUrl({
+        tenantSlug,
+        tableId,
+        token,
+        path: "/cart",
+      });
+    }
+  }, [tenantSlug, tableId, token]);
 
   // Decode token to get table number
   const tableNumber = useMemo(() => {
@@ -244,14 +258,17 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
         backHref={menuHref}
         maxWidth="full"
         rightContent={
-          <button
-            onClick={handleClearCart}
-            disabled={isLoading}
-            className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
-          >
-            <Trash2 className="size-4" />
-            <span className="hidden sm:inline">{t.cart.clearAll}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleClearCart}
+              disabled={isLoading}
+              className="px-3 h-9 flex items-center justify-center gap-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+            >
+              <Trash2 className="size-4" />
+              <span className="hidden sm:inline">{t.cart.clearAll}</span>
+            </button>
+            <UserAvatar />
+          </div>
         }
       />
 

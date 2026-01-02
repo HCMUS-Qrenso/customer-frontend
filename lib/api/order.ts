@@ -1,11 +1,13 @@
 /**
  * Order API
  * API layer for order operations using session token
+ *
+ * Note: Session token is automatically added via apiClient interceptor
+ * using x-table-session-token header (v2.0)
  */
 
-import { apiClient } from './client';
-import { getSessionToken } from '@/lib/stores/qr-token-store';
-import type { CartItemDTO } from '@/lib/types/menu';
+import { apiClient } from "./client";
+import type { CartItemDTO } from "@/lib/types/menu";
 
 // ============================================
 // Request/Response Types
@@ -75,17 +77,11 @@ export interface OrderResponse {
 // ============================================
 
 /**
- * Create auth config with session token for API requests
- */
-function getAuthConfig() {
-  const token = getSessionToken();
-  return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-}
-
-/**
  * Convert cart items to API payload format
  */
-function cartItemsToPayload(cartItems: CartItemDTO[]): CreateOrderItemPayload[] {
+function cartItemsToPayload(
+  cartItems: CartItemDTO[]
+): CreateOrderItemPayload[] {
   return cartItems.map((item) => ({
     menu_item_id: item.menuItemId,
     quantity: item.quantity,
@@ -103,7 +99,8 @@ function cartItemsToPayload(cartItems: CartItemDTO[]): CreateOrderItemPayload[] 
 export const orderApi = {
   /**
    * Create a new order with cart items
-   * Requires session token
+   * Requires session token (automatically added via apiClient interceptor)
+   * Uses x-table-session-token header (v2.0)
    */
   createOrder: async (
     cartItems: CartItemDTO[],
@@ -114,28 +111,25 @@ export const orderApi = {
       special_instructions: specialInstructions,
     };
 
-    const { data } = await apiClient.post<OrderResponse>(
-      '/orders',
-      payload,
-      getAuthConfig()
-    );
+    // apiClient interceptor automatically adds x-table-session-token header
+    const { data } = await apiClient.post<OrderResponse>("/orders", payload);
     return data;
   },
 
   /**
    * Get current order for this session
    * Returns null if no active order exists
+   * Uses x-table-session-token header (v2.0)
    */
   getMyOrder: async (): Promise<OrderResponse> => {
-    const { data } = await apiClient.get<OrderResponse>(
-      '/orders/my-order',
-      getAuthConfig()
-    );
+    // apiClient interceptor automatically adds x-table-session-token header
+    const { data } = await apiClient.get<OrderResponse>("/orders/my-order");
     return data;
   },
 
   /**
    * Add items to an existing order
+   * Uses x-table-session-token header (v2.0)
    */
   addItemsToOrder: async (
     orderId: string,
@@ -145,22 +139,21 @@ export const orderApi = {
       items: cartItemsToPayload(cartItems),
     };
 
+    // apiClient interceptor automatically adds x-table-session-token header
     const { data } = await apiClient.post<OrderResponse>(
       `/orders/${orderId}/items`,
-      payload,
-      getAuthConfig()
+      payload
     );
     return data;
   },
 
   /**
    * Get order by ID (for order tracking)
+   * Uses x-table-session-token header (v2.0)
    */
   getOrder: async (orderId: string): Promise<OrderResponse> => {
-    const { data } = await apiClient.get<OrderResponse>(
-      `/orders/${orderId}`,
-      getAuthConfig()
-    );
+    // apiClient interceptor automatically adds x-table-session-token header
+    const { data } = await apiClient.get<OrderResponse>(`/orders/${orderId}`);
     return data;
   },
 };

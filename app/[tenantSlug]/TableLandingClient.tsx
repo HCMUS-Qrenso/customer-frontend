@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
@@ -8,6 +9,7 @@ import { TableHeroCard } from "@/components/TableHeroCard";
 import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { MapPin, AlertTriangle, CircleX } from "lucide-react";
@@ -133,6 +135,20 @@ function TableLandingContent({
   // Store the QR token and tableId for API requests and navigation
   useQrToken(tableContext ? token : undefined, tableContext ? tableId : undefined);
 
+  // Save returnUrl for redirect after login
+  useEffect(() => {
+    if (tenantSlug && tableId && token && tableContext) {
+      import("@/lib/utils/return-url").then(({ saveReturnUrl }) => {
+        saveReturnUrl({
+          tenantSlug,
+          tableId,
+          token,
+          path: "/menu", // Default to menu after landing
+        });
+      });
+    }
+  }, [tenantSlug, tableId, token, tableContext]);
+
   // No token provided
   if (!token) {
     return <MissingTokenError />;
@@ -186,6 +202,7 @@ function TableLandingContent({
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <LanguageToggle />
+          <UserAvatar />
         </div>
       </header>
 
