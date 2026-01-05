@@ -71,13 +71,36 @@ apiClient.interceptors.request.use(
 // Response interceptor - centralized error handling
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError<{ message?: string; error?: string }>) => {
+  async (error: AxiosError<{ message?: string; error?: string; code?: string }>) => {
     const originalRequest = error.config as typeof error.config & {
       _retry?: boolean;
     };
 
-    // Handle 401 Unauthorized - try to refresh token
+    // Handle 401 Unauthorized
     if (error.response?.status === 401 && !originalRequest?._retry) {
+      const errorCode = error.response?.data?.code;
+
+      // Check for session expired/not found errors
+      if (
+        errorCode === "SESSION_EXPIRED" ||
+        errorCode === "SESSION_NOT_FOUND"
+      ) {
+        // Clear session token from storage
+        const { clearSessionToken } = await import("@/lib/stores/qr-token-store");
+        clearSessionToken();
+
+        // Redirect to landing page with session_expired flag
+        // Only redirect if we're in the browser
+        if (typeof window !== "undefined") {
+          const pathParts = window.location.pathname.split("/");
+          const tenantSlug = pathParts[1]; // /{tenantSlug}/...
+          if (tenantSlug) {
+            window.location.href = `/${tenantSlug}?session_expired=true`;
+            return Promise.reject(error);
+          }
+        }
+      }
+
       const accessToken = getAccessToken();
 
       // Only attempt refresh if user was authenticated

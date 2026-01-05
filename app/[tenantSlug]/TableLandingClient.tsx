@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
@@ -12,12 +13,31 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
-import { MapPin, AlertTriangle, CircleX } from "lucide-react";
+import { MapPin, AlertTriangle, CircleX, Clock } from "lucide-react";
 import {
   setSessionToken,
   getQrToken,
   getTableId,
 } from "@/lib/stores/qr-token-store";
+
+// Session expired banner component
+function SessionExpiredBanner() {
+  return (
+    <div className="mb-4 flex items-center gap-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 p-4 border border-amber-200 dark:border-amber-500/20">
+      <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400">
+        <Clock className="size-5" />
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+          Phiên của bạn đã hết hạn
+        </p>
+        <p className="text-xs text-amber-600 dark:text-amber-400">
+          Vui lòng bắt đầu phiên mới để tiếp tục đặt món.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -133,6 +153,8 @@ function TableLandingContent({
   token: propsToken,
 }: TableLandingClientProps) {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
+  const isSessionExpired = searchParams.get("session_expired") === "true";
 
   // Use props or fallback to persisted values from sessionStorage
   // This handles the case when token is removed from URL after verification
@@ -231,6 +253,9 @@ function TableLandingContent({
 
       {/* Main Content */}
       <main className="relative z-10 flex flex-1 flex-col gap-6 px-5 pb-40 pt-2 sm:px-6">
+        {/* Session Expired Banner */}
+        {isSessionExpired && <SessionExpiredBanner />}
+
         <TableHeroCard
           tableNumber={table.tableNumber}
           capacity={table.capacity}
