@@ -27,7 +27,8 @@ const apiClient: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 10000, // 10 seconds timeout
-  withCredentials: true, // Important: send cookies for refresh token
+  // NOTE: withCredentials removed to prevent cookie conflict with admin frontend
+  // Cookies will be sent explicitly only for auth refresh endpoint
 });
 
 // Request interceptor - add tokens for API requests

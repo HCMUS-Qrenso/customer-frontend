@@ -66,6 +66,7 @@ export interface MenuItemDTO {
   allergens?: string[];
   category: MenuItemCategoryDTO;
   images: MenuItemImageDTO[];
+  modifier_groups?: { id: string; is_required: boolean }[];
   created_at: string;
   updated_at: string;
   // Display fields

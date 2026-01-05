@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -13,6 +14,7 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
+  const router = useRouter();
   const isUnavailable = item.status === "unavailable";
   const isSoldOut = item.status === "sold_out";
   const isDisabled = isUnavailable || isSoldOut;
@@ -22,11 +24,22 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
     item.images?.find((img) => img.is_primary) || item.images?.[0];
   const imageUrl = primaryImage?.image_url;
 
+  // Check if item has any required modifier groups
+  const hasRequiredModifiers = item.modifier_groups?.some(
+    (mg) => mg.is_required
+  );
+
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isDisabled && onQuickAdd) {
-      onQuickAdd(item);
+    if (!isDisabled) {
+      if (hasRequiredModifiers) {
+        // Navigate to detail page if item has required modifiers
+        router.push(href);
+      } else if (onQuickAdd) {
+        // Quick add directly if no required modifiers
+        onQuickAdd(item);
+      }
     }
   };
 

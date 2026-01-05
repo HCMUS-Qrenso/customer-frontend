@@ -42,7 +42,9 @@ export const authApi = {
    * POST /auth/login
    */
   login: async (payload: LoginRequest): Promise<AuthResponse> => {
-    const { data } = await apiClient.post<AuthResponse>("/auth/login", payload);
+    const { data } = await apiClient.post<AuthResponse>("/auth/login", payload, {
+      withCredentials: true, // Receive refresh token cookie
+    });
     return data;
   },
 
@@ -63,7 +65,9 @@ export const authApi = {
    * POST /auth/logout
    */
   logout: async (): Promise<MessageResponse> => {
-    const { data } = await apiClient.post<MessageResponse>("/auth/logout");
+    const { data } = await apiClient.post<MessageResponse>("/auth/logout", null, {
+      withCredentials: true, // Clear refresh token cookie
+    });
     return data;
   },
 
