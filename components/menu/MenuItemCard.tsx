@@ -26,7 +26,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
 
   // Check if item has any required modifier groups
   const hasRequiredModifiers = item.modifier_groups?.some(
-    (mg) => mg.is_required
+    (mg) => mg.is_required,
   );
 
   const handleQuickAdd = (e: React.MouseEvent) => {

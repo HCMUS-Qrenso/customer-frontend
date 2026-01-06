@@ -67,6 +67,9 @@ function MenuContent({
   );
   const [isCheckingOrder, setIsCheckingOrder] = useState(true);
 
+  // Track if component is mounted to avoid hydration mismatch
+  const [isMounted, setIsMounted] = useState(false);
+
   // Use props or fallback to persisted values from sessionStorage
   const tableId = propsTableId || getTableId() || undefined;
   const token = propsToken || getQrToken() || undefined;
@@ -90,8 +93,9 @@ function MenuContent({
   // URLs (no need to include table/token params - they're in storage)
   const orderHref = `/${tenantSlug}/my-order`;
 
-  // Save returnUrl for redirect after login
+  // Set mounted state and save returnUrl for redirect after login
   useEffect(() => {
+    setIsMounted(true);
     if (tenantSlug && tableId && token) {
       saveReturnUrl({
         tenantSlug,
@@ -239,7 +243,7 @@ function MenuContent({
       {/* Header */}
       <PageHeader
         title={tenantSlug}
-        subtitle={tableNumber ? `Bàn ${tableNumber}` : "Menu"}
+        subtitle={isMounted && tableNumber ? `Bàn ${tableNumber}` : "Menu"}
         backHref={`/${tenantSlug}`}
         rightContent={
           <div className="flex items-center gap-2">
