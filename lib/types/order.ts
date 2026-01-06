@@ -12,6 +12,7 @@ export type OrderStatus =
 export interface OrderItemDTO {
   id: string;
   name: string;
+  nameEn?: string;
   price: number;
   quantity: number;
   image?: string;
@@ -33,4 +34,5 @@ export interface OrderDTO {
   voucherCode?: string;
   total: number;
   createdAt: string;
+  tableId?: string;
 }
