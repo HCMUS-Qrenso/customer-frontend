@@ -13,6 +13,7 @@ import { useOrderSocket } from "@/hooks/use-order-socket";
 import { orderApi, type OrderResponse } from "@/lib/api/order";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { groupItemsIntoBatches } from "@/lib/utils/group-items";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderDTO, OrderStatus } from "@/lib/types/order";
 import type { OrderBatch, OrderItemStatus } from "@/lib/types/order-tracking";
 import { OrderStatusStepper } from "@/components/track/OrderStatusStepper";
@@ -31,8 +32,12 @@ interface MyOrderClientProps {
 
 /**
  * Transform API response to frontend OrderDTO format
+ * serviceChargeCalculator is passed in to use dynamic rate from tenant settings
  */
-function transformOrderResponse(data: OrderResponse["data"]): OrderDTO | null {
+function transformOrderResponse(
+  data: OrderResponse["data"],
+  serviceChargeCalculator: (subtotal: number) => number
+): OrderDTO | null {
   if (!data) return null;
 
   return {
@@ -51,7 +56,7 @@ function transformOrderResponse(data: OrderResponse["data"]): OrderDTO | null {
       addedAt: item.createdAt || new Date().toISOString(),
     })),
     subtotal: data.subtotal,
-    serviceCharge: Math.round(data.subtotal * 0.05),
+    serviceCharge: serviceChargeCalculator(data.subtotal),
     tax: data.taxAmount,
     discount: data.discountAmount,
     total: data.totalAmount,
@@ -67,6 +72,7 @@ function MyOrderContent({
 }: MyOrderClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
+  const { calculateServiceCharge } = useTenantSettings();
 
   // State
   const [order, setOrder] = useState<OrderDTO | null>(null);
@@ -117,7 +123,7 @@ function MyOrderContent({
         : await orderApi.getMyOrder();
 
       if (result.success && result.data) {
-        const transformedOrder = transformOrderResponse(result.data);
+        const transformedOrder = transformOrderResponse(result.data, calculateServiceCharge);
         setOrder(transformedOrder);
         const itemBatches = groupItemsIntoBatches(result.data.items);
         setBatches(itemBatches);

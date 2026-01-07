@@ -2,7 +2,7 @@
 
 import { UtensilsCrossed } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderBatch, OrderItemStatus } from "@/lib/types/order-tracking";
 
 interface BatchItemsListProps {
@@ -11,6 +11,7 @@ interface BatchItemsListProps {
 
 export function BatchItemsList({ batches }: BatchItemsListProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   const getStatusInfo = (status: OrderItemStatus) => {
     switch (status) {
@@ -84,7 +85,7 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
                       )}
                     </div>
                     <span className="text-sm font-semibold text-slate-900 dark:text-white shrink-0">
-                      {formatVND(item.price)}
+                      {formatPrice(item.price)}
                     </span>
                   </div>
 

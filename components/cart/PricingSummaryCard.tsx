@@ -3,7 +3,7 @@
 import { ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface PricingSummaryCardProps {
   itemCount: number;
@@ -19,6 +19,7 @@ export function PricingSummaryCard({
   isLoading = false,
 }: PricingSummaryCardProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   return (
     <div className="lg:sticky lg:top-24">
@@ -33,7 +34,7 @@ export function PricingSummaryCard({
               {t.cart.subtotal} ({itemCount} {t.cart.items})
             </span>
             <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(subtotal)}
+              {formatPrice(subtotal)}
             </span>
           </div>
 
@@ -50,7 +51,7 @@ export function PricingSummaryCard({
               </span>
             </div>
             <span className="text-2xl font-bold text-emerald-500">
-              {formatVND(subtotal)}
+              {formatPrice(subtotal)}
             </span>
           </div>
         </div>

@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { MenuItemDTO, CartItemDTO } from "@/lib/types/menu";
-import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useMenuQuery } from "@/hooks/use-menu-query";
 import { CartItemCard } from "@/components/cart/CartItemCard";
@@ -29,6 +28,7 @@ import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { setSessionToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { saveReturnUrl } from "@/lib/utils/return-url";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface CartClientProps {
   tenantSlug: string;
@@ -39,6 +39,7 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   // Use Zustand cart store
   const cartItems = useCartStore((state) => state.items);
@@ -362,7 +363,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
                     </h4>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs font-semibold text-emerald-500">
-                        {formatVND(item.base_price)}
+                        {formatPrice(item.base_price)}
                       </span>
                       <button
                         onClick={() => handleQuickAdd(item)}
@@ -407,7 +408,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
               </div>
             </div>
             <span className="text-xl font-bold text-emerald-500">
-              {formatVND(calculations.subtotal)}
+              {formatPrice(calculations.subtotal)}
             </span>
           </div>
           <Button

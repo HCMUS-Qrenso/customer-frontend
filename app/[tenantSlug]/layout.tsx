@@ -1,4 +1,5 @@
 import { Metadata, Viewport } from "next";
+import { TenantSettingsClientProvider } from "@/providers/tenant-settings-client-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -20,5 +21,11 @@ interface LayoutProps {
 }
 
 export default function TableLayout({ children }: LayoutProps) {
-  return <div className="min-h-[100svh] bg-slate-100">{children}</div>;
+  return (
+    <div className="min-h-[100svh] bg-slate-100">
+      <TenantSettingsClientProvider>
+        {children}
+      </TenantSettingsClientProvider>
+    </div>
+  );
 }

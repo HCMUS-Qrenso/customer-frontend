@@ -12,6 +12,7 @@ export type OrderStatus =
 export interface OrderItemDTO {
   id: string;
   name: string;
+  nameEn?: string;
   price: number;
   quantity: number;
   image?: string;
@@ -24,6 +25,7 @@ export interface OrderItemDTO {
 export interface OrderDTO {
   id: string;
   orderNumber: string;
+  tableId?: string;
   status: OrderStatus;
   items: OrderItemDTO[];
   subtotal: number;

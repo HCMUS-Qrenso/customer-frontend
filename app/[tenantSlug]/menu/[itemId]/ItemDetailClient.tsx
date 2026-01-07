@@ -18,12 +18,12 @@ import { ImageCarousel } from "@/components/shared/ImageCarousel";
 import { NutritionalInfo } from "@/components/menu/NutritionalInfo";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { ModifierGroup } from "@/components/menu/ModifierGroup";
-import { formatVND } from "@/lib/format";
 import { useMenuItemQuery } from "@/hooks/use-menu-query";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { toast } from "sonner";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { ModifierGroupDTO, CartItemDTO } from "@/lib/types/menu";
 
 interface ItemDetailClientProps {
@@ -40,6 +40,7 @@ function ItemDetailContent({
   token: propsToken,
 }: ItemDetailClientProps) {
   const { t, lang } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<
@@ -157,7 +158,7 @@ function ItemDetailContent({
 
     // Show success toast
     toast.success(`Đã thêm ${item.name} vào giỏ hàng`, {
-      description: `${quantity} x ${formatVND(totalPrice)}`,
+      description: `${quantity} x ${formatPrice(totalPrice)}`,
       duration: 2000,
     });
 
@@ -256,7 +257,7 @@ function ItemDetailContent({
                   </h2>
                   <div className="flex flex-col items-end">
                     <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 md:text-2xl">
-                      {formatVND(item.base_price)}
+                      {formatPrice(item.base_price)}
                     </span>
                     {item.status === "available" && (
                       <span className="mt-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-500">
@@ -398,7 +399,7 @@ function ItemDetailContent({
                   {t.menu.subtotal}
                 </span>
                 <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatVND(totalPrice)}
+                  {formatPrice(totalPrice)}
                 </span>
               </div>
             </div>
@@ -425,7 +426,7 @@ function ItemDetailContent({
             >
               <span className="text-sm md:text-base">{t.menu.addToCart}</span>
               <span className="hidden border-l border-emerald-950/10 pl-4 md:block">
-                {formatVND(totalPrice)}
+                {formatPrice(totalPrice)}
               </span>
             </Button>
           </div>

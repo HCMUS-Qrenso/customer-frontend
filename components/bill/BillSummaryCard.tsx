@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CreditCard, Store, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { BillDTO } from "@/lib/types/checkout";
 
 interface BillSummaryCardProps {
@@ -19,6 +19,10 @@ export function BillSummaryCard({
   checkoutHref,
 }: BillSummaryCardProps) {
   const { t } = useLanguage();
+  const { formatPrice, getServiceChargeRate, getTaxLabel, getTaxRate, isServiceChargeEnabled, settings } = useTenantSettings();
+  const scRate = getServiceChargeRate();
+  const taxLabel = getTaxLabel();
+  const taxRate = getTaxRate();
 
   return (
     <div className="lg:sticky lg:top-24 flex flex-col gap-6">
@@ -33,29 +37,33 @@ export function BillSummaryCard({
               {t.cart.subtotal} ({bill.items.length} {t.cart.items})
             </span>
             <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(bill.subtotal)}
+              {formatPrice(bill.subtotal)}
             </span>
           </div>
+          {isServiceChargeEnabled() && bill.serviceCharge > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-500 dark:text-slate-400">
+                {t.cart.serviceCharge} ({scRate}%)
+              </span>
+              <span className="font-medium text-slate-900 dark:text-white">
+                {formatPrice(bill.serviceCharge)}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between text-sm">
             <span className="text-slate-500 dark:text-slate-400">
-              {t.cart.serviceCharge} (5%)
+              {taxLabel} ({taxRate}%){settings.tax.inclusive ? ' (đã bao gồm)' : ''}
             </span>
-            <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(bill.serviceCharge)}
+            <span className="font-medium text-slate-400">
+              {settings.tax.inclusive ? 'Đã bao gồm' : '--'}
             </span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">
-              {t.bill.vat}
-            </span>
-            <span className="font-medium text-slate-400">--</span>
           </div>
           {bill.discount && bill.discount > 0 && (
             <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
               <span className="font-medium">
                 {t.bill.voucher} ({bill.voucherCode})
               </span>
-              <span className="font-bold">-{formatVND(bill.discount)}</span>
+              <span className="font-bold">-{formatPrice(bill.discount)}</span>
             </div>
           )}
         </div>
@@ -68,7 +76,7 @@ export function BillSummaryCard({
             <span className="text-xs text-slate-400">{t.bill.inclTaxes}</span>
           </div>
           <span className="text-2xl font-bold text-slate-900 dark:text-white">
-            {formatVND(bill.total)}
+            {formatPrice(bill.total)}
           </span>
         </div>
 

@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
+import { OperatingHoursButton } from "@/components/shared/OperatingHoursButton";
 import { MapPin, AlertTriangle, CircleX, Clock } from "lucide-react";
 import {
   setSessionToken,
@@ -242,6 +243,8 @@ function TableLandingContent({
           <div className="flex items-center gap-1 text-sm font-medium text-slate-500 dark:text-slate-400">
             <MapPin className="size-4" />
             <span>{tableContext.zoneName || "Restaurant"}</span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <OperatingHoursButton />
           </div>
         </div>
         <div className="flex items-center gap-2">

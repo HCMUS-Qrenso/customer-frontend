@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Receipt, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
@@ -17,6 +16,7 @@ import { OrderSummaryPanel } from "@/components/checkout/OrderSummaryPanel";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { UserAvatar } from "@/components/auth/UserAvatar";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface CheckoutClientProps {
   tenantSlug: string;
@@ -31,6 +31,7 @@ function CheckoutContent({
 }: CheckoutClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("e-wallet");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -77,7 +78,7 @@ function CheckoutContent({
             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 rounded-full text-emerald-600 dark:text-emerald-400 font-bold text-sm">
               <Receipt className="size-4" />
               <span>
-                {t.cart.total}: {formatVND(total)}
+                {t.cart.total}: {formatPrice(total)}
               </span>
             </div>
             <UserAvatar />
@@ -134,7 +135,7 @@ function CheckoutContent({
           <span className="text-sm text-slate-500 dark:text-slate-400">
             {t.checkout.totalAmount}
           </span>
-          <span className="text-xl font-bold">{formatVND(total)}</span>
+          <span className="text-xl font-bold">{formatPrice(total)}</span>
         </div>
         <Button
           onClick={handlePayment}

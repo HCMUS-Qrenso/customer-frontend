@@ -3,7 +3,7 @@
 import { Receipt, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { BillItemDTO, PaymentMethod } from "@/lib/types/checkout";
 
 interface OrderSummaryPanelProps {
@@ -28,6 +28,8 @@ export function OrderSummaryPanel({
   onConfirmPayment,
 }: OrderSummaryPanelProps) {
   const { t } = useLanguage();
+  const { formatPrice, getServiceChargeRate, isServiceChargeEnabled } = useTenantSettings();
+  const scRate = getServiceChargeRate();
 
   return (
     <div className="sticky top-24 space-y-4">
@@ -57,7 +59,7 @@ export function OrderSummaryPanel({
                 )}
               </div>
               <p className="text-sm font-bold text-slate-900 dark:text-white">
-                {formatVND(item.price * item.quantity)}
+                {formatPrice(item.price * item.quantity)}
               </p>
             </div>
           ))}
@@ -70,21 +72,23 @@ export function OrderSummaryPanel({
               {t.cart.subtotal}
             </span>
             <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(subtotal)}
+              {formatPrice(subtotal)}
             </span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">
-              {t.cart.serviceCharge} (5%)
-            </span>
-            <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(serviceCharge)}
-            </span>
-          </div>
+          {isServiceChargeEnabled() && serviceCharge > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-500 dark:text-slate-400">
+                {t.cart.serviceCharge} ({scRate}%)
+              </span>
+              <span className="font-medium text-slate-900 dark:text-white">
+                {formatPrice(serviceCharge)}
+              </span>
+            </div>
+          )}
           {paymentMethod === "card" && cardFee > 0 && (
             <div className="flex justify-between text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/10 -mx-2 px-2 py-1 rounded">
               <span>{t.checkout.processingFee} (2%)</span>
-              <span className="font-medium">+{formatVND(cardFee)}</span>
+              <span className="font-medium">+{formatPrice(cardFee)}</span>
             </div>
           )}
         </div>
@@ -95,7 +99,7 @@ export function OrderSummaryPanel({
               {t.checkout.totalAmount}
             </span>
             <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              {formatVND(total)}
+              {formatPrice(total)}
             </span>
           </div>
         </div>

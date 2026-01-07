@@ -100,6 +100,7 @@ export interface Translations {
     clearAll: string;
     addNote: string;
     note: string;
+    notePlaceholder: string;
     youMayLike: string;
     orderSummary: string;
     subtotal: string;
@@ -292,6 +293,7 @@ export const translations: Record<Language, Translations> = {
       clearAll: "Xoá tất cả",
       addNote: "Thêm ghi chú",
       note: "Ghi chú",
+      notePlaceholder: "Ghi chú cho món ăn...",
       youMayLike: "Có thể bạn thích",
       orderSummary: "Tóm tắt đơn hàng",
       subtotal: "Tạm tính",
@@ -481,6 +483,7 @@ export const translations: Record<Language, Translations> = {
       clearAll: "Clear all",
       addNote: "Add note",
       note: "Note",
+      notePlaceholder: "Note for this item...",
       youMayLike: "You may also like",
       orderSummary: "Order Summary",
       subtotal: "Subtotal",

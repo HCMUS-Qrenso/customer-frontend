@@ -42,7 +42,7 @@ export const mockOrder: OrderDTO = {
       status: "served",
       addedAt: new Date(Date.now() - 15 * 60000).toISOString(),
     },
-  ] as OrderItemDTO[],
+  ],
   subtotal: 215000,
   serviceCharge: 10750,
   tax: 0,

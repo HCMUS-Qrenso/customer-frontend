@@ -16,11 +16,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatVND, formatDate } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { orderApi, type OrderHistoryResponse } from "@/lib/api/order";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { UserAvatar } from "@/components/auth/UserAvatar";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface MyOrdersClientProps {
   tenantSlug: string;
@@ -28,6 +29,7 @@ interface MyOrdersClientProps {
 
 function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
@@ -272,7 +274,7 @@ function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
                       </div>
                       <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-start gap-2 sm:gap-1">
                         <div className="font-bold text-lg sm:text-xl text-slate-900 dark:text-white">
-                          {formatVND(order.totalAmount)}
+                          {formatPrice(order.totalAmount)}
                         </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           {order.itemCount} món

@@ -2,7 +2,8 @@
 
 import { Clock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND, formatTime } from "@/lib/format";
+import { formatTime } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { BillItemDTO } from "@/lib/types/checkout";
 
 interface BillItemsListProps {
@@ -11,6 +12,7 @@ interface BillItemsListProps {
 
 export function BillItemsList({ items }: BillItemsListProps) {
   const { t, lang } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   // Group items by addedAt time
   const grouped = items.reduce(
@@ -76,7 +78,7 @@ export function BillItemsList({ items }: BillItemsListProps) {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-base font-bold text-slate-900 dark:text-white">
-                        {formatVND(item.price * item.quantity)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -85,7 +87,7 @@ export function BillItemsList({ items }: BillItemsListProps) {
                       x{item.quantity} {t.cart.items}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {formatVND(item.price)} / {t.bill.each}
+                      {formatPrice(item.price)} / {t.bill.each}
                     </p>
                   </div>
                 </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Minus, Plus, Trash2, FileEdit, X, Check } from "lucide-react";
 import { CartItemDTO } from "@/lib/types/menu";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface CartItemCardProps {
   item: CartItemDTO;
@@ -20,6 +20,7 @@ export function CartItemCard({
   onUpdateNotes,
 }: CartItemCardProps) {
   const { lang, t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState(item.notes || "");
 
@@ -73,7 +74,7 @@ export function CartItemCard({
             </button>
           </div>
           <p className="text-emerald-500 font-semibold text-sm mt-1">
-            {formatVND(item.basePrice)}
+            {formatPrice(item.basePrice)}
           </p>
           {modifiersText && (
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
@@ -151,7 +152,7 @@ export function CartItemCard({
             </button>
           </div>
           <span className="font-bold text-slate-900 dark:text-white">
-            {formatVND(item.totalPrice)}
+            {formatPrice(item.totalPrice)}
           </span>
         </div>
       </div>
