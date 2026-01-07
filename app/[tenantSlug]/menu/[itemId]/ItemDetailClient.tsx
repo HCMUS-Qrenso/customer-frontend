@@ -19,18 +19,26 @@ import { NutritionalInfo } from "@/components/menu/NutritionalInfo";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { ModifierGroup } from "@/components/menu/ModifierGroup";
 import { formatVND } from "@/lib/format";
-import { customerHref } from "@/lib/customer/context";
 import { useMenuItemQuery } from "@/hooks/use-menu-query";
-import { setQrToken } from "@/lib/stores/qr-token-store";
-import type { ModifierGroupDTO, CartSummaryDTO } from "@/lib/types/menu";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { useCartStore } from "@/lib/stores/cart-store";
+import { toast } from "sonner";
+import type { ModifierGroupDTO, CartItemDTO } from "@/lib/types/menu";
 
 interface ItemDetailClientProps {
   tenantSlug: string;
   itemId: string;
-  ctx: { table: string; token: string };
+  tableId?: string;
+  token?: string;
 }
 
-function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
+function ItemDetailContent({
+  tenantSlug,
+  itemId,
+  tableId: propsTableId,
+  token: propsToken,
+}: ItemDetailClientProps) {
   const { t, lang } = useLanguage();
 
   const [quantity, setQuantity] = useState(1);
@@ -38,14 +46,18 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
     Record<string, string[]>
   >({});
   const [notes, setNotes] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
-  // Mock cart state (would be from context/store in production)
-  const [cart] = useState<CartSummaryDTO>({ count: 2, subtotal: 178000 });
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
 
-  // Set QR token for API requests
-  useEffect(() => {
-    setQrToken(ctx.token);
-  }, [ctx.token]);
+  // Store QR token and tableId for API requests
+  useQrToken(token, tableId);
+
+  // Cart state from Zustand store (shared across all pages)
+  const addToCart = useCartStore((state) => state.addItem);
+  const cartItemCount = useCartStore((state) => state.getItemCount());
 
   // Fetch menu item detail
   const { data: item, isLoading, error } = useMenuItemQuery(itemId);
@@ -103,8 +115,71 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
       );
   }, [item, selectedModifiers]);
 
-  const menuHref = customerHref(tenantSlug, "menu", ctx);
-  const cartHref = customerHref(tenantSlug, "cart", ctx);
+  // Handle add to cart with toast notification
+  const handleAddToCart = useCallback(() => {
+    if (!item || !isValid || isAdding) return;
+
+    setIsAdding(true);
+
+    // Build selected modifiers for CartItemDTO
+    const cartModifiers: CartItemDTO["selectedModifiers"] = [];
+    item.modifier_groups?.forEach((group) => {
+      const selected = selectedModifiers[group.id] || [];
+      selected.forEach((modifierId) => {
+        const modifier = group.modifiers.find((m) => m.id === modifierId);
+        if (modifier) {
+          cartModifiers.push({
+            groupId: group.id,
+            groupName: group.name,
+            modifierId: modifier.id,
+            modifierName: modifier.name,
+            price: parseInt(modifier.price_adjustment, 10) || 0,
+          });
+        }
+      });
+    });
+
+    const cartItem: CartItemDTO = {
+      menuItemId: item.id,
+      menuItemName: item.name,
+      quantity,
+      basePrice:
+        typeof item.base_price === "string"
+          ? parseInt(item.base_price, 10)
+          : item.base_price,
+      image: item.images?.[0]?.image_url,
+      selectedModifiers: cartModifiers,
+      notes: notes || undefined,
+      totalPrice: totalPrice,
+    };
+
+    addToCart(cartItem);
+
+    // Show success toast
+    toast.success(`Đã thêm ${item.name} vào giỏ hàng`, {
+      description: `${quantity} x ${formatVND(totalPrice)}`,
+      duration: 2000,
+    });
+
+    // Reset form after adding
+    setQuantity(1);
+    setSelectedModifiers({});
+    setNotes("");
+    setIsAdding(false);
+  }, [
+    item,
+    isValid,
+    isAdding,
+    quantity,
+    selectedModifiers,
+    notes,
+    totalPrice,
+    addToCart,
+  ]);
+
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const cartHref = `/${tenantSlug}/cart`;
 
   // Error state
   if (error) {
@@ -140,7 +215,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
             className="relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
           >
             <ShoppingCart className="size-5" />
-            {cart.count > 0 && (
+            {cartItemCount > 0 && (
               <LiveIndicator size="sm" className="absolute right-1 top-1" />
             )}
           </Link>
@@ -330,8 +405,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
 
             {/* Add to Cart Button */}
             <Button
+              onClick={handleAddToCart}
               disabled={
                 !isValid ||
+                isAdding ||
                 item.status === "unavailable" ||
                 item.status === "sold_out"
               }

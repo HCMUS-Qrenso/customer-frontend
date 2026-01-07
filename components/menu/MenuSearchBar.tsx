@@ -120,7 +120,7 @@ export function MenuSearchBar({
           {/* Dropdown Menu */}
           {isOpen && (
             <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
-              <div className="p-1.5">
+              <div className="p-2 space-y-1">
                 {SORT_OPTIONS.map((option) => (
                   <button
                     key={option.value}

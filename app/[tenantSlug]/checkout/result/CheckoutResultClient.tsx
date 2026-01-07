@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { mockCheckoutResult as mockResult } from "@/lib/mocks";
 import type { CheckoutResultDTO } from "@/lib/types/checkout";
 
@@ -29,17 +30,22 @@ function formatDateTime(dateString: string): string {
 
 function CheckoutResultContent({
   tenantSlug,
-  tableId,
-  token,
+  tableId: propsTableId,
+  token: propsToken,
 }: CheckoutResultClientProps) {
   const { t } = useLanguage();
   const [result] = useState<CheckoutResultDTO>(mockResult);
 
-  // Store QR token
-  useQrToken(token);
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
 
-  const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const orderHref = `/${tenantSlug}/order?table=${tableId}&token=${token}`;
+  // Store QR token and tableId
+  useQrToken(token, tableId);
+
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const orderHref = `/${tenantSlug}/my-order`;
 
   // Failed state
   if (!result.success) {

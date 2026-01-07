@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useVerifyTokenQuery } from "@/hooks/use-table-context-query";
@@ -8,9 +10,34 @@ import { TableHeroCard } from "@/components/TableHeroCard";
 import { GuestCountStepper } from "@/components/GuestCountStepper";
 import { StartSessionButton } from "@/components/StartSessionButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
-import { MapPin, AlertTriangle, CircleX } from "lucide-react";
+import { MapPin, AlertTriangle, CircleX, Clock } from "lucide-react";
+import {
+  setSessionToken,
+  getQrToken,
+  getTableId,
+} from "@/lib/stores/qr-token-store";
+
+// Session expired banner component
+function SessionExpiredBanner() {
+  return (
+    <div className="mb-4 flex items-center gap-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 p-4 border border-amber-200 dark:border-amber-500/20">
+      <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400">
+        <Clock className="size-5" />
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+          Phiên của bạn đã hết hạn
+        </p>
+        <p className="text-xs text-amber-600 dark:text-amber-400">
+          Vui lòng bắt đầu phiên mới để tiếp tục đặt món.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 interface TableLandingClientProps {
   tenantSlug: string;
@@ -122,18 +149,52 @@ function LoadingSkeleton() {
 
 function TableLandingContent({
   tenantSlug,
-  tableId,
-  token,
+  tableId: propsTableId,
+  token: propsToken,
 }: TableLandingClientProps) {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
+  const isSessionExpired = searchParams.get("session_expired") === "true";
+
+  // Use props or fallback to persisted values from sessionStorage
+  // This handles the case when token is removed from URL after verification
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
+
+  // Store the QR token and tableId for API requests and navigation
+  // IMPORTANT: Always call useQrToken with token/tableId (not conditional on tableContext)
+  // This ensures tokens are restored from storage even when reloading page
+  useQrToken(token, tableId);
 
   // Verify token and get table context from API
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
-  // Store the QR token for API requests
-  useQrToken(tableContext ? token : undefined);
+  // Save session token when received from verify response
+  useEffect(() => {
+    if (tableContext?.session_token) {
+      setSessionToken(tableContext.session_token);
+      console.log(
+        "[TableLanding] Session token saved:",
+        tableContext.session_token.substring(0, 20) + "...",
+      );
+    }
+  }, [tableContext?.session_token]);
 
-  // No token provided
+  // Save returnUrl for redirect after login
+  useEffect(() => {
+    if (tenantSlug && tableId && token && tableContext) {
+      import("@/lib/utils/return-url").then(({ saveReturnUrl }) => {
+        saveReturnUrl({
+          tenantSlug,
+          tableId,
+          token,
+          path: "/menu", // Default to menu after landing
+        });
+      });
+    }
+  }, [tenantSlug, tableId, token, tableContext]);
+
+  // No token provided (neither from URL nor storage)
   if (!token) {
     return <MissingTokenError />;
   }
@@ -186,11 +247,15 @@ function TableLandingContent({
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <LanguageToggle />
+          <UserAvatar />
         </div>
       </header>
 
       {/* Main Content */}
       <main className="relative z-10 flex flex-1 flex-col gap-6 px-5 pb-40 pt-2 sm:px-6">
+        {/* Session Expired Banner */}
+        {isSessionExpired && <SessionExpiredBanner />}
+
         <TableHeroCard
           tableNumber={table.tableNumber}
           capacity={table.capacity}

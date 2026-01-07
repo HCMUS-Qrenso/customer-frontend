@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CreditCard, Bell } from "lucide-react";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { formatTime } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
+import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { mockBill } from "@/lib/mocks";
 import type { BillDTO } from "@/lib/types/checkout";
 import { BillItemsList } from "@/components/bill/BillItemsList";
@@ -14,6 +17,7 @@ import { BillSummaryCard } from "@/components/bill/BillSummaryCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { OrderStatusCard } from "@/components/shared/OrderStatusCard";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 
 interface BillClientProps {
   tenantSlug: string;
@@ -21,22 +25,41 @@ interface BillClientProps {
   token?: string;
 }
 
-function BillContent({ tenantSlug, tableId, token }: BillClientProps) {
+function BillContent({
+  tenantSlug,
+  tableId: propsTableId,
+  token: propsToken,
+}: BillClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
 
-  // Store QR token
-  useQrToken(token);
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
 
-  const menuHref = `/${tenantSlug}/menu?table=${tableId}&token=${token}`;
-  const checkoutHref = `/${tenantSlug}/checkout?table=${tableId}&token=${token}`;
+  // Store QR token and tableId
+  useQrToken(token, tableId);
+
+  // Decode token to get table number
+  const tableNumber = useMemo(() => {
+    if (!token) return null;
+    const payload = decodeQrToken(token);
+    return payload?.tableNumber || null;
+  }, [token]);
+
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const checkoutHref = `/${tenantSlug}/checkout`;
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
       <PageHeader
         title={t.bill.title}
-        subtitle={`${tenantSlug} • ${t.checkout.table} ${tableId}`}
+        subtitle={
+          tableNumber ? `${tenantSlug} • Bàn ${tableNumber}` : tenantSlug
+        }
         onBack={() => router.back()}
+        rightContent={<UserAvatar />}
       />
 
       {/* Main Content */}

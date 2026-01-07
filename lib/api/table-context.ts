@@ -13,14 +13,14 @@ export interface GetTableContextParams {
 export const tableContextApi = {
   /**
    * Verify QR token and get table context
-   * Uses Authorization: Bearer token for GUEST authentication
+   * Uses x-qr-token header (v2.0 - no backward compatibility)
    * GET /tables/qr/verify-token
    */
   verifyToken: async (token: string): Promise<TableContextDTO> => {
     const { data } = await apiClient.get<VerifyTokenResponse>(
       "/tables/qr/verify-token",
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { "x-qr-token": token },
       },
     );
     return data.data;

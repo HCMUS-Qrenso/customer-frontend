@@ -57,3 +57,17 @@ export function formatTime(dateString: string): string {
     minute: "2-digit",
   }).format(date);
 }
+
+/**
+ * Format a date string to date in Vietnamese locale (DD/MM/YYYY)
+ * @param dateString - ISO date string
+ * @returns Formatted date string like "30/12/2024"
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
