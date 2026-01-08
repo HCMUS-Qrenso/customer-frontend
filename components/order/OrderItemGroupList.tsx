@@ -2,7 +2,7 @@
 
 import { Clock, UtensilsCrossed } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderItemDTO } from "@/lib/types/order";
 
 interface OrderItemGroupListProps {
@@ -11,6 +11,7 @@ interface OrderItemGroupListProps {
 
 export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
   const { t, lang } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,7 +64,7 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-base font-bold text-slate-900 dark:text-white">
-                        {formatVND(item.price * item.quantity)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -72,7 +73,7 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                       x{item.quantity} {t.cart.items}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {formatVND(item.price)} / {t.bill.each}
+                      {formatPrice(item.price)} / {t.bill.each}
                     </p>
                   </div>
                 </div>

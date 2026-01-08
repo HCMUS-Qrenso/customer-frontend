@@ -25,6 +25,7 @@ export interface OrderItemDTO {
 export interface OrderDTO {
   id: string;
   orderNumber: string;
+  tableId?: string;
   status: OrderStatus;
   items: OrderItemDTO[];
   subtotal: number;
@@ -34,5 +35,4 @@ export interface OrderDTO {
   voucherCode?: string;
   total: number;
   createdAt: string;
-  tableId?: string;
 }

@@ -3,13 +3,14 @@
 import { ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface PricingSummaryCardProps {
   itemCount: number;
   subtotal: number;
   onPlaceOrder: () => void;
   isLoading?: boolean;
+  disabled?: boolean;
 }
 
 export function PricingSummaryCard({
@@ -17,8 +18,10 @@ export function PricingSummaryCard({
   subtotal,
   onPlaceOrder,
   isLoading = false,
+  disabled = false,
 }: PricingSummaryCardProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   return (
     <div className="lg:sticky lg:top-24">
@@ -33,7 +36,7 @@ export function PricingSummaryCard({
               {t.cart.subtotal} ({itemCount} {t.cart.items})
             </span>
             <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(subtotal)}
+              {formatPrice(subtotal)}
             </span>
           </div>
 
@@ -50,7 +53,7 @@ export function PricingSummaryCard({
               </span>
             </div>
             <span className="text-2xl font-bold text-emerald-500">
-              {formatVND(subtotal)}
+              {formatPrice(subtotal)}
             </span>
           </div>
         </div>
@@ -59,7 +62,7 @@ export function PricingSummaryCard({
         <div className="hidden lg:flex flex-col gap-3">
           <Button
             onClick={onPlaceOrder}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
             className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:translate-y-[-2px] disabled:opacity-50"
           >
             <span>{t.cart.placeOrder}</span>

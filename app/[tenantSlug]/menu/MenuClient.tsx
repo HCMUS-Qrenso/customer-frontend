@@ -22,7 +22,6 @@ import {
 import { useQrToken } from "@/hooks/use-qr-token";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
-import { formatVND } from "@/lib/format";
 import { orderApi } from "@/lib/api/order";
 import { saveReturnUrl } from "@/lib/utils/return-url";
 import { ChefPicksCarousel } from "@/components/menu/ChefPicksCarousel";
@@ -32,6 +31,7 @@ import { CategoryChips } from "@/components/menu/CategoryChips";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { LiveIndicator } from "@/components/shared/LiveIndicator";
 import { UserAvatar } from "@/components/auth/UserAvatar";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface MenuClientProps {
   tenantSlug: string;
@@ -55,6 +55,7 @@ function MenuContent({
   token: propsToken,
 }: MenuClientProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -455,7 +456,7 @@ function MenuContent({
                     </div>
                   )}
                 </div>
-                <span className="font-bold">{formatVND(cartSubtotal)}</span>
+                <span className="font-bold">{formatPrice(cartSubtotal)}</span>
               </div>
 
               <div className="flex items-center gap-2 font-bold">

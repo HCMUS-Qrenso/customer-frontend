@@ -20,3 +20,5 @@ export { useOrderSocket, type UseOrderSocketOptions } from "./use-order-socket";
 export { useSessionGuard } from "./use-session-guard";
 
 export { useQrToken } from "./use-qr-token";
+
+export { useTenantData } from "./use-tenant-data";

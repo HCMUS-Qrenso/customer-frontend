@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { MenuItemDTO, CartItemDTO } from "@/lib/types/menu";
-import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useMenuQuery } from "@/hooks/use-menu-query";
 import { CartItemCard } from "@/components/cart/CartItemCard";
@@ -29,6 +28,7 @@ import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { setSessionToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { saveReturnUrl } from "@/lib/utils/return-url";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface CartClientProps {
   tenantSlug: string;
@@ -39,6 +39,8 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
+  const { formatPrice, isMinOrderMet, getMinOrderGap, minOrderValue } =
+    useTenantSettings();
 
   // Use Zustand cart store
   const cartItems = useCartStore((state) => state.items);
@@ -250,6 +252,10 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
     return { subtotal, itemCount };
   }, [cartItems]);
 
+  // Min order validation
+  const isMinOrderMetValue = isMinOrderMet(calculations.subtotal);
+  const minOrderGap = getMinOrderGap(calculations.subtotal);
+
   // Empty cart state
   if (cartItems.length === 0) {
     return (
@@ -309,6 +315,25 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
         </div>
       )}
 
+      {/* Min Order Warning */}
+      {minOrderValue && !isMinOrderMetValue && (
+        <div className="w-full max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+            <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
+              <Info className="size-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                Đơn hàng tối thiểu: {formatPrice(minOrderValue)}
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-400">
+                Còn thiếu {formatPrice(minOrderGap)} để đặt hàng
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="grow w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32 lg:pb-6">
         {/* Left: Cart Items */}
@@ -362,7 +387,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
                     </h4>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs font-semibold text-emerald-500">
-                        {formatVND(item.base_price)}
+                        {formatPrice(item.base_price)}
                       </span>
                       <button
                         onClick={() => handleQuickAdd(item)}
@@ -385,6 +410,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             subtotal={calculations.subtotal}
             onPlaceOrder={handlePlaceOrder}
             isLoading={isLoading}
+            disabled={!isMinOrderMetValue}
           />
         </div>
       </main>
@@ -407,12 +433,12 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
               </div>
             </div>
             <span className="text-xl font-bold text-emerald-500">
-              {formatVND(calculations.subtotal)}
+              {formatPrice(calculations.subtotal)}
             </span>
           </div>
           <Button
             onClick={handlePlaceOrder}
-            disabled={isLoading}
+            disabled={isLoading || !isMinOrderMetValue}
             className="flex-[2] h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             {isLoading ? (

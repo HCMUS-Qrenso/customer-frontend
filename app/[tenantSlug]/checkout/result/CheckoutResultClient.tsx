@@ -5,10 +5,10 @@ import Link from "next/link";
 import { X, Check, AlertTriangle, Receipt, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { mockCheckoutResult as mockResult } from "@/lib/mocks";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { CheckoutResultDTO } from "@/lib/types/checkout";
 
 interface CheckoutResultClientProps {
@@ -17,23 +17,13 @@ interface CheckoutResultClientProps {
   token?: string;
 }
 
-function formatDateTime(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 function CheckoutResultContent({
   tenantSlug,
   tableId: propsTableId,
   token: propsToken,
 }: CheckoutResultClientProps) {
   const { t } = useLanguage();
+  const { formatPrice, formatDateTime } = useTenantSettings();
   const [result] = useState<CheckoutResultDTO>(mockResult);
 
   // Use props or fallback to persisted values from sessionStorage
@@ -106,7 +96,7 @@ function CheckoutResultContent({
               {t.checkout.transactionId}: {result.transactionId}
             </div>
             <div className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              {formatVND(result.amountPaid || 0)}
+              {formatPrice(result.amountPaid || 0)}
             </div>
           </div>
 
@@ -118,7 +108,7 @@ function CheckoutResultContent({
                   Total Paid
                 </span>
                 <span className="text-lg font-bold text-slate-900 dark:text-white">
-                  {formatVND(result.amountPaid || 0)}
+                  {formatPrice(result.amountPaid || 0)}
                 </span>
               </div>
               <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">

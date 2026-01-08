@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -319,28 +319,23 @@ function RegisterContent() {
   );
 }
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4">
+      <div className="w-full max-w-sm text-center">
+        <div className="flex justify-center mb-6">
+          <Loader2 className="size-12 text-emerald-500 animate-spin" />
+        </div>
+        <p className="text-slate-500 dark:text-slate-400">Đang tải...</p>
+      </div>
+    </div>
+  );
+}
+
 export default function RegisterPage() {
   return (
     <LanguageProvider>
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 py-8">
-            <div className="w-full max-w-md">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8">
-                <div className="text-center mb-8">
-                  <Loader2 className="size-8 mx-auto mb-4 text-emerald-500 animate-spin" />
-                  <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                    Đang tải...
-                  </h1>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Vui lòng chờ trong giây lát
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        }
-      >
+      <Suspense fallback={<LoadingFallback />}>
         <RegisterContent />
       </Suspense>
     </LanguageProvider>

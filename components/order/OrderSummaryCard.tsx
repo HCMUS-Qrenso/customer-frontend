@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderDTO } from "@/lib/types/order";
 
 interface OrderSummaryCardProps {
@@ -10,6 +10,17 @@ interface OrderSummaryCardProps {
 
 export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   const { t } = useLanguage();
+  const {
+    formatPrice,
+    getServiceChargeRate,
+    getTaxLabel,
+    getTaxRate,
+    isServiceChargeEnabled,
+    settings,
+  } = useTenantSettings();
+  const scRate = getServiceChargeRate();
+  const taxLabel = getTaxLabel();
+  const taxRate = getTaxRate();
 
   return (
     <div>
@@ -29,24 +40,26 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
               Tạm tính ({order.items.length} món)
             </span>
             <span className="font-medium text-slate-900 dark:text-white tabular-nums">
-              {formatVND(order.subtotal)}
+              {formatPrice(order.subtotal)}
             </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-500 dark:text-slate-400">
-              Phí dịch vụ (5%)
-            </span>
-            <span className="font-medium text-slate-900 dark:text-white tabular-nums">
-              {formatVND(order.serviceCharge)}
-            </span>
-          </div>
+          {isServiceChargeEnabled() && order.serviceCharge > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 dark:text-slate-400">
+                {t.cart.serviceCharge} ({scRate}%)
+              </span>
+              <span className="font-medium text-slate-900 dark:text-white tabular-nums">
+                {formatPrice(order.serviceCharge)}
+              </span>
+            </div>
+          )}
           {order.discount && order.discount > 0 && (
             <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
               <span className="font-medium">
                 Giảm giá {order.voucherCode && `(${order.voucherCode})`}
               </span>
               <span className="font-bold tabular-nums">
-                -{formatVND(order.discount)}
+                -{formatPrice(order.discount)}
               </span>
             </div>
           )}
@@ -61,10 +74,14 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             <span className="text-base font-bold text-slate-900 dark:text-white">
               Tổng cộng
             </span>
-            <p className="text-xs text-slate-400">Đã gồm thuế VAT</p>
+            <p className="text-xs text-slate-400">
+              {settings.tax.inclusive
+                ? `Đã gồm ${taxLabel} ${taxRate}%`
+                : `Chưa gồm ${taxLabel}`}
+            </p>
           </div>
           <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
-            {formatVND(order.total)}
+            {formatPrice(order.total)}
           </span>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Minus, Plus, Trash2, FileEdit, X, Check } from "lucide-react";
 import { CartItemDTO } from "@/lib/types/menu";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface CartItemCardProps {
   item: CartItemDTO;
@@ -20,6 +20,7 @@ export function CartItemCard({
   onUpdateNotes,
 }: CartItemCardProps) {
   const { lang, t } = useLanguage();
+  const { formatPrice, allowSpecialInstructions } = useTenantSettings();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState(item.notes || "");
 
@@ -73,7 +74,7 @@ export function CartItemCard({
             </button>
           </div>
           <p className="text-emerald-500 font-semibold text-sm mt-1">
-            {formatVND(item.basePrice)}
+            {formatPrice(item.basePrice)}
           </p>
           {modifiersText && (
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
@@ -81,53 +82,59 @@ export function CartItemCard({
             </p>
           )}
 
-          {/* Notes Section */}
-          {isEditingNotes ? (
-            <div className="mt-2 space-y-2">
-              <textarea
-                value={notesValue}
-                onChange={(e) => setNotesValue(e.target.value)}
-                placeholder={t.cart.notePlaceholder || "Ghi chú cho món ăn..."}
-                maxLength={100}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none"
-                rows={2}
-                autoFocus
-              />
-              <div className="flex gap-2">
+          {/* Notes Section - Only show if allow_special_instructions is enabled */}
+          {allowSpecialInstructions && (
+            <>
+              {isEditingNotes ? (
+                <div className="mt-2 space-y-2">
+                  <textarea
+                    value={notesValue}
+                    onChange={(e) => setNotesValue(e.target.value)}
+                    placeholder={
+                      t.cart.notePlaceholder || "Ghi chú cho món ăn..."
+                    }
+                    maxLength={100}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none"
+                    rows={2}
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSaveNotes}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+                    >
+                      <Check className="size-3" />
+                      Lưu
+                    </button>
+                    <button
+                      onClick={handleCancelNotes}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                    >
+                      <X className="size-3" />
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              ) : item.notes ? (
                 <button
-                  onClick={handleSaveNotes}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+                  onClick={handleStartEditNotes}
+                  className="flex items-center gap-1 mt-2 text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
                 >
-                  <Check className="size-3" />
-                  Lưu
+                  <FileEdit className="size-3.5" />
+                  <span className="line-clamp-1">
+                    {t.cart.note}: {item.notes}
+                  </span>
                 </button>
+              ) : (
                 <button
-                  onClick={handleCancelNotes}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                  onClick={handleStartEditNotes}
+                  className="flex items-center gap-1 mt-2 text-xs text-slate-400 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
                 >
-                  <X className="size-3" />
-                  Hủy
+                  <FileEdit className="size-3.5" />
+                  <span>{t.cart.addNote}</span>
                 </button>
-              </div>
-            </div>
-          ) : item.notes ? (
-            <button
-              onClick={handleStartEditNotes}
-              className="flex items-center gap-1 mt-2 text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-            >
-              <FileEdit className="size-3.5" />
-              <span className="line-clamp-1">
-                {t.cart.note}: {item.notes}
-              </span>
-            </button>
-          ) : (
-            <button
-              onClick={handleStartEditNotes}
-              className="flex items-center gap-1 mt-2 text-xs text-slate-400 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-            >
-              <FileEdit className="size-3.5" />
-              <span>{t.cart.addNote}</span>
-            </button>
+              )}
+            </>
           )}
         </div>
 
@@ -151,7 +158,7 @@ export function CartItemCard({
             </button>
           </div>
           <span className="font-bold text-slate-900 dark:text-white">
-            {formatVND(item.totalPrice)}
+            {formatPrice(item.totalPrice)}
           </span>
         </div>
       </div>
