@@ -32,6 +32,11 @@ export interface MessageResponse {
   message: string;
 }
 
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
 // ============================================
 // API Functions
 // ============================================
@@ -69,14 +74,22 @@ export const authApi = {
    * POST /auth/logout
    */
   logout: async (): Promise<MessageResponse> => {
-    const { data } = await apiClient.post<MessageResponse>(
-      "/auth/logout",
-      null,
-      {
-        withCredentials: true, // Clear refresh token cookie
-      },
-    );
-    return data;
+    try {
+      const { data } = await apiClient.post<MessageResponse>(
+        "/auth/logout",
+        {}, // Use empty object instead of null
+        {
+          withCredentials: true, // Clear refresh token cookie
+        },
+      );
+      return data;
+    } catch (error: any) {
+      // Handle cases where backend returns empty response or null
+      if (error.response?.status === 200 || error.response?.status === 204) {
+        return { message: "Logout successful" };
+      }
+      throw error;
+    }
   },
 
   /**
@@ -84,7 +97,7 @@ export const authApi = {
    * GET /auth/me
    */
   getProfile: async (): Promise<AuthUser> => {
-    const { data } = await apiClient.get<AuthUser>("/auth/me");
+    const { data } = await apiClient.get<AuthUser>("/users/profile");
     return data;
   },
 
@@ -93,9 +106,13 @@ export const authApi = {
    * POST /auth/refresh
    */
   refreshToken: async (): Promise<AuthResponse> => {
-    const { data } = await apiClient.post<AuthResponse>("/auth/refresh", null, {
-      withCredentials: true, // Important: send cookies
-    });
+    const { data } = await apiClient.post<AuthResponse>(
+      "/auth/refresh",
+      {},
+      {
+        withCredentials: true, // Important: send cookies
+      },
+    );
     return data;
   },
 
@@ -172,6 +189,20 @@ export const authApi = {
         email,
         type,
       },
+    );
+    return data;
+  },
+
+  /**
+   * Change current user password
+   * POST /auth/change-password
+   */
+  changePassword: async (
+    payload: ChangePasswordPayload,
+  ): Promise<MessageResponse> => {
+    const { data } = await apiClient.post<MessageResponse>(
+      "/auth/change-password",
+      payload,
     );
     return data;
   },

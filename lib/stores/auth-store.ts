@@ -18,6 +18,7 @@ export interface AuthUser {
   role: string;
   avatarUrl?: string | null;
   tenantId?: string | null;
+  phone?: string | null;
 }
 
 interface AuthState {
@@ -33,7 +34,7 @@ interface AuthState {
   setAccessToken: (token: string | null) => void;
   setLoading: (loading: boolean) => void;
   setInitialized: (initialized: boolean) => void;
-  login: (user: AuthUser, accessToken: string) => void;
+  login: (user: AuthUser | undefined, accessToken: string) => void;
   logout: () => void;
   clearAuth: () => void;
 }
@@ -53,11 +54,13 @@ export const useAuthStore = create<AuthState>()(
       isInitialized: false,
 
       // Actions
-      setUser: (user) =>
-        set({
-          user,
+      setUser: (user) => {
+        console.log("Setting user in auth store:", user);
+        set((state) => ({
+          user: user ? { ...user } : null, // Create a new object reference to trigger re-renders
           isAuthenticated: !!user,
-        }),
+        }));
+      },
 
       setAccessToken: (accessToken) =>
         set({

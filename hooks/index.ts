@@ -22,3 +22,11 @@ export { useSessionGuard } from "./use-session-guard";
 export { useQrToken } from "./use-qr-token";
 
 export { useTenantData } from "./use-tenant-data";
+
+export {
+  useProfileQuery,
+  useUpdateProfileMutation,
+  profileQueryKeys,
+} from "./use-profile";
+
+export { useUploadFiles } from "./use-uploads";

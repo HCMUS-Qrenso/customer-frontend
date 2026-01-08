@@ -30,7 +30,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useLanguage();
-  const { login, isAuthenticated } = useAuthStore();
+  const { login, isAuthenticated, setAccessToken } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,8 +79,14 @@ function LoginContent() {
       setIsLoading(true);
       const response = await authApi.login({ email, password, rememberMe });
 
-      // Update auth store
-      login(response.user, response.accessToken);
+      // Temporarily store the access token to make API call
+      useAuthStore.getState().setAccessToken(response.accessToken);
+
+      // Fetch user profile
+      const user = await authApi.getProfile();
+
+      // Update auth store with user and token
+      login(user, response.accessToken);
 
       // Clear returnUrl from localStorage after successful login
       clearReturnUrl();

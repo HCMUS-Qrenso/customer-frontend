@@ -43,6 +43,9 @@ apiClient.interceptors.request.use(
     // NEVER use sessionToken or qrToken in Authorization header
     if (accessToken && typeof accessToken === "string") {
       config.headers.Authorization = `Bearer ${accessToken}`;
+      console.log("Setting Authorization header for request:", config.url);
+    } else {
+      console.log("No accessToken for request:", config.url);
     }
 
     // 2. x-table-session-token: REQUIRED for order operations

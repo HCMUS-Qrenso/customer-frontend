@@ -14,6 +14,7 @@ import {
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { authApi } from "@/lib/api/auth";
 import { useLanguage } from "@/lib/i18n/context";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface UserAvatarProps {
   className?: string;
@@ -103,6 +104,7 @@ export function UserAvatar({ className }: UserAvatarProps) {
 
   const tenantSlug = getTenantSlug();
   const orderHistoryUrl = tenantSlug ? `/${tenantSlug}/my-orders` : null;
+  const profileUrl = tenantSlug ? `/${tenantSlug}/profile` : null;
 
   // Login/Register URLs with return path
   const returnUrl = encodeURIComponent(buildReturnUrl());
@@ -120,17 +122,15 @@ export function UserAvatar({ className }: UserAvatarProps) {
         {isAuthenticated && user ? (
           // Authenticated: Show avatar
           <div className="flex items-center gap-2">
-            {user.avatarUrl ? (
-              <img
-                src={user.avatarUrl}
+            <Avatar className="size-8">
+              <AvatarImage
+                src={user.avatarUrl || undefined}
                 alt={user.fullName}
-                className="size-8 rounded-full object-cover border-2 border-emerald-500"
               />
-            ) : (
-              <div className="flex size-8 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+              <AvatarFallback className="bg-emerald-500 text-xs font-bold text-white">
                 {getInitials(user.fullName)}
-              </div>
-            )}
+              </AvatarFallback>
+            </Avatar>
             <ChevronDown
               className={`size-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
             />
@@ -157,10 +157,25 @@ export function UserAvatar({ className }: UserAvatarProps) {
                 <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
                   {user.email}
                 </p>
+                {user.phone && (
+                  <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                    {user.phone}
+                  </p>
+                )}
               </div>
 
               {/* Menu Items */}
               <div className="py-1">
+                {profileUrl && (
+                  <Link
+                    href={profileUrl}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                  >
+                    <User className="size-4" />
+                    <span>{t?.auth?.profile || "Profile"}</span>
+                  </Link>
+                )}
                 {orderHistoryUrl && (
                   <Link
                     href={orderHistoryUrl}
