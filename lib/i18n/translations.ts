@@ -34,6 +34,7 @@ export interface Translations {
     emailRequired: string;
     passwordRequired: string;
     fullNameRequired: string;
+    profile: string;
   };
   table: {
     active: string;
@@ -181,6 +182,52 @@ export interface Translations {
     estimatedTime: string;
     preparingMessage: string;
   };
+  // Profile Page
+  profile: {
+    personalInfo: string;
+    fullName: string;
+    fullNamePlaceholder: string;
+    phone: string;
+    phonePlaceholder: string;
+    email: string;
+    emailNote: string;
+    avatar: string;
+    changeAvatar: string;
+    removeAvatar: string;
+    saveChanges: string;
+    saving: string;
+    uploading: string;
+    loadError: string;
+    memberSince: string;
+    updateSuccess: string;
+    updateError: string;
+    avatarUploadSuccess: string;
+    avatarUploadError: string;
+    avatarRemoveSuccess: string;
+    avatarRemoveError: string;
+    cropAvatar: string;
+    zoom: string;
+    cancel: string;
+    avatarInvalidType: string;
+    avatarTooLarge: string;
+    changePassword: string;
+    currentPassword: string;
+    currentPasswordRequired: string;
+    currentPasswordPlaceholder: string;
+    newPassword: string;
+    newPasswordRequired: string;
+    newPasswordPlaceholder: string;
+    confirmPassword: string;
+    confirmPasswordRequired: string;
+    confirmPasswordPlaceholder: string;
+    passwordsDoNotMatch: string;
+    passwordTooShort: string;
+    passwordRequirementsText: string;
+    changingPassword: string;
+    passwordChangedSuccess: string;
+    passwordChangeError: string;
+    passwordRequirements: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -219,6 +266,7 @@ export const translations: Record<Language, Translations> = {
       emailRequired: "Vui lòng nhập email",
       passwordRequired: "Vui lòng nhập mật khẩu",
       fullNameRequired: "Vui lòng nhập họ tên",
+      profile: "Hồ sơ",
     },
     // Table Info
     table: {
@@ -374,6 +422,53 @@ export const translations: Record<Language, Translations> = {
       estimatedTime: "Dự kiến",
       preparingMessage: "Đơn hàng của bạn đang được bếp chuẩn bị.",
     },
+    // Profile
+    profile: {
+      personalInfo: "Thông tin cá nhân",
+      fullName: "Họ và tên",
+      fullNamePlaceholder: "Nhập họ và tên của bạn",
+      phone: "Số điện thoại",
+      phonePlaceholder: "Nhập số điện thoại của bạn",
+      email: "Email",
+      emailNote: "Email không thể thay đổi",
+      avatar: "Ảnh đại diện",
+      changeAvatar: "Thay đổi ảnh đại diện",
+      removeAvatar: "Xóa ảnh đại diện",
+      saveChanges: "Lưu thay đổi",
+      saving: "Đang lưu...",
+      uploading: "Đang tải lên...",
+      loadError: "Không thể tải dữ liệu hồ sơ",
+      memberSince: "Thành viên từ",
+      updateSuccess: "Cập nhật hồ sơ thành công",
+      updateError: "Cập nhật hồ sơ thất bại",
+      avatarUploadSuccess: "Tải lên ảnh đại diện thành công",
+      avatarUploadError: "Tải lên ảnh đại diện thất bại",
+      avatarRemoveSuccess: "Xóa ảnh đại diện thành công",
+      avatarRemoveError: "Xóa ảnh đại diện thất bại",
+      cropAvatar: "Cắt ảnh đại diện",
+      zoom: "Thu phóng",
+      cancel: "Hủy",
+      avatarInvalidType: "Vui lòng chọn tệp hình ảnh hợp lệ",
+      avatarTooLarge: "Tệp hình ảnh quá lớn (tối đa 5MB)",
+      changePassword: "Đổi mật khẩu",
+      currentPassword: "Mật khẩu hiện tại",
+      currentPasswordRequired: "Vui lòng nhập mật khẩu hiện tại",
+      currentPasswordPlaceholder: "Nhập mật khẩu hiện tại",
+      newPassword: "Mật khẩu mới",
+      newPasswordRequired: "Vui lòng nhập mật khẩu mới",
+      newPasswordPlaceholder: "Nhập mật khẩu mới",
+      confirmPassword: "Xác nhận mật khẩu",
+      confirmPasswordRequired: "Vui lòng xác nhận mật khẩu mới",
+      confirmPasswordPlaceholder: "Nhập lại mật khẩu mới",
+      passwordsDoNotMatch: "Mật khẩu xác nhận không khớp",
+      passwordTooShort: "Mật khẩu phải có ít nhất 8 ký tự",
+      passwordRequirementsText:
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+      changingPassword: "Đang đổi mật khẩu...",
+      passwordChangedSuccess: "Đổi mật khẩu thành công",
+      passwordChangeError: "Đổi mật khẩu thất bại",
+      passwordRequirements: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+    },
   },
   en: {
     // Header
@@ -410,6 +505,7 @@ export const translations: Record<Language, Translations> = {
       emailRequired: "Please enter your email",
       passwordRequired: "Please enter your password",
       fullNameRequired: "Please enter your full name",
+      profile: "Profile",
     },
     // Table Info
     table: {
@@ -563,6 +659,53 @@ export const translations: Record<Language, Translations> = {
       orderUpdates: "Order Updates",
       estimatedTime: "Estimated",
       preparingMessage: "Your order is being prepared by the kitchen.",
+    },
+    // Profile
+    profile: {
+      personalInfo: "Personal Information",
+      fullName: "Full Name",
+      fullNamePlaceholder: "Enter your full name",
+      phone: "Phone Number",
+      phonePlaceholder: "Enter your phone number",
+      email: "Email",
+      emailNote: "Email cannot be changed",
+      avatar: "Avatar",
+      changeAvatar: "Change Avatar",
+      removeAvatar: "Remove Avatar",
+      saveChanges: "Save Changes",
+      saving: "Saving...",
+      uploading: "Uploading...",
+      loadError: "Failed to load profile data",
+      memberSince: "Member since",
+      updateSuccess: "Profile updated successfully",
+      updateError: "Failed to update profile",
+      avatarUploadSuccess: "Avatar uploaded successfully",
+      avatarUploadError: "Failed to upload avatar",
+      avatarRemoveSuccess: "Avatar removed successfully",
+      avatarRemoveError: "Failed to remove avatar",
+      cropAvatar: "Crop Avatar",
+      zoom: "Zoom",
+      cancel: "Cancel",
+      avatarInvalidType: "Please select a valid image file",
+      avatarTooLarge: "Image file is too large (max 5MB)",
+      changePassword: "Change Password",
+      currentPassword: "Current Password",
+      currentPasswordRequired: "Please enter your current password",
+      currentPasswordPlaceholder: "Enter your current password",
+      newPassword: "New Password",
+      newPasswordRequired: "Please enter a new password",
+      newPasswordPlaceholder: "Enter a new password",
+      confirmPassword: "Confirm Password",
+      confirmPasswordRequired: "Please confirm your new password",
+      confirmPasswordPlaceholder: "Re-enter your new password",
+      passwordsDoNotMatch: "Passwords do not match",
+      passwordTooShort: "Password must be at least 8 characters",
+      passwordRequirementsText:
+        "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
+      changingPassword: "Changing password...",
+      passwordChangedSuccess: "Password changed successfully",
+      passwordChangeError: "Failed to change password",
+      passwordRequirements: "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
     },
   },
 };

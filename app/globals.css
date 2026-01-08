@@ -177,3 +177,8 @@ h6 {
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide default password reveal button in Microsoft Edge */
+input[type="password"]::-ms-reveal {
+  display: none;
+}
