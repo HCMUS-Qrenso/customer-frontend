@@ -99,4 +99,3 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
     </Card>
   );
 }
-

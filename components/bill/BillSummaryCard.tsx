@@ -19,7 +19,14 @@ export function BillSummaryCard({
   checkoutHref,
 }: BillSummaryCardProps) {
   const { t } = useLanguage();
-  const { formatPrice, getServiceChargeRate, getTaxLabel, getTaxRate, isServiceChargeEnabled, settings } = useTenantSettings();
+  const {
+    formatPrice,
+    getServiceChargeRate,
+    getTaxLabel,
+    getTaxRate,
+    isServiceChargeEnabled,
+    settings,
+  } = useTenantSettings();
   const scRate = getServiceChargeRate();
   const taxLabel = getTaxLabel();
   const taxRate = getTaxRate();
@@ -52,10 +59,11 @@ export function BillSummaryCard({
           )}
           <div className="flex justify-between text-sm">
             <span className="text-slate-500 dark:text-slate-400">
-              {taxLabel} ({taxRate}%){settings.tax.inclusive ? ' (đã bao gồm)' : ''}
+              {taxLabel} ({taxRate}%)
+              {settings.tax.inclusive ? " (đã bao gồm)" : ""}
             </span>
             <span className="font-medium text-slate-400">
-              {settings.tax.inclusive ? 'Đã bao gồm' : '--'}
+              {settings.tax.inclusive ? "Đã bao gồm" : "--"}
             </span>
           </div>
           {bill.discount && bill.discount > 0 && (

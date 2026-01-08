@@ -35,7 +35,7 @@ interface MyOrderClientProps {
  */
 function transformOrderResponse(
   data: OrderResponse["data"],
-  serviceChargeCalculator: (subtotal: number) => number
+  serviceChargeCalculator: (subtotal: number) => number,
 ): OrderDTO | null {
   if (!data) return null;
 
@@ -122,7 +122,10 @@ function MyOrderContent({
         : await orderApi.getMyOrder();
 
       if (result.success && result.data) {
-        const transformedOrder = transformOrderResponse(result.data, calculateServiceCharge);
+        const transformedOrder = transformOrderResponse(
+          result.data,
+          calculateServiceCharge,
+        );
         setOrder(transformedOrder);
         const itemBatches = groupItemsIntoBatches(result.data.items);
         setBatches(itemBatches);

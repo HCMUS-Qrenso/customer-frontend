@@ -1,7 +1,7 @@
 /**
  * Shared format utilities for consistent data formatting across customer app.
  * All functions accept optional settings to override defaults.
- * 
+ *
  * NOTE: For price formatting in React components, prefer using useTenantSettings().formatPrice()
  * from the TenantSettingsProvider which automatically reads tenant currency settings.
  */
@@ -27,26 +27,26 @@ export interface DateFormatOptions {
   /** Include time in output */
   includeTime?: boolean;
   /** Date format pattern: 'DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD' */
-  dateFormat?: 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
+  dateFormat?: "DD/MM/YYYY" | "MM/DD/YYYY" | "YYYY-MM-DD";
 }
 
 // ============================================
 // DEFAULTS
 // ============================================
 
-const DEFAULT_CURRENCY = 'VND';
-const DEFAULT_LOCALE = 'vi-VN';
-const DEFAULT_TIMEZONE = 'Asia/Ho_Chi_Minh';
+const DEFAULT_CURRENCY = "VND";
+const DEFAULT_LOCALE = "vi-VN";
+const DEFAULT_TIMEZONE = "Asia/Ho_Chi_Minh";
 
 /**
  * Maps language code to Intl locale
  */
 export function languageToLocale(language: string): string {
   const localeMap: Record<string, string> = {
-    vi: 'vi-VN',
-    en: 'en-US',
-    zh: 'zh-CN',
-    fr: 'fr-FR',
+    vi: "vi-VN",
+    en: "en-US",
+    zh: "zh-CN",
+    fr: "fr-FR",
   };
   return localeMap[language] || DEFAULT_LOCALE;
 }
@@ -70,16 +70,16 @@ export function formatPrice(
   price: string | number,
   options?: PriceFormatOptions,
 ): string {
-  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+  const numPrice = typeof price === "string" ? parseFloat(price) : price;
 
   if (isNaN(numPrice)) {
-    return '—';
+    return "—";
   }
 
   const currency = options?.currency || DEFAULT_CURRENCY;
-  const locale = options?.locale || (currency === 'VND' ? 'vi-VN' : 'en-US');
-  const symbol = options?.symbol || (currency === 'VND' ? '₫' : '$');
-  const decimals = currency === 'VND' ? 0 : 2;
+  const locale = options?.locale || (currency === "VND" ? "vi-VN" : "en-US");
+  const symbol = options?.symbol || (currency === "VND" ? "₫" : "$");
+  const decimals = currency === "VND" ? 0 : 2;
 
   // Use simple number format + symbol for consistency
   const formattedNumber = numPrice.toLocaleString(locale, {
@@ -88,8 +88,8 @@ export function formatPrice(
   });
 
   // Currency symbol position: prefix for USD-like, suffix for VND
-  return currency === 'VND' 
-    ? `${formattedNumber} ${symbol}` 
+  return currency === "VND"
+    ? `${formattedNumber} ${symbol}`
     : `${symbol}${formattedNumber}`;
 }
 
@@ -111,59 +111,60 @@ export function formatDateTime(
   dateString: string | null,
   options?: DateFormatOptions,
 ): string {
-  if (!dateString) return '—';
+  if (!dateString) return "—";
 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '—';
+  if (isNaN(date.getTime())) return "—";
 
   const timezone = options?.timezone || DEFAULT_TIMEZONE;
   const includeTime = options?.includeTime !== false; // Default true
-  const dateFormat = options?.dateFormat || 'DD/MM/YYYY';
+  const dateFormat = options?.dateFormat || "DD/MM/YYYY";
 
   try {
     // Get date parts in the specified timezone
-    const formatter = new Intl.DateTimeFormat('en-CA', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: includeTime ? '2-digit' : undefined,
-      minute: includeTime ? '2-digit' : undefined,
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: includeTime ? "2-digit" : undefined,
+      minute: includeTime ? "2-digit" : undefined,
       hour12: false,
       timeZone: timezone,
     });
-    
+
     const parts = formatter.formatToParts(date);
-    const getPart = (type: string) => parts.find(p => p.type === type)?.value || '';
-    
-    const day = getPart('day');
-    const month = getPart('month');
-    const year = getPart('year');
-    const hour = getPart('hour');
-    const minute = getPart('minute');
-    
+    const getPart = (type: string) =>
+      parts.find((p) => p.type === type)?.value || "";
+
+    const day = getPart("day");
+    const month = getPart("month");
+    const year = getPart("year");
+    const hour = getPart("hour");
+    const minute = getPart("minute");
+
     // Format date according to dateFormat setting
     let formattedDate: string;
     switch (dateFormat) {
-      case 'MM/DD/YYYY':
+      case "MM/DD/YYYY":
         formattedDate = `${month}/${day}/${year}`;
         break;
-      case 'YYYY-MM-DD':
+      case "YYYY-MM-DD":
         formattedDate = `${year}-${month}-${day}`;
         break;
-      case 'DD/MM/YYYY':
+      case "DD/MM/YYYY":
       default:
         formattedDate = `${day}/${month}/${year}`;
         break;
     }
-    
+
     if (includeTime && hour && minute) {
       return `${formattedDate}, ${hour}:${minute}`;
     }
-    
+
     return formattedDate;
   } catch {
     // Fallback to simple format
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 }
 
@@ -196,24 +197,24 @@ export function formatTime(
   dateString: string,
   options?: DateFormatOptions,
 ): string {
-  if (!dateString) return '—';
+  if (!dateString) return "—";
 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '—';
+  if (isNaN(date.getTime())) return "—";
 
   const locale = options?.locale || DEFAULT_LOCALE;
   const timezone = options?.timezone || DEFAULT_TIMEZONE;
 
   try {
     return date.toLocaleTimeString(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
       timeZone: timezone,
     });
   } catch {
     return date.toLocaleTimeString(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 }
@@ -231,17 +232,26 @@ export function formatTime(
  */
 export function formatRelativeDate(
   dateString: string,
-  locale: string = 'vi',
+  locale: string = "vi",
 ): string {
   const date = new Date(dateString);
   const now = new Date();
-  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+  const diffInHours = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+  );
 
-  const translations: Record<string, { justNow: string; hoursAgo: string; dayAgo: string }> = {
-    vi: { justNow: 'Vừa xong', hoursAgo: 'h trước', dayAgo: '1 ngày trước' },
-    en: { justNow: 'Just now', hoursAgo: 'h ago', dayAgo: '1 day ago' },
-    zh: { justNow: '刚刚', hoursAgo: '小时前', dayAgo: '1天前' },
-    fr: { justNow: "À l'instant", hoursAgo: 'h avant', dayAgo: 'Il y a 1 jour' },
+  const translations: Record<
+    string,
+    { justNow: string; hoursAgo: string; dayAgo: string }
+  > = {
+    vi: { justNow: "Vừa xong", hoursAgo: "h trước", dayAgo: "1 ngày trước" },
+    en: { justNow: "Just now", hoursAgo: "h ago", dayAgo: "1 day ago" },
+    zh: { justNow: "刚刚", hoursAgo: "小时前", dayAgo: "1天前" },
+    fr: {
+      justNow: "À l'instant",
+      hoursAgo: "h avant",
+      dayAgo: "Il y a 1 jour",
+    },
   };
 
   const t = translations[locale] || translations.vi;

@@ -14,13 +14,23 @@ import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { OperatingHoursButton } from "@/components/shared/OperatingHoursButton";
-import { MapPin, AlertTriangle, CircleX, Clock, Phone, Mail } from "lucide-react";
+import {
+  MapPin,
+  AlertTriangle,
+  CircleX,
+  Clock,
+  Phone,
+  Mail,
+} from "lucide-react";
 import {
   setSessionToken,
   getQrToken,
   getTableId,
 } from "@/lib/stores/qr-token-store";
-import { saveTenantSettings, saveTenantInfo } from "@/lib/stores/tenant-settings-store";
+import {
+  saveTenantSettings,
+  saveTenantInfo,
+} from "@/lib/stores/tenant-settings-store";
 
 // Session expired banner component
 function SessionExpiredBanner() {
@@ -189,7 +199,10 @@ function TableLandingContent({
     // Save tenant settings from verify-token response
     if (tableContext?.tenantSettings) {
       saveTenantSettings(tableContext.tenantSettings);
-      console.log('[TableLanding] Tenant settings saved:', tableContext.tenantSettings);
+      console.log(
+        "[TableLanding] Tenant settings saved:",
+        tableContext.tenantSettings,
+      );
     }
     // Save tenant info
     if (tableContext?.tenantName) {
@@ -199,7 +212,12 @@ function TableLandingContent({
         image: tableContext.tenantImage || null,
       });
     }
-  }, [tableContext?.session_token, tableContext?.tenantSettings, tableContext?.tenantName, tableContext?.tenantImage]);
+  }, [
+    tableContext?.session_token,
+    tableContext?.tenantSettings,
+    tableContext?.tenantName,
+    tableContext?.tenantImage,
+  ]);
 
   // Save returnUrl for redirect after login
   useEffect(() => {
@@ -244,8 +262,9 @@ function TableLandingContent({
   };
 
   // Order settings
-  const requireGuestCount = tableContext.tenantSettings?.order?.require_guest_count ?? false;
-  
+  const requireGuestCount =
+    tableContext.tenantSettings?.order?.require_guest_count ?? false;
+
   // Guest count is always valid if not required (uses table capacity implicitly)
   // If required, need guest count > 0
   const isGuestCountValid = !requireGuestCount || guestCount > 0;
@@ -296,15 +315,16 @@ function TableLandingContent({
 
         {/* Guest Count - Only show if require_guest_count is enabled */}
         {requireGuestCount && (
-          <GuestCountStepper 
-            onChange={handleGuestCountChange}
-          />
+          <GuestCountStepper onChange={handleGuestCountChange} />
         )}
 
         {/* Contact Info */}
-        {(tableContext.tenantSettings?.phone || tableContext.tenantSettings?.contact_email) && (
+        {(tableContext.tenantSettings?.phone ||
+          tableContext.tenantSettings?.contact_email) && (
           <div className="mt-4 rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm border border-slate-200 dark:border-slate-700">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Liên hệ</h3>
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+              Liên hệ
+            </h3>
             <div className="flex flex-col gap-2">
               {tableContext.tenantSettings.phone && (
                 <a

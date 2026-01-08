@@ -39,7 +39,8 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
-  const { formatPrice, isMinOrderMet, getMinOrderGap, minOrderValue } = useTenantSettings();
+  const { formatPrice, isMinOrderMet, getMinOrderGap, minOrderValue } =
+    useTenantSettings();
 
   // Use Zustand cart store
   const cartItems = useCartStore((state) => state.items);

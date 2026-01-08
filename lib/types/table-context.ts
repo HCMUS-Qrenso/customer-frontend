@@ -1,6 +1,6 @@
 // Table Context - Type Definitions (from GET /tables/qr/verify-token)
 
-import type { TenantSettings } from './table';
+import type { TenantSettings } from "./table";
 
 /**
  * Table context returned from QR token verification

@@ -24,7 +24,7 @@ export function useStartSessionMutation() {
         address: data.data.tenant.address || null,
         image: data.data.tenant.image || null,
       });
-      
+
       // Invalidate table context query to refresh data
       queryClient.invalidateQueries({
         queryKey: tableContextQueryKeys.detail(

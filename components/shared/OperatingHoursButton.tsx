@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Clock, ChevronDown, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTenantSettings } from '@/providers/tenant-settings-context';
-import type { OperatingHours, DayHours } from '@/lib/types/table';
+import { useState, useRef, useEffect } from "react";
+import { Clock, ChevronDown, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
+import type { OperatingHours, DayHours } from "@/lib/types/table";
 
 interface OperatingHoursButtonProps {
   className?: string;
@@ -12,13 +12,13 @@ interface OperatingHoursButtonProps {
 
 // Day order and localized labels (Monday first, Sunday last)
 const DAYS_ORDER: Array<{ key: keyof OperatingHours; label: string }> = [
-  { key: 'monday', label: 'Thứ 2' },
-  { key: 'tuesday', label: 'Thứ 3' },
-  { key: 'wednesday', label: 'Thứ 4' },
-  { key: 'thursday', label: 'Thứ 5' },
-  { key: 'friday', label: 'Thứ 6' },
-  { key: 'saturday', label: 'Thứ 7' },
-  { key: 'sunday', label: 'Chủ Nhật' },
+  { key: "monday", label: "Thứ 2" },
+  { key: "tuesday", label: "Thứ 3" },
+  { key: "wednesday", label: "Thứ 4" },
+  { key: "thursday", label: "Thứ 5" },
+  { key: "friday", label: "Thứ 6" },
+  { key: "saturday", label: "Thứ 7" },
+  { key: "sunday", label: "Chủ Nhật" },
 ];
 
 // Get current day index (0 = Monday, 6 = Sunday)
@@ -31,48 +31,50 @@ function getCurrentDayIndex(): number {
 function formatDayHours(hours: DayHours | undefined): string {
   // No data for this day
   if (!hours) {
-    return 'Đóng cửa';
+    return "Đóng cửa";
   }
-  
+
   // New format: isOpen + slots
-  if (typeof hours.isOpen === 'boolean') {
+  if (typeof hours.isOpen === "boolean") {
     if (!hours.isOpen) {
-      return 'Đóng cửa';
+      return "Đóng cửa";
     }
     // isOpen is true, check for slots
     if (hours.slots && hours.slots.length > 0) {
       return hours.slots
-        .map(slot => `${slot.open} - ${slot.close}`)
-        .join(', ');
+        .map((slot) => `${slot.open} - ${slot.close}`)
+        .join(", ");
     }
-    return 'Đóng cửa'; // isOpen but no slots
+    return "Đóng cửa"; // isOpen but no slots
   }
-  
+
   // Legacy format: closed flag + direct open/close
   if (hours.closed) {
-    return 'Đóng cửa';
+    return "Đóng cửa";
   }
   if (hours.open && hours.close) {
     return `${hours.open} - ${hours.close}`;
   }
-  
-  return 'Đóng cửa';
+
+  return "Đóng cửa";
 }
 
 // Check if day is open
 function isDayOpen(hours: DayHours | undefined): boolean {
   if (!hours) return false;
-  
+
   // New format
-  if (typeof hours.isOpen === 'boolean') {
+  if (typeof hours.isOpen === "boolean") {
     return hours.isOpen && !!hours.slots && hours.slots.length > 0;
   }
-  
+
   // Legacy format
   return !hours.closed && !!hours.open && !!hours.close;
 }
 
-export function OperatingHoursButton({ className = '' }: OperatingHoursButtonProps) {
+export function OperatingHoursButton({
+  className = "",
+}: OperatingHoursButtonProps) {
   const { isOpenNow, getTodayHours, settings } = useTenantSettings();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,14 +86,18 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen]);
 
@@ -112,16 +118,16 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
         {/* Status dot */}
         <span
           className={`size-2 rounded-full ${
-            isCurrentlyOpen 
-              ? 'bg-green-500 animate-pulse' 
-              : 'bg-red-500'
+            isCurrentlyOpen ? "bg-green-500 animate-pulse" : "bg-red-500"
           }`}
         />
         <Clock className="size-3.5" />
         <span className="text-xs font-medium">
-          {isCurrentlyOpen ? 'Mở cửa' : 'Đóng cửa'}
+          {isCurrentlyOpen ? "Mở cửa" : "Đóng cửa"}
         </span>
-        <ChevronDown className={`size-3 opacity-50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`size-3 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </Button>
 
       {/* Dropdown */}
@@ -132,17 +138,17 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
             <div className="flex items-center gap-2">
               <span
                 className={`size-2.5 rounded-full ${
-                  isCurrentlyOpen 
-                    ? 'bg-green-500 animate-pulse' 
-                    : 'bg-red-500'
+                  isCurrentlyOpen ? "bg-green-500 animate-pulse" : "bg-red-500"
                 }`}
               />
-              <span className={`font-semibold text-sm ${
-                isCurrentlyOpen 
-                  ? 'text-green-600 dark:text-green-400' 
-                  : 'text-red-600 dark:text-red-400'
-              }`}>
-                {isCurrentlyOpen ? 'Đang mở cửa' : 'Đã đóng cửa'}
+              <span
+                className={`font-semibold text-sm ${
+                  isCurrentlyOpen
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {isCurrentlyOpen ? "Đang mở cửa" : "Đã đóng cửa"}
               </span>
             </div>
             <button
@@ -172,30 +178,32 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
               const isToday = index === currentDayIndex;
               const hoursText = formatDayHours(dayData);
               const dayIsOpen = isDayOpen(dayData);
-              
+
               return (
-                <div 
-                  key={key} 
+                <div
+                  key={key}
                   className={`flex justify-between text-sm py-1.5 px-2 rounded-lg ${
-                    isToday 
-                      ? 'bg-emerald-50 dark:bg-emerald-500/10' 
-                      : ''
+                    isToday ? "bg-emerald-50 dark:bg-emerald-500/10" : ""
                   }`}
                 >
-                  <span className={`${
-                    isToday 
-                      ? 'font-semibold text-emerald-700 dark:text-emerald-300' 
-                      : 'text-slate-600 dark:text-slate-400'
-                  }`}>
+                  <span
+                    className={`${
+                      isToday
+                        ? "font-semibold text-emerald-700 dark:text-emerald-300"
+                        : "text-slate-600 dark:text-slate-400"
+                    }`}
+                  >
                     {label}
                   </span>
-                  <span className={`tabular-nums text-right ${
-                    !dayIsOpen 
-                      ? 'text-red-500 dark:text-red-400' 
-                      : isToday 
-                        ? 'font-semibold text-emerald-700 dark:text-emerald-300' 
-                        : 'text-slate-800 dark:text-slate-200'
-                  }`}>
+                  <span
+                    className={`tabular-nums text-right ${
+                      !dayIsOpen
+                        ? "text-red-500 dark:text-red-400"
+                        : isToday
+                          ? "font-semibold text-emerald-700 dark:text-emerald-300"
+                          : "text-slate-800 dark:text-slate-200"
+                    }`}
+                  >
                     {hoursText}
                   </span>
                 </div>

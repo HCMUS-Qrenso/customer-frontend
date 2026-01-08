@@ -6,18 +6,18 @@
 
 /** Time slot for operating hours */
 export interface TimeSlot {
-  open: string;  // "09:00"
+  open: string; // "09:00"
   close: string; // "22:00"
 }
 
 /** Day operating hours - supports multiple time slots */
 export interface DayHours {
-  slots?: TimeSlot[];  // Multiple time slots (e.g., morning + evening)
-  isOpen?: boolean;     // Whether the day is open
+  slots?: TimeSlot[]; // Multiple time slots (e.g., morning + evening)
+  isOpen?: boolean; // Whether the day is open
   // Legacy format support
-  open?: string;       // "09:00" (legacy)
-  close?: string;      // "22:00" (legacy)
-  closed?: boolean;    // Legacy closed flag
+  open?: string; // "09:00" (legacy)
+  close?: string; // "22:00" (legacy)
+  closed?: boolean; // Legacy closed flag
 }
 
 /** Operating hours for each day of the week */

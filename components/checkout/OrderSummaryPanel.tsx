@@ -28,7 +28,8 @@ export function OrderSummaryPanel({
   onConfirmPayment,
 }: OrderSummaryPanelProps) {
   const { t } = useLanguage();
-  const { formatPrice, getServiceChargeRate, isServiceChargeEnabled } = useTenantSettings();
+  const { formatPrice, getServiceChargeRate, isServiceChargeEnabled } =
+    useTenantSettings();
   const scRate = getServiceChargeRate();
 
   return (

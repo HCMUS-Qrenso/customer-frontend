@@ -10,7 +10,14 @@ interface OrderSummaryCardProps {
 
 export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   const { t } = useLanguage();
-  const { formatPrice, getServiceChargeRate, getTaxLabel, getTaxRate, isServiceChargeEnabled, settings } = useTenantSettings();
+  const {
+    formatPrice,
+    getServiceChargeRate,
+    getTaxLabel,
+    getTaxRate,
+    isServiceChargeEnabled,
+    settings,
+  } = useTenantSettings();
   const scRate = getServiceChargeRate();
   const taxLabel = getTaxLabel();
   const taxRate = getTaxRate();
@@ -68,7 +75,9 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
               Tổng cộng
             </span>
             <p className="text-xs text-slate-400">
-              {settings.tax.inclusive ? `Đã gồm ${taxLabel} ${taxRate}%` : `Chưa gồm ${taxLabel}`}
+              {settings.tax.inclusive
+                ? `Đã gồm ${taxLabel} ${taxRate}%`
+                : `Chưa gồm ${taxLabel}`}
             </p>
           </div>
           <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
@@ -79,4 +88,3 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
     </div>
   );
 }
-

@@ -23,9 +23,7 @@ interface LayoutProps {
 export default function TableLayout({ children }: LayoutProps) {
   return (
     <div className="min-h-[100svh] bg-slate-100">
-      <TenantSettingsClientProvider>
-        {children}
-      </TenantSettingsClientProvider>
+      <TenantSettingsClientProvider>{children}</TenantSettingsClientProvider>
     </div>
   );
 }

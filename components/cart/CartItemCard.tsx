@@ -90,7 +90,9 @@ export function CartItemCard({
                   <textarea
                     value={notesValue}
                     onChange={(e) => setNotesValue(e.target.value)}
-                    placeholder={t.cart.notePlaceholder || "Ghi chú cho món ăn..."}
+                    placeholder={
+                      t.cart.notePlaceholder || "Ghi chú cho món ăn..."
+                    }
                     maxLength={100}
                     className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none"
                     rows={2}
