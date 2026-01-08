@@ -35,5 +35,4 @@ export interface OrderDTO {
   voucherCode?: string;
   total: number;
   createdAt: string;
-  tableId?: string;
 }

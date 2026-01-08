@@ -111,7 +111,6 @@ export interface Translations {
     termsAgreement: string;
     items: string;
     backToMenu: string;
-    notePlaceholder: string;
   };
   // Checkout Page
   checkout: {
@@ -305,7 +304,6 @@ export const translations: Record<Language, Translations> = {
       termsAgreement: "Bằng cách đặt món, bạn đồng ý với điều khoản sử dụng.",
       items: "món",
       backToMenu: "Quay lại menu",
-      notePlaceholder: "Ghi chú cho món ăn...",
     },
     // Checkout
     checkout: {
@@ -496,7 +494,6 @@ export const translations: Record<Language, Translations> = {
       termsAgreement: "By placing order, you agree to the terms of service.",
       items: "items",
       backToMenu: "Back to menu",
-      notePlaceholder: "Note for the dish...",
     },
     // Checkout
     checkout: {
