@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { MenuItemDTO } from "@/lib/types/menu";
-import { formatUSD } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface MenuItemCardProps {
   item: MenuItemDTO;
@@ -15,6 +15,7 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
   const router = useRouter();
+  const { formatPrice } = useTenantSettings();
   const isUnavailable = item.status === "unavailable";
   const isSoldOut = item.status === "sold_out";
   const isDisabled = isUnavailable || isSoldOut;
@@ -115,7 +116,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
               <span
                 className={`font-bold ${isDisabled ? "text-slate-400 dark:text-slate-500" : "text-emerald-600 dark:text-emerald-400"}`}
               >
-                {formatUSD(item.base_price)}
+                {formatPrice(Number(item.base_price))}
               </span>
               {/* Show category name as a hint */}
               {item.category?.name && (

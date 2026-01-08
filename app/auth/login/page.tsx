@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -268,10 +268,26 @@ function LoginContent() {
   );
 }
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4">
+      <div className="w-full max-w-sm text-center">
+        <div className="flex justify-center mb-6">
+          <Loader2 className="size-12 text-emerald-500 animate-spin" />
+        </div>
+        <p className="text-slate-500 dark:text-slate-400">Đang tải...</p>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   return (
     <LanguageProvider>
-      <LoginContent />
+      <Suspense fallback={<LoadingFallback />}>
+        <LoginContent />
+      </Suspense>
     </LanguageProvider>
   );
 }
+

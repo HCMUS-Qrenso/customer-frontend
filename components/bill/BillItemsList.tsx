@@ -2,7 +2,6 @@
 
 import { Clock } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatTime } from "@/lib/format";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { BillItemDTO } from "@/lib/types/checkout";
 
@@ -12,7 +11,7 @@ interface BillItemsListProps {
 
 export function BillItemsList({ items }: BillItemsListProps) {
   const { t, lang } = useLanguage();
-  const { formatPrice } = useTenantSettings();
+  const { formatPrice, formatTime } = useTenantSettings();
 
   // Group items by addedAt time
   const grouped = items.reduce(

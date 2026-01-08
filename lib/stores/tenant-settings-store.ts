@@ -14,6 +14,13 @@ interface TenantInfo {
   image: string | null;
 }
 
+// Dispatch custom event to notify components of settings change
+function dispatchSettingsUpdate() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('tenant-settings-updated'));
+  }
+}
+
 /**
  * Save tenant settings to sessionStorage
  */
@@ -21,6 +28,7 @@ export function saveTenantSettings(settings: TenantSettings): void {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    dispatchSettingsUpdate(); // Notify components
   } catch (error) {
     console.error('[TenantSettingsStore] Failed to save settings:', error);
   }
@@ -47,6 +55,7 @@ export function saveTenantInfo(info: TenantInfo): void {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(TENANT_INFO_KEY, JSON.stringify(info));
+    dispatchSettingsUpdate(); // Notify components
   } catch (error) {
     console.error('[TenantSettingsStore] Failed to save tenant info:', error);
   }
@@ -74,6 +83,7 @@ export function clearTenantData(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(TENANT_INFO_KEY);
+    dispatchSettingsUpdate(); // Notify components
   } catch (error) {
     console.error('[TenantSettingsStore] Failed to clear data:', error);
   }

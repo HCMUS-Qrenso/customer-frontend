@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { CreditCard, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatTime } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
@@ -18,6 +17,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { OrderStatusCard } from "@/components/shared/OrderStatusCard";
 import { UserAvatar } from "@/components/auth/UserAvatar";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface BillClientProps {
   tenantSlug: string;
@@ -32,6 +32,7 @@ function BillContent({
 }: BillClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
+  const { formatTime } = useTenantSettings();
 
   // Use props or fallback to persisted values from sessionStorage
   const tableId = propsTableId || getTableId() || undefined;

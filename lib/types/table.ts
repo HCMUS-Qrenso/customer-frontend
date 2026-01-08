@@ -4,11 +4,20 @@
 // Tenant DTOs
 // ============================================
 
-/** Day operating hours */
-export interface DayHours {
+/** Time slot for operating hours */
+export interface TimeSlot {
   open: string;  // "09:00"
   close: string; // "22:00"
-  closed?: boolean;
+}
+
+/** Day operating hours - supports multiple time slots */
+export interface DayHours {
+  slots?: TimeSlot[];  // Multiple time slots (e.g., morning + evening)
+  isOpen?: boolean;     // Whether the day is open
+  // Legacy format support
+  open?: string;       // "09:00" (legacy)
+  close?: string;      // "22:00" (legacy)
+  closed?: boolean;    // Legacy closed flag
 }
 
 /** Operating hours for each day of the week */
@@ -36,6 +45,15 @@ export interface ServiceChargeSettings {
   min_party?: number | null;
 }
 
+/** Order settings */
+export interface OrderSettings {
+  min_value?: number | null;
+  estimated_prep_time: number;
+  allow_special_instructions: boolean;
+  session_timeout_minutes: number;
+  require_guest_count: boolean;
+}
+
 /** Tenant display/branding settings */
 export interface TenantBrandingSettings {
   logoUrl?: string;
@@ -48,9 +66,12 @@ export interface TenantSettings {
   currency: string;
   currency_symbol: string;
   timezone: string;
+  phone?: string | null;
+  contact_email?: string | null;
   tax: TaxSettings;
   service_charge?: ServiceChargeSettings | null;
   operating_hours?: OperatingHours | null;
+  order?: OrderSettings | null;
 }
 
 export interface TenantDTO {

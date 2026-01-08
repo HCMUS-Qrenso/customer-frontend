@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatDate } from "@/lib/format";
 import { orderApi, type OrderHistoryResponse } from "@/lib/api/order";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -29,7 +28,7 @@ interface MyOrdersClientProps {
 
 function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
   const { t } = useLanguage();
-  const { formatPrice } = useTenantSettings();
+  const { formatPrice, formatDate } = useTenantSettings();
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 

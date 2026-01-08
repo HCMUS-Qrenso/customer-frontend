@@ -39,7 +39,7 @@ interface CartClientProps {
 function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const router = useRouter();
   const { t, lang } = useLanguage();
-  const { formatPrice } = useTenantSettings();
+  const { formatPrice, isMinOrderMet, getMinOrderGap, minOrderValue } = useTenantSettings();
 
   // Use Zustand cart store
   const cartItems = useCartStore((state) => state.items);
@@ -251,6 +251,10 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
     return { subtotal, itemCount };
   }, [cartItems]);
 
+  // Min order validation
+  const isMinOrderMetValue = isMinOrderMet(calculations.subtotal);
+  const minOrderGap = getMinOrderGap(calculations.subtotal);
+
   // Empty cart state
   if (cartItems.length === 0) {
     return (
@@ -307,6 +311,25 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       {error && (
         <div className="mx-4 mt-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
           {error}
+        </div>
+      )}
+
+      {/* Min Order Warning */}
+      {minOrderValue && !isMinOrderMetValue && (
+        <div className="w-full max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+            <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
+              <Info className="size-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                Đơn hàng tối thiểu: {formatPrice(minOrderValue)}
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-400">
+                Còn thiếu {formatPrice(minOrderGap)} để đặt hàng
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -386,6 +409,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             subtotal={calculations.subtotal}
             onPlaceOrder={handlePlaceOrder}
             isLoading={isLoading}
+            disabled={!isMinOrderMetValue}
           />
         </div>
       </main>
@@ -413,7 +437,7 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
           </div>
           <Button
             onClick={handlePlaceOrder}
-            disabled={isLoading}
+            disabled={isLoading || !isMinOrderMetValue}
             className="flex-[2] h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             {isLoading ? (

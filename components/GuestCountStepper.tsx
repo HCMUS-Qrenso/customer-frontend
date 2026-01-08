@@ -30,11 +30,15 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
     }
   }, []);
 
+  // Notify parent of initial value and changes
+  useEffect(() => {
+    onChange?.(count);
+  }, [count, onChange]);
+
   const updateCount = (newCount: number) => {
     if (newCount >= MIN_GUESTS && newCount <= MAX_GUESTS) {
       setCount(newCount);
       localStorage.setItem(GUEST_COUNT_STORAGE_KEY, String(newCount));
-      onChange?.(newCount);
     }
   };
 
@@ -95,3 +99,4 @@ export function GuestCountStepper({ onChange }: GuestCountStepperProps) {
     </Card>
   );
 }
+

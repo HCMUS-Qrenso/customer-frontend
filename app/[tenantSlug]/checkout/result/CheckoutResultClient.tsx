@@ -17,24 +17,13 @@ interface CheckoutResultClientProps {
   token?: string;
 }
 
-function formatDateTime(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 function CheckoutResultContent({
   tenantSlug,
   tableId: propsTableId,
   token: propsToken,
 }: CheckoutResultClientProps) {
   const { t } = useLanguage();
-  const { formatPrice } = useTenantSettings();
+  const { formatPrice, formatDateTime } = useTenantSettings();
   const [result] = useState<CheckoutResultDTO>(mockResult);
 
   // Use props or fallback to persisted values from sessionStorage

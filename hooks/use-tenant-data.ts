@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { TenantSettings } from '@/lib/types/table';
 import { getTenantSettings, getTenantInfo } from '@/lib/stores/tenant-settings-store';
 import { DEFAULT_SETTINGS } from '@/providers/tenant-settings-context';
@@ -15,7 +15,7 @@ interface UseTenantDataResult {
 
 /**
  * Hook to load tenant settings from sessionStorage
- * Used to hydrate TenantSettingsProvider on client side
+ * Listens for custom 'tenant-settings-updated' event to re-read settings
  */
 export function useTenantData(): UseTenantDataResult {
   const [settings, setSettings] = useState<TenantSettings>(DEFAULT_SETTINGS);
@@ -24,12 +24,13 @@ export function useTenantData(): UseTenantDataResult {
   const [tenantImage, setTenantImage] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    // Load from sessionStorage on mount
+  // Function to read all data from storage
+  const loadFromStorage = useCallback(() => {
     const storedSettings = getTenantSettings();
     const storedInfo = getTenantInfo();
 
     if (storedSettings) {
+      console.log('[useTenantData] Loading settings:', storedSettings);
       setSettings(storedSettings);
     }
     
@@ -38,9 +39,34 @@ export function useTenantData(): UseTenantDataResult {
       setTenantAddress(storedInfo.address);
       setTenantImage(storedInfo.image);
     }
-
-    setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    // Initial load from storage
+    loadFromStorage();
+    setIsLoaded(true);
+
+    // Listen for settings updates (same-tab)
+    const handleUpdate = () => {
+      console.log('[useTenantData] Received tenant-settings-updated event');
+      loadFromStorage();
+    };
+
+    // Listen for storage events (cross-tab)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'tenant_settings' || e.key === 'tenant_info') {
+        loadFromStorage();
+      }
+    };
+
+    window.addEventListener('tenant-settings-updated', handleUpdate);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('tenant-settings-updated', handleUpdate);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [loadFromStorage]);
 
   return {
     settings,

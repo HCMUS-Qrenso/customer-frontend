@@ -4,9 +4,72 @@ import { useState, useRef, useEffect } from 'react';
 import { Clock, ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTenantSettings } from '@/providers/tenant-settings-context';
+import type { OperatingHours, DayHours } from '@/lib/types/table';
 
 interface OperatingHoursButtonProps {
   className?: string;
+}
+
+// Day order and localized labels (Monday first, Sunday last)
+const DAYS_ORDER: Array<{ key: keyof OperatingHours; label: string }> = [
+  { key: 'monday', label: 'Thứ 2' },
+  { key: 'tuesday', label: 'Thứ 3' },
+  { key: 'wednesday', label: 'Thứ 4' },
+  { key: 'thursday', label: 'Thứ 5' },
+  { key: 'friday', label: 'Thứ 6' },
+  { key: 'saturday', label: 'Thứ 7' },
+  { key: 'sunday', label: 'Chủ Nhật' },
+];
+
+// Get current day index (0 = Monday, 6 = Sunday)
+function getCurrentDayIndex(): number {
+  const jsDay = new Date().getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  return jsDay === 0 ? 6 : jsDay - 1; // Convert to 0 = Monday, 6 = Sunday
+}
+
+// Format day hours - supports both slots-based and legacy format
+function formatDayHours(hours: DayHours | undefined): string {
+  // No data for this day
+  if (!hours) {
+    return 'Đóng cửa';
+  }
+  
+  // New format: isOpen + slots
+  if (typeof hours.isOpen === 'boolean') {
+    if (!hours.isOpen) {
+      return 'Đóng cửa';
+    }
+    // isOpen is true, check for slots
+    if (hours.slots && hours.slots.length > 0) {
+      return hours.slots
+        .map(slot => `${slot.open} - ${slot.close}`)
+        .join(', ');
+    }
+    return 'Đóng cửa'; // isOpen but no slots
+  }
+  
+  // Legacy format: closed flag + direct open/close
+  if (hours.closed) {
+    return 'Đóng cửa';
+  }
+  if (hours.open && hours.close) {
+    return `${hours.open} - ${hours.close}`;
+  }
+  
+  return 'Đóng cửa';
+}
+
+// Check if day is open
+function isDayOpen(hours: DayHours | undefined): boolean {
+  if (!hours) return false;
+  
+  // New format
+  if (typeof hours.isOpen === 'boolean') {
+    return hours.isOpen && !!hours.slots && hours.slots.length > 0;
+  }
+  
+  // Legacy format
+  return !hours.closed && !!hours.open && !!hours.close;
 }
 
 export function OperatingHoursButton({ className = '' }: OperatingHoursButtonProps) {
@@ -16,6 +79,7 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
 
   const isCurrentlyOpen = isOpenNow();
   const todayHours = getTodayHours();
+  const currentDayIndex = getCurrentDayIndex();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -35,21 +99,6 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
   if (!settings.operating_hours) {
     return null;
   }
-
-  const dayLabels: Record<string, string> = {
-    monday: 'Thứ 2',
-    tuesday: 'Thứ 3',
-    wednesday: 'Thứ 4',
-    thursday: 'Thứ 5',
-    friday: 'Thứ 6',
-    saturday: 'Thứ 7',
-    sunday: 'Chủ nhật',
-  };
-
-  // Get current day for highlighting
-  const now = new Date();
-  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  const currentDayName = dayNames[now.getDay()];
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -77,7 +126,7 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-50 w-64 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-full left-0 mt-2 z-50 w-72 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
           {/* Header */}
           <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -108,21 +157,25 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
           {todayHours && (
             <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-b border-slate-200 dark:border-slate-700">
               <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                Hôm nay: {todayHours.open} - {todayHours.close}
+                Hôm nay: {todayHours}
               </p>
             </div>
           )}
 
-          {/* Schedule */}
+          {/* Schedule - Sorted by DAYS_ORDER */}
           <div className="p-4 space-y-1.5 max-h-64 overflow-y-auto">
             <h4 className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
               Lịch mở cửa
             </h4>
-            {Object.entries(settings.operating_hours).map(([day, hours]) => {
-              const isToday = day === currentDayName;
+            {DAYS_ORDER.map(({ key, label }, index) => {
+              const dayData = settings.operating_hours?.[key];
+              const isToday = index === currentDayIndex;
+              const hoursText = formatDayHours(dayData);
+              const dayIsOpen = isDayOpen(dayData);
+              
               return (
                 <div 
-                  key={day} 
+                  key={key} 
                   className={`flex justify-between text-sm py-1.5 px-2 rounded-lg ${
                     isToday 
                       ? 'bg-emerald-50 dark:bg-emerald-500/10' 
@@ -134,16 +187,16 @@ export function OperatingHoursButton({ className = '' }: OperatingHoursButtonPro
                       ? 'font-semibold text-emerald-700 dark:text-emerald-300' 
                       : 'text-slate-600 dark:text-slate-400'
                   }`}>
-                    {dayLabels[day] || day}
+                    {label}
                   </span>
-                  <span className={`tabular-nums ${
-                    hours?.closed 
-                      ? 'text-slate-400 dark:text-slate-500 italic' 
+                  <span className={`tabular-nums text-right ${
+                    !dayIsOpen 
+                      ? 'text-red-500 dark:text-red-400' 
                       : isToday 
                         ? 'font-semibold text-emerald-700 dark:text-emerald-300' 
                         : 'text-slate-800 dark:text-slate-200'
                   }`}>
-                    {hours?.closed ? 'Đóng cửa' : `${hours?.open} - ${hours?.close}`}
+                    {hoursText}
                   </span>
                 </div>
               );

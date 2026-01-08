@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { tableSessionApi } from "@/lib/api/table-session";
 import { tableContextQueryKeys } from "./use-table-context-query";
-import { saveTenantSettings, saveTenantInfo } from "@/lib/stores/tenant-settings-store";
+import { saveTenantInfo } from "@/lib/stores/tenant-settings-store";
 import type {
   StartSessionRequest,
   StartSessionResponse,
@@ -10,6 +10,7 @@ import type {
 /**
  * Hook to start a new table session
  * Called when customer clicks "Start Ordering" button
+ * Note: Tenant settings are now provided by verify-token, not startSession
  */
 export function useStartSessionMutation() {
   const queryClient = useQueryClient();
@@ -17,13 +18,7 @@ export function useStartSessionMutation() {
   return useMutation<StartSessionResponse, Error, StartSessionRequest>({
     mutationFn: (payload) => tableSessionApi.startSession(payload),
     onSuccess: (data, variables) => {
-      // Save tenant settings to sessionStorage for use across the app
-      if (data.data.tenant.settings) {
-        saveTenantSettings(data.data.tenant.settings);
-        console.log('[StartSession] Tenant settings saved:', data.data.tenant.settings);
-      }
-      
-      // Save tenant info
+      // Save tenant info as a fallback
       saveTenantInfo({
         name: data.data.tenant.name,
         address: data.data.tenant.address || null,

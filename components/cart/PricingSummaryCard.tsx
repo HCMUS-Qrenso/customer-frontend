@@ -10,6 +10,7 @@ interface PricingSummaryCardProps {
   subtotal: number;
   onPlaceOrder: () => void;
   isLoading?: boolean;
+  disabled?: boolean;
 }
 
 export function PricingSummaryCard({
@@ -17,6 +18,7 @@ export function PricingSummaryCard({
   subtotal,
   onPlaceOrder,
   isLoading = false,
+  disabled = false,
 }: PricingSummaryCardProps) {
   const { t } = useLanguage();
   const { formatPrice } = useTenantSettings();
@@ -60,7 +62,7 @@ export function PricingSummaryCard({
         <div className="hidden lg:flex flex-col gap-3">
           <Button
             onClick={onPlaceOrder}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
             className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:translate-y-[-2px] disabled:opacity-50"
           >
             <span>{t.cart.placeOrder}</span>

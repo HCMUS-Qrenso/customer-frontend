@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { authApi } from "@/lib/api/auth";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuthStore();
@@ -123,3 +123,30 @@ export default function AuthCallbackPage() {
     </div>
   );
 }
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4">
+      <div className="w-full max-w-sm text-center">
+        <div className="flex justify-center mb-6">
+          <Loader2 className="size-12 text-emerald-500 animate-spin" />
+        </div>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+          Đang xử lý đăng nhập...
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400">
+          Vui lòng chờ trong giây lát
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthCallbackContent />
+    </Suspense>
+  );
+}
+

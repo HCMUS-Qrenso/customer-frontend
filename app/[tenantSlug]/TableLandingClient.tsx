@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { useQrToken } from "@/hooks/use-qr-token";
@@ -14,12 +14,13 @@ import { UserAvatar } from "@/components/auth/UserAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageLoadingSkeleton } from "@/components/shared/LoadingState";
 import { OperatingHoursButton } from "@/components/shared/OperatingHoursButton";
-import { MapPin, AlertTriangle, CircleX, Clock } from "lucide-react";
+import { MapPin, AlertTriangle, CircleX, Clock, Phone, Mail } from "lucide-react";
 import {
   setSessionToken,
   getQrToken,
   getTableId,
 } from "@/lib/stores/qr-token-store";
+import { saveTenantSettings, saveTenantInfo } from "@/lib/stores/tenant-settings-store";
 
 // Session expired banner component
 function SessionExpiredBanner() {
@@ -170,7 +171,13 @@ function TableLandingContent({
   // Verify token and get table context from API
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);
 
-  // Save session token when received from verify response
+  // Guest count state for validation (must be before early returns)
+  const [guestCount, setGuestCount] = useState<number>(0);
+  const handleGuestCountChange = useCallback((count: number) => {
+    setGuestCount(count);
+  }, []);
+
+  // Save session token and tenant settings when received from verify response
   useEffect(() => {
     if (tableContext?.session_token) {
       setSessionToken(tableContext.session_token);
@@ -179,7 +186,20 @@ function TableLandingContent({
         tableContext.session_token.substring(0, 20) + "...",
       );
     }
-  }, [tableContext?.session_token]);
+    // Save tenant settings from verify-token response
+    if (tableContext?.tenantSettings) {
+      saveTenantSettings(tableContext.tenantSettings);
+      console.log('[TableLanding] Tenant settings saved:', tableContext.tenantSettings);
+    }
+    // Save tenant info
+    if (tableContext?.tenantName) {
+      saveTenantInfo({
+        name: tableContext.tenantName,
+        address: null,
+        image: tableContext.tenantImage || null,
+      });
+    }
+  }, [tableContext?.session_token, tableContext?.tenantSettings, tableContext?.tenantName, tableContext?.tenantImage]);
 
   // Save returnUrl for redirect after login
   useEffect(() => {
@@ -222,6 +242,13 @@ function TableLandingContent({
     capacity: tableContext.tableCapacity || 4,
     status: "available" as const,
   };
+
+  // Order settings
+  const requireGuestCount = tableContext.tenantSettings?.order?.require_guest_count ?? false;
+  
+  // Guest count is always valid if not required (uses table capacity implicitly)
+  // If required, need guest count > 0
+  const isGuestCountValid = !requireGuestCount || guestCount > 0;
 
   return (
     <div className="relative flex min-h-svh w-full flex-col bg-slate-50/50 dark:bg-slate-900 shadow-2xl sm:min-h-screen transition-colors lg:px-40">
@@ -267,7 +294,43 @@ function TableLandingContent({
           coverImageUrl={tableContext.tenantImage}
         />
 
-        <GuestCountStepper />
+        {/* Guest Count - Only show if require_guest_count is enabled */}
+        {requireGuestCount && (
+          <GuestCountStepper 
+            onChange={handleGuestCountChange}
+          />
+        )}
+
+        {/* Contact Info */}
+        {(tableContext.tenantSettings?.phone || tableContext.tenantSettings?.contact_email) && (
+          <div className="mt-4 rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Liên hệ</h3>
+            <div className="flex flex-col gap-2">
+              {tableContext.tenantSettings.phone && (
+                <a
+                  href={`tel:${tableContext.tenantSettings.phone}`}
+                  className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                >
+                  <div className="flex size-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/10">
+                    <Phone className="size-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <span>{tableContext.tenantSettings.phone}</span>
+                </a>
+              )}
+              {tableContext.tenantSettings.contact_email && (
+                <a
+                  href={`mailto:${tableContext.tenantSettings.contact_email}`}
+                  className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                >
+                  <div className="flex size-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/10">
+                    <Mail className="size-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <span>{tableContext.tenantSettings.contact_email}</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Sticky Bottom CTA */}
@@ -280,7 +343,7 @@ function TableLandingContent({
             tenantSlug={tenantSlug}
             tableCode={tableId || table.id}
             token={token}
-            disabled={table.status !== "available"}
+            disabled={table.status !== "available" || !isGuestCountValid}
           />
           <p className="text-center text-xs text-slate-400">
             {t.cta.termsAgreement}

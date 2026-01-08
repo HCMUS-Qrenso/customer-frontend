@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { MenuItemDTO } from "@/lib/types/menu";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatUSD } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface ChefPicksCarouselProps {
   items: MenuItemDTO[];
@@ -17,6 +17,7 @@ export function ChefPicksCarousel({
   tenantSlug,
 }: ChefPicksCarouselProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   if (items.length === 0) return null;
 
@@ -81,7 +82,7 @@ export function ChefPicksCarousel({
                     <div className="absolute right-2 top-2">
                       <div className="rounded-lg bg-slate-500 px-2.5 py-1 shadow-md">
                         <span className="text-sm font-bold text-white">
-                          {formatUSD(item.base_price)}
+                          {formatPrice(Number(item.base_price))}
                         </span>
                       </div>
                     </div>
@@ -142,7 +143,7 @@ export function ChefPicksCarousel({
                     <div className="absolute right-2 top-2">
                       <div className="rounded-lg bg-emerald-500 px-2.5 py-1 shadow-md">
                         <span className="text-sm font-bold text-white">
-                          {formatUSD(item.base_price)}
+                          {formatPrice(Number(item.base_price))}
                         </span>
                       </div>
                     </div>

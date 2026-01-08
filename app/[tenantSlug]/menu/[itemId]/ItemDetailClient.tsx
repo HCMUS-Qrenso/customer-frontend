@@ -40,7 +40,7 @@ function ItemDetailContent({
   token: propsToken,
 }: ItemDetailClientProps) {
   const { t, lang } = useLanguage();
-  const { formatPrice } = useTenantSettings();
+  const { formatPrice, allowSpecialInstructions } = useTenantSettings();
 
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<
@@ -344,25 +344,27 @@ function ItemDetailContent({
                 />
               ))}
 
-              {/* Notes */}
-              <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
-                  {t.menu.noteForKitchen}
-                </h3>
-                <div className="relative">
-                  <textarea
-                    className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                    placeholder={t.menu.notePlaceholder}
-                    rows={3}
-                    maxLength={100}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                  <div className="absolute bottom-2 right-2 text-[10px] text-slate-400 dark:text-slate-500">
-                    {notes.length}/100
+              {/* Notes - Only show if allow_special_instructions is enabled */}
+              {allowSpecialInstructions && (
+                <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                  <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+                    {t.menu.noteForKitchen}
+                  </h3>
+                  <div className="relative">
+                    <textarea
+                      className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      placeholder={t.menu.notePlaceholder}
+                      rows={3}
+                      maxLength={100}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                    />
+                    <div className="absolute bottom-2 right-2 text-[10px] text-slate-400 dark:text-slate-500">
+                      {notes.length}/100
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         ) : null}

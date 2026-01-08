@@ -7,7 +7,6 @@ import { Receipt, Wifi, WifiOff, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
-import { formatTime } from "@/lib/format";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useOrderSocket } from "@/hooks/use-order-socket";
 import { orderApi, type OrderResponse } from "@/lib/api/order";
@@ -72,7 +71,7 @@ function MyOrderContent({
 }: MyOrderClientProps) {
   const router = useRouter();
   const { t } = useLanguage();
-  const { calculateServiceCharge } = useTenantSettings();
+  const { calculateServiceCharge, formatTime } = useTenantSettings();
 
   // State
   const [order, setOrder] = useState<OrderDTO | null>(null);
