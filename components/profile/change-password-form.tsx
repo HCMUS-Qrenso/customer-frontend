@@ -111,7 +111,7 @@ export function ChangePasswordForm() {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-slate-100 bg-white/80 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/80",
+        "bg-white dark:bg-slate-800 rounded-xl p-5",
       )}
     >
       <div className="mb-6">

@@ -129,7 +129,7 @@ export function ProfileOverviewCard({ profile }: ProfileOverviewCardProps) {
     <>
       <div
         className={cn(
-          "rounded-2xl border border-slate-100 bg-white/80 p-5 shadow-sm lg:col-span-1 dark:border-slate-800 dark:bg-slate-900/80",
+          "bg-white dark:bg-slate-800 rounded-xl p-5 lg:col-span-1",
         )}
       >
         <div className="text-center">
