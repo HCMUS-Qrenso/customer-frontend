@@ -63,9 +63,7 @@ export function ProfileEditForm({
 
   return (
     <div
-      className={cn(
-        "bg-white dark:bg-slate-800 rounded-xl p-5 lg:col-span-2",
-      )}
+      className={cn("bg-white dark:bg-slate-800 rounded-xl p-5 lg:col-span-2")}
     >
       <div className="mb-6">
         <h3 className="flex items-center gap-2 text-lg font-semibold">

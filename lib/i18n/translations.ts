@@ -167,6 +167,7 @@ export interface Translations {
     requestBill: string;
     addMoreItems: string;
     trackOrder: string;
+    paymentRequested: string;
   };
   // Track Page
   track: {
@@ -407,6 +408,8 @@ export const translations: Record<Language, Translations> = {
       requestBill: "Yêu cầu hoá đơn",
       addMoreItems: "Thêm món",
       trackOrder: "Theo dõi",
+      paymentRequested:
+        "Yêu cầu thanh toán đã được tiếp nhận và đang xử lý. Quý khách vui lòng đợi trong giây lát !",
     },
     // Track
     track: {
@@ -646,6 +649,8 @@ export const translations: Record<Language, Translations> = {
       requestBill: "Request Bill",
       addMoreItems: "Add More Items",
       trackOrder: "Track Order",
+      paymentRequested:
+        "Your payment request has been received and is being processed. Please wait a moment!",
     },
     // Track
     track: {
