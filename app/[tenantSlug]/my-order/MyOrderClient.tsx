@@ -60,7 +60,7 @@ function transformOrderResponse(
     subtotal: data.subtotal,
     serviceCharge: serviceChargeCalculator(data.subtotal),
     tax: data.taxAmount,
-    discount: data.discountAmount,
+    discount: data.discountAmount > 0 ? data.discountAmount : undefined,
     total: data.totalAmount,
     createdAt: data.createdAt,
   };
@@ -393,25 +393,51 @@ function MyOrderContent({
               <OrderSummaryCard order={order} />
 
               {/* Review Section - Show for history orders or when payment is complete */}
-              {(orderId || order.paymentStatus === "paid") && (
+              {order.paymentStatus === "paid" && (
                 <OrderReviewSection orderId={orderId || order.id} />
               )}
+
+              {/* Alert that staff is processing payment request */}
+              {order.status === "completed" &&
+                order.paymentStatus !== "paid" && (
+                  <div className="bg-emerald-50 relative dark:bg-emerald-900/30 rounded-xl p-4 mb-6 text-emerald-700 dark:text-emerald-400">
+                    {t.order.paymentRequested}
+                  </div>
+                )}
+
+              {/* Request Bill Button - Desktop only, for served orders */}
+              {!orderId &&
+                order.paymentStatus !== "paid" &&
+                order.status === "served" && (
+                  <div className="hidden lg:block">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
+                      <Link href={billHref}>
+                        <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg flex items-center justify-center gap-2">
+                          <Receipt className="size-5" />
+                          {t.order.requestBill}
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
         </div>
       </main>
 
-      {/* Sticky CTA - Only show for active orders, not history */}
-      {!orderId && (
-        <MobileStickyBar>
-          <Link href={billHref} className="w-full">
-            <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2">
-              <Receipt className="size-5" />
-              {t.order.requestBill}
-            </Button>
-          </Link>
-        </MobileStickyBar>
-      )}
+      {/* Sticky CTA - Only show for served orders */}
+      {!orderId &&
+        order.paymentStatus !== "paid" &&
+        order.status === "served" && (
+          <MobileStickyBar>
+            <Link href={billHref} className="w-full">
+              <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2">
+                <Receipt className="size-5" />
+                {t.order.requestBill}
+              </Button>
+            </Link>
+          </MobileStickyBar>
+        )}
     </div>
   );
 }

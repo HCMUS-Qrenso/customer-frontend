@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
@@ -65,7 +65,14 @@ export function PricingSummaryCard({
             disabled={isLoading || disabled}
             className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:translate-y-[-2px] disabled:opacity-50"
           >
-            <span>{t.cart.placeOrder}</span>
+            {isLoading ? (
+              <>
+                <Loader2 className="size-5 animate-spin" />
+                <span>Đang xử lý...</span>
+              </>
+            ) : (
+              <span>{t.cart.placeOrder}</span>
+            )}
             <ArrowRight className="size-5" />
           </Button>
           <p className="text-center text-xs text-slate-400 mt-2">
