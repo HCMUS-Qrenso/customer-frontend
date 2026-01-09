@@ -17,20 +17,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { orderApi, type OrderHistoryResponse } from "@/lib/api/order";
-import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuth } from "@/hooks/use-auth";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { UserAvatar } from "@/components/auth/UserAvatar";
+import { OrderReviewsDisplay } from "@/components/order/OrderReviewsDisplay";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
 
-interface MyOrdersClientProps {
+interface OrderHistoryClientProps {
   tenantSlug: string;
 }
 
-function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
+function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
   const { t } = useLanguage();
   const { formatPrice, formatDate } = useTenantSettings();
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isInitialized } = useAuth({
+    requireAuth: true,
+    loginUrl: `/auth/login`,
+  });
 
   // Filter states
   const [page, setPage] = useState(1);
@@ -54,20 +58,21 @@ function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
         sort_by: "createdAt",
         sort_order: "desc",
       }),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && isInitialized,
     retry: 1,
   });
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      const returnUrl = encodeURIComponent(`/${tenantSlug}/my-orders`);
-      router.push(`/auth/login?returnUrl=${returnUrl}`);
-    }
-  }, [isAuthenticated, router, tenantSlug]);
-
   const orders = ordersData?.data || [];
   const meta = ordersData?.meta;
+
+  // Show loading while auth initializes
+  if (!isInitialized) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Loader2 className="size-8 animate-spin text-emerald-500" />
+      </div>
+    );
+  }
 
   // Get status badge color
   const getStatusColor = (status: string) => {
@@ -230,12 +235,15 @@ function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
           <>
             <div className="space-y-3 sm:space-y-4">
               {orders.map((order) => (
-                <Link
+                <div
                   key={order.id}
-                  href={`/${tenantSlug}/my-order?orderId=${order.id}`}
-                  className="block group"
+                  className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
                 >
-                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200">
+                  {/* Clickable upper section - navigates to detail */}
+                  <Link
+                    href={`/${tenantSlug}/my-order?orderId=${order.id}`}
+                    className="block group p-4 sm:p-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                  >
                     {/* Header: Order Number, Status, Total */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                       <div className="flex-1 min-w-0">
@@ -300,8 +308,16 @@ function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
                         )}
                       </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+
+                  {/* Non-clickable review section */}
+                  {order.status === "completed" &&
+                    order.paymentStatus === "paid" && (
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                        <OrderReviewsDisplay orderId={order.id} />
+                      </div>
+                    )}
+                </div>
               ))}
             </div>
 
@@ -340,10 +356,10 @@ function MyOrdersContent({ tenantSlug }: MyOrdersClientProps) {
   );
 }
 
-export function MyOrdersClient({ tenantSlug }: MyOrdersClientProps) {
+export function OrderHistoryClient({ tenantSlug }: OrderHistoryClientProps) {
   return (
     <LanguageProvider>
-      <MyOrdersContent tenantSlug={tenantSlug} />
+      <OrderHistoryContent tenantSlug={tenantSlug} />
     </LanguageProvider>
   );
 }

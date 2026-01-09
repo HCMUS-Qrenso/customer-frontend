@@ -148,15 +148,6 @@ function RegisterContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Back button */}
-        <Link
-          href={returnUrl}
-          className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mb-6"
-        >
-          <ArrowLeft className="size-4" />
-          <span>Quay lại</span>
-        </Link>
-
         {/* Card */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8">
           {/* Header */}

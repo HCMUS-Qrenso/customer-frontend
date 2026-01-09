@@ -467,7 +467,8 @@ export const translations: Record<Language, Translations> = {
       changingPassword: "Đang đổi mật khẩu...",
       passwordChangedSuccess: "Đổi mật khẩu thành công",
       passwordChangeError: "Đổi mật khẩu thất bại",
-      passwordRequirements: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+      passwordRequirements:
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
     },
   },
   en: {
@@ -705,7 +706,8 @@ export const translations: Record<Language, Translations> = {
       changingPassword: "Changing password...",
       passwordChangedSuccess: "Password changed successfully",
       passwordChangeError: "Failed to change password",
-      passwordRequirements: "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
+      passwordRequirements:
+        "Password must be at least 8 characters, including uppercase, lowercase, number and special character",
     },
   },
 };

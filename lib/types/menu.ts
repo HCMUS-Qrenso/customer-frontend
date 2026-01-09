@@ -72,6 +72,9 @@ export interface MenuItemDTO {
   // Display fields
   isChefRecommendation?: boolean;
   badges?: string[];
+  // Review fields (from API)
+  average_rating?: number;
+  review_count?: number;
 }
 
 // Nutritional info from API
