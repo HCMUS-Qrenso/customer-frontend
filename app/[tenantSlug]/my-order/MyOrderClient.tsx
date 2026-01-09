@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Receipt, Wifi, WifiOff, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { useQrToken } from "@/hooks/use-qr-token";
 import { useOrderSocket } from "@/hooks/use-order-socket";
@@ -18,6 +19,7 @@ import type { OrderBatch, OrderItemStatus } from "@/lib/types/order-tracking";
 import { OrderStatusStepper } from "@/components/track/OrderStatusStepper";
 import { BatchItemsList } from "@/components/track/BatchItemsList";
 import { OrderSummaryCard } from "@/components/order/OrderSummaryCard";
+import { OrderReviewSection } from "@/components/order/OrderReviewSection";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { UserAvatar } from "@/components/auth/UserAvatar";
@@ -43,6 +45,7 @@ function transformOrderResponse(
     id: data.id,
     orderNumber: data.orderNumber,
     status: data.status as OrderStatus,
+    paymentStatus: data.paymentStatus as "paid" | "unpaid",
     items: data.items.map((item) => ({
       id: item.id,
       name: item.menuItem.name,
@@ -94,7 +97,7 @@ function MyOrderContent({
   // URLs (no need to include table/token params - they're in storage)
   const menuHref = `/${tenantSlug}/menu`;
   const billHref = `/${tenantSlug}/bill`;
-  const ordersHistoryHref = `/${tenantSlug}/my-orders`;
+  const ordersHistoryHref = `/${tenantSlug}/order-history`;
   const backHref = orderId ? ordersHistoryHref : menuHref;
 
   // Subtitle for header
@@ -160,9 +163,23 @@ function MyOrderContent({
     onOrderUpdated: (data) => {
       console.log("[MyOrder] Order updated:", data);
       if (data.id === order?.id) {
-        // Update status from WebSocket, no REST refetch needed
+        const prevPaymentStatus = order?.paymentStatus;
+        const newPaymentStatus = (data as any).paymentStatus;
+        
+        // Check if payment just completed
+        if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
+          toast.success("Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.", {
+            duration: 5000,
+          });
+        }
+        
+        // Update order with new status and payment status
         setOrder((prev) =>
-          prev ? { ...prev, status: data.status as OrderStatus } : prev,
+          prev ? { 
+            ...prev, 
+            status: data.status as OrderStatus,
+            paymentStatus: newPaymentStatus || prev.paymentStatus,
+          } : prev,
         );
         setLastUpdated(new Date());
       }
@@ -179,6 +196,34 @@ function MyOrderContent({
                 : item,
             ),
           })),
+        );
+        setLastUpdated(new Date());
+      }
+    },
+    onPaymentUpdated: (data) => {
+      console.log("[MyOrder] Payment updated:", data);
+      if (data.orderId === order?.id) {
+        const prevPaymentStatus = order?.paymentStatus;
+        
+        // Map payment status to order payment status
+        // "completed" or "paid" payment status -> "paid" order payment status
+        const newPaymentStatus = (data.status === "completed" || data.status === "paid") 
+          ? "paid" 
+          : "unpaid";
+        
+        // Check if payment just completed
+        if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
+          toast.success("Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.", {
+            duration: 5000,
+          });
+        }
+        
+        // Update order payment status
+        setOrder((prev) =>
+          prev ? { 
+            ...prev, 
+            paymentStatus: newPaymentStatus,
+          } : prev,
         );
         setLastUpdated(new Date());
       }
@@ -308,9 +353,23 @@ function MyOrderContent({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Status + Items */}
           <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-            {/* Status Stepper */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl">
-              <OrderStatusStepper currentStatus={order.status as any} />
+            <div>
+              {/* Section Header */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                  Trạng thái đơn hàng
+                </h3>
+                {/* Payment Status Badge */}
+                {order.paymentStatus === "paid" && (
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    Đã thanh toán
+                  </span>
+                )}
+              </div>
+              {/* Status Stepper */}
+              <div className="bg-white dark:bg-slate-800 rounded-xl">
+                <OrderStatusStepper currentStatus={order.status as any} />
+              </div>
             </div>
 
             {/* Items List */}
@@ -319,8 +378,13 @@ function MyOrderContent({
 
           {/* Right: Summary - Sticky on desktop */}
           <div className="lg:col-span-5 xl:col-span-4">
-            <div className="lg:sticky lg:top-24">
+            <div className="lg:sticky lg:top-24 space-y-6">
               <OrderSummaryCard order={order} />
+              
+              {/* Review Section - Show for history orders or when payment is complete */}
+              {(orderId || order.paymentStatus === "paid") && (
+                <OrderReviewSection orderId={orderId || order.id} />
+              )}
             </div>
           </div>
         </div>

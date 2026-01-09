@@ -27,6 +27,7 @@ export interface OrderDTO {
   orderNumber: string;
   tableId?: string;
   status: OrderStatus;
+  paymentStatus?: "paid" | "unpaid";
   items: OrderItemDTO[];
   subtotal: number;
   serviceCharge: number;

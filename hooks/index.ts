@@ -30,3 +30,12 @@ export {
 } from "./use-profile";
 
 export { useUploadFiles } from "./use-uploads";
+
+export {
+  useItemReviews,
+  useOrderReviews,
+  useMyReviews,
+  useReviewableOrders,
+  useCreateItemReview,
+  useCreateOrderReview,
+} from "./use-reviews";

@@ -16,6 +16,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { LiveIndicator } from "@/components/shared/LiveIndicator";
 import { ImageCarousel } from "@/components/shared/ImageCarousel";
 import { NutritionalInfo } from "@/components/menu/NutritionalInfo";
+import { ItemReviews } from "@/components/menu/ItemReviews";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { ModifierGroup } from "@/components/menu/ModifierGroup";
 import { useMenuItemQuery } from "@/hooks/use-menu-query";
@@ -365,6 +366,11 @@ function ItemDetailContent({
                   </div>
                 </div>
               )}
+
+              {/* Reviews Section */}
+              <div className="mt-8">
+                <ItemReviews menuItemId={itemId} />
+              </div>
             </div>
           </div>
         ) : null}

@@ -103,7 +103,7 @@ export function UserAvatar({ className }: UserAvatarProps) {
   };
 
   const tenantSlug = getTenantSlug();
-  const orderHistoryUrl = tenantSlug ? `/${tenantSlug}/my-orders` : null;
+  const orderHistoryUrl = tenantSlug ? `/${tenantSlug}/order-history` : null;
   const profileUrl = tenantSlug ? `/${tenantSlug}/profile` : null;
 
   // Login/Register URLs with return path

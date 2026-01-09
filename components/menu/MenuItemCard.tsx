@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { MenuItemDTO } from "@/lib/types/menu";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
 
@@ -108,6 +108,18 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
               <p className="mt-1 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">
                 {item.description}
               </p>
+            )}
+            {/* Rating Display */}
+            {item.average_rating !== undefined && item.review_count !== undefined && item.review_count > 0 && (
+              <div className="flex items-center gap-1 mt-1">
+                <Star className="size-3 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                  {item.average_rating.toFixed(1)}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  ({item.review_count})
+                </span>
+              </div>
             )}
           </div>
 

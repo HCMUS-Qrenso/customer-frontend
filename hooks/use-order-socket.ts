@@ -45,9 +45,20 @@ interface ItemStatusEvent {
   timestamp: string;
 }
 
+interface PaymentUpdateEvent {
+  type: "payment:updated";
+  data: {
+    orderId: string;
+    status: string; // Payment status: "completed", "paid", etc.
+    paidAt?: string;
+  };
+  timestamp: string;
+}
+
 export interface UseOrderSocketOptions {
   onOrderUpdated?: (data: OrderUpdateEvent["data"]) => void;
   onItemStatusChanged?: (data: ItemStatusEvent["data"]) => void;
+  onPaymentUpdated?: (data: { orderId: string; status: string; paidAt?: string }) => void;
   onConnected?: () => void;
   onDisconnected?: () => void;
   onError?: (error: Error) => void;
@@ -77,6 +88,7 @@ export function useOrderSocket(
   const {
     onOrderUpdated,
     onItemStatusChanged,
+    onPaymentUpdated,
     onConnected,
     onDisconnected,
     onError,
@@ -93,6 +105,7 @@ export function useOrderSocket(
   const callbacksRef = useRef({
     onOrderUpdated,
     onItemStatusChanged,
+    onPaymentUpdated,
     onConnected,
     onDisconnected,
     onError,
@@ -103,6 +116,7 @@ export function useOrderSocket(
     callbacksRef.current = {
       onOrderUpdated,
       onItemStatusChanged,
+      onPaymentUpdated,
       onConnected,
       onDisconnected,
       onError,
@@ -110,6 +124,7 @@ export function useOrderSocket(
   }, [
     onOrderUpdated,
     onItemStatusChanged,
+    onPaymentUpdated,
     onConnected,
     onDisconnected,
     onError,
@@ -243,6 +258,12 @@ export function useOrderSocket(
     socket.on("item:ready", (event: ItemStatusEvent) => {
       console.log("[OrderSocket] Item ready:", event);
       callbacksRef.current.onItemStatusChanged?.(event.data);
+    });
+
+    // Payment updated event (payment status changes)
+    socket.on("payment:updated", (event: PaymentUpdateEvent) => {
+      console.log("[OrderSocket] Payment updated:", event);
+      callbacksRef.current.onPaymentUpdated?.(event.data);
     });
 
     socketRef.current = socket;
