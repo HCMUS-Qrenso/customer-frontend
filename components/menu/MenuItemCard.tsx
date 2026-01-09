@@ -110,17 +110,19 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
               </p>
             )}
             {/* Rating Display */}
-            {item.average_rating !== undefined && item.review_count !== undefined && item.review_count > 0 && (
-              <div className="flex items-center gap-1 mt-1">
-                <Star className="size-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  {item.average_rating.toFixed(1)}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
-                  ({item.review_count})
-                </span>
-              </div>
-            )}
+            {item.average_rating !== undefined &&
+              item.review_count !== undefined &&
+              item.review_count > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="size-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                    {item.average_rating.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    ({item.review_count})
+                  </span>
+                </div>
+              )}
           </div>
 
           <div className="flex items-end justify-between mt-auto">

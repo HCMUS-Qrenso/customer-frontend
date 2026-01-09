@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquarePlus, ChevronDown, ChevronUp, Loader2, Star } from "lucide-react";
+import {
+  MessageSquarePlus,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  Star,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewForm } from "@/components/order/ReviewForm";
 import { useReviewableOrders } from "@/hooks/use-reviews";
@@ -17,7 +23,8 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
   const [reviewingItem, setReviewingItem] = useState<string | null>(null);
   const [reviewingOrder, setReviewingOrder] = useState(false);
 
-  const { data: reviewableOrders, isLoading } = useReviewableOrders(isAuthenticated);
+  const { data: reviewableOrders, isLoading } =
+    useReviewableOrders(isAuthenticated);
 
   if (!isAuthenticated) {
     return null;

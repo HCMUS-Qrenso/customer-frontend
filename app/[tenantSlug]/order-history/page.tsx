@@ -4,7 +4,9 @@ interface OrderHistoryPageProps {
   params: Promise<{ tenantSlug: string }>;
 }
 
-export default async function OrderHistoryPage({ params }: OrderHistoryPageProps) {
+export default async function OrderHistoryPage({
+  params,
+}: OrderHistoryPageProps) {
   const { tenantSlug } = await params;
 
   return <OrderHistoryClient tenantSlug={tenantSlug} />;

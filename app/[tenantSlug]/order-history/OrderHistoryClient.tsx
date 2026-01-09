@@ -311,11 +311,12 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                   </Link>
 
                   {/* Non-clickable review section */}
-                  {order.status === "completed" && order.paymentStatus === "paid" && (
-                    <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                      <OrderReviewsDisplay orderId={order.id} />
-                    </div>
-                  )}
+                  {order.status === "completed" &&
+                    order.paymentStatus === "paid" && (
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                        <OrderReviewsDisplay orderId={order.id} />
+                      </div>
+                    )}
                 </div>
               ))}
             </div>

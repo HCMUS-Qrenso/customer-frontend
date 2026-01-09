@@ -80,25 +80,25 @@ export function useCreateItemReview(options?: UseCreateItemReviewOptions) {
     },
     onSuccess: (_, variables) => {
       toast.success("Đánh giá của bạn đã được gửi thành công!");
-      
+
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ["reviewable-orders"] });
-      queryClient.invalidateQueries({ 
-        queryKey: ["order-reviews", variables.orderId] 
+      queryClient.invalidateQueries({
+        queryKey: ["order-reviews", variables.orderId],
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ["item-reviews", variables.menuItemId] 
+      queryClient.invalidateQueries({
+        queryKey: ["item-reviews", variables.menuItemId],
       });
       // Invalidate menu queries to update ratings
       queryClient.invalidateQueries({ queryKey: ["menu"] });
-      
+
       options?.onSuccess?.();
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(
-        err.response?.data?.message || 
-        "Không thể gửi đánh giá. Vui lòng thử lại."
+        err.response?.data?.message ||
+          "Không thể gửi đánh giá. Vui lòng thử lại.",
       );
       options?.onError?.(error);
     },
@@ -122,22 +122,22 @@ export function useCreateOrderReview(options?: UseCreateOrderReviewOptions) {
     },
     onSuccess: (_, variables) => {
       toast.success("Đánh giá của bạn đã được gửi thành công!");
-      
+
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ["reviewable-orders"] });
-      queryClient.invalidateQueries({ 
-        queryKey: ["order-reviews", variables.orderId] 
+      queryClient.invalidateQueries({
+        queryKey: ["order-reviews", variables.orderId],
       });
       // Invalidate menu queries to update ratings
       queryClient.invalidateQueries({ queryKey: ["menu"] });
-      
+
       options?.onSuccess?.();
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(
-        err.response?.data?.message || 
-        "Không thể gửi đánh giá. Vui lòng thử lại."
+        err.response?.data?.message ||
+          "Không thể gửi đánh giá. Vui lòng thử lại.",
       );
       options?.onError?.(error);
     },

@@ -99,11 +99,17 @@ export function ChefPicksCarousel({
                     <p className="line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                       {item.description}
                     </p>
-                    {item.average_rating && item.review_count && item.review_count > 0 ? (
+                    {item.average_rating &&
+                    item.review_count &&
+                    item.review_count > 0 ? (
                       <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                         <Star className="size-3.5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-medium">{item.average_rating.toFixed(1)}</span>
-                        <span className="text-slate-400 dark:text-slate-500">({item.review_count})</span>
+                        <span className="font-medium">
+                          {item.average_rating.toFixed(1)}
+                        </span>
+                        <span className="text-slate-400 dark:text-slate-500">
+                          ({item.review_count})
+                        </span>
                       </div>
                     ) : null}
                   </div>
@@ -167,11 +173,17 @@ export function ChefPicksCarousel({
                     <p className="line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                       {item.description}
                     </p>
-                    {item.average_rating && item.review_count && item.review_count > 0 ? (
+                    {item.average_rating &&
+                    item.review_count &&
+                    item.review_count > 0 ? (
                       <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                         <Star className="size-3.5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-medium">{item.average_rating.toFixed(1)}</span>
-                        <span className="text-slate-400 dark:text-slate-500">({item.review_count})</span>
+                        <span className="font-medium">
+                          {item.average_rating.toFixed(1)}
+                        </span>
+                        <span className="text-slate-400 dark:text-slate-500">
+                          ({item.review_count})
+                        </span>
                       </div>
                     ) : null}
                   </div>

@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCreateItemReview, useCreateOrderReview } from "@/hooks/use-reviews";
-import type { CreateItemReviewDTO, CreateOrderReviewDTO } from "@/lib/types/review";
+import type {
+  CreateItemReviewDTO,
+  CreateOrderReviewDTO,
+} from "@/lib/types/review";
 
 interface ReviewFormProps {
   orderId: string;
@@ -60,7 +63,10 @@ export function ReviewForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {menuItemName && (
         <div className="text-sm text-slate-600 dark:text-slate-400">
-          Đánh giá cho: <span className="font-semibold text-slate-900 dark:text-white">{menuItemName}</span>
+          Đánh giá cho:{" "}
+          <span className="font-semibold text-slate-900 dark:text-white">
+            {menuItemName}
+          </span>
         </div>
       )}
 

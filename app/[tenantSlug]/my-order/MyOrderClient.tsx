@@ -165,21 +165,26 @@ function MyOrderContent({
       if (data.id === order?.id) {
         const prevPaymentStatus = order?.paymentStatus;
         const newPaymentStatus = (data as any).paymentStatus;
-        
+
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
-          toast.success("Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.", {
-            duration: 5000,
-          });
+          toast.success(
+            "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
+            {
+              duration: 5000,
+            },
+          );
         }
-        
+
         // Update order with new status and payment status
         setOrder((prev) =>
-          prev ? { 
-            ...prev, 
-            status: data.status as OrderStatus,
-            paymentStatus: newPaymentStatus || prev.paymentStatus,
-          } : prev,
+          prev
+            ? {
+                ...prev,
+                status: data.status as OrderStatus,
+                paymentStatus: newPaymentStatus || prev.paymentStatus,
+              }
+            : prev,
         );
         setLastUpdated(new Date());
       }
@@ -204,26 +209,32 @@ function MyOrderContent({
       console.log("[MyOrder] Payment updated:", data);
       if (data.orderId === order?.id) {
         const prevPaymentStatus = order?.paymentStatus;
-        
+
         // Map payment status to order payment status
         // "completed" or "paid" payment status -> "paid" order payment status
-        const newPaymentStatus = (data.status === "completed" || data.status === "paid") 
-          ? "paid" 
-          : "unpaid";
-        
+        const newPaymentStatus =
+          data.status === "completed" || data.status === "paid"
+            ? "paid"
+            : "unpaid";
+
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
-          toast.success("Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.", {
-            duration: 5000,
-          });
+          toast.success(
+            "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
+            {
+              duration: 5000,
+            },
+          );
         }
-        
+
         // Update order payment status
         setOrder((prev) =>
-          prev ? { 
-            ...prev, 
-            paymentStatus: newPaymentStatus,
-          } : prev,
+          prev
+            ? {
+                ...prev,
+                paymentStatus: newPaymentStatus,
+              }
+            : prev,
         );
         setLastUpdated(new Date());
       }
@@ -380,7 +391,7 @@ function MyOrderContent({
           <div className="lg:col-span-5 xl:col-span-4">
             <div className="lg:sticky lg:top-24 space-y-6">
               <OrderSummaryCard order={order} />
-              
+
               {/* Review Section - Show for history orders or when payment is complete */}
               {(orderId || order.paymentStatus === "paid") && (
                 <OrderReviewSection orderId={orderId || order.id} />

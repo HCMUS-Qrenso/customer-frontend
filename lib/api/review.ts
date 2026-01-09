@@ -13,7 +13,10 @@ export const reviewApi = {
   createItemReview: async (
     data: CreateItemReviewDTO,
   ): Promise<ReviewResponseDTO> => {
-    const response = await apiClient.post<ReviewResponseDTO>("/reviews/items", data);
+    const response = await apiClient.post<ReviewResponseDTO>(
+      "/reviews/items",
+      data,
+    );
     return response.data;
   },
 
@@ -21,7 +24,10 @@ export const reviewApi = {
   createOrderReview: async (
     data: CreateOrderReviewDTO,
   ): Promise<ReviewResponseDTO> => {
-    const response = await apiClient.post<ReviewResponseDTO>("/reviews/orders", data);
+    const response = await apiClient.post<ReviewResponseDTO>(
+      "/reviews/orders",
+      data,
+    );
     return response.data;
   },
 
@@ -53,9 +59,12 @@ export const reviewApi = {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<MyReviewsResponse> => {
-    const response = await apiClient.get<MyReviewsResponse>("/reviews/my-reviews", {
-      params: { page, pageSize },
-    });
+    const response = await apiClient.get<MyReviewsResponse>(
+      "/reviews/my-reviews",
+      {
+        params: { page, pageSize },
+      },
+    );
     return response.data;
   },
 

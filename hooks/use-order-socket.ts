@@ -58,7 +58,11 @@ interface PaymentUpdateEvent {
 export interface UseOrderSocketOptions {
   onOrderUpdated?: (data: OrderUpdateEvent["data"]) => void;
   onItemStatusChanged?: (data: ItemStatusEvent["data"]) => void;
-  onPaymentUpdated?: (data: { orderId: string; status: string; paidAt?: string }) => void;
+  onPaymentUpdated?: (data: {
+    orderId: string;
+    status: string;
+    paidAt?: string;
+  }) => void;
   onConnected?: () => void;
   onDisconnected?: () => void;
   onError?: (error: Error) => void;

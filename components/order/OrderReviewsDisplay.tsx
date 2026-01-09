@@ -20,14 +20,16 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
   }
 
   const hasReviews = reviews && reviews.length > 0;
-  const orderReview = hasReviews ? reviews.find((r) => r.reviewType === "order") : null;
-  const itemReviews = hasReviews ? reviews.filter((r) => r.reviewType === "item") : [];
+  const orderReview = hasReviews
+    ? reviews.find((r) => r.reviewType === "order")
+    : null;
+  const itemReviews = hasReviews
+    ? reviews.filter((r) => r.reviewType === "item")
+    : [];
 
   return (
-    <div 
-      className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700"
-    >
-      <div 
+    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+      <div
         className="flex items-center justify-between mb-2 cursor-pointer"
         onClick={() => hasReviews && setExpanded(!expanded)}
       >

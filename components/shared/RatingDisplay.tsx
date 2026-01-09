@@ -9,7 +9,11 @@ interface RatingStarsProps {
   showNumber?: boolean;
 }
 
-export function RatingStars({ rating, size = "md", showNumber = false }: RatingStarsProps) {
+export function RatingStars({
+  rating,
+  size = "md",
+  showNumber = false,
+}: RatingStarsProps) {
   const sizeClasses = {
     sm: "size-3",
     md: "size-4",
@@ -35,7 +39,9 @@ export function RatingStars({ rating, size = "md", showNumber = false }: RatingS
         />
       ))}
       {showNumber && (
-        <span className={`font-medium text-slate-700 dark:text-slate-300 ${textClasses[size]} ml-1`}>
+        <span
+          className={`font-medium text-slate-700 dark:text-slate-300 ${textClasses[size]} ml-1`}
+        >
           {rating.toFixed(1)}
         </span>
       )}
@@ -71,13 +77,16 @@ export function RatingDistribution({ stats }: RatingDistributionProps) {
         {/* Rating Distribution */}
         <div className="flex-1 space-y-2">
           {[5, 4, 3, 2, 1].map((star) => {
-            const count = ratingDistribution[star as keyof typeof ratingDistribution] || 0;
-            const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+            const count =
+              ratingDistribution[star as keyof typeof ratingDistribution] || 0;
+            const percentage =
+              totalReviews > 0 ? (count / totalReviews) * 100 : 0;
 
             return (
               <div key={star} className="flex items-center gap-2">
                 <span className="text-sm text-slate-600 dark:text-slate-400 w-8">
-                  {star} <Star className="inline size-3 fill-yellow-400 text-yellow-400" />
+                  {star}{" "}
+                  <Star className="inline size-3 fill-yellow-400 text-yellow-400" />
                 </span>
                 <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div

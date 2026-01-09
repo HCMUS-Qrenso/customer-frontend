@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Loader2, User, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useItemReviews } from "@/hooks/use-reviews";
-import { RatingStars, RatingDistribution } from "@/components/shared/RatingDisplay";
+import {
+  RatingStars,
+  RatingDistribution,
+} from "@/components/shared/RatingDisplay";
 import type { ReviewResponseDTO } from "@/lib/types/review";
 
 interface ItemReviewsProps {
