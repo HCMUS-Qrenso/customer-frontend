@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Loader2,
   Info,
+  Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,16 +20,20 @@ import { useQrToken } from "@/hooks/use-qr-token";
 import { useMenuQuery } from "@/hooks/use-menu-query";
 import { CartItemCard } from "@/components/cart/CartItemCard";
 import { PricingSummaryCard } from "@/components/cart/PricingSummaryCard";
+import { CartVoucherSection } from "@/components/cart/CartVoucherSection";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MobileStickyBar } from "@/components/shared/MobileStickyBar";
 import { useCartStore } from "@/lib/stores/cart-store";
+import { useVoucherStore, useAppliedVoucher } from "@/lib/stores";
 import { orderApi } from "@/lib/api/order";
+import { voucherApi } from "@/lib/api/voucher";
 import { tableSessionApi } from "@/lib/api/table-session";
 import { decodeQrToken } from "@/lib/utils/jwt-decode";
 import { setSessionToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { saveReturnUrl } from "@/lib/utils/return-url";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
+import { toast } from "sonner";
 
 interface CartClientProps {
   tenantSlug: string;
@@ -49,6 +54,10 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const addItem = useCartStore((state) => state.addItem);
+
+  // Voucher store
+  const appliedVoucher = useAppliedVoucher();
+  const { clearAppliedVoucher, setAppliedVoucher } = useVoucherStore();
 
   // Loading and error states for order creation
   const [isLoading, setIsLoading] = useState(false);
@@ -231,8 +240,32 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
       if (orderResult?.success && orderResult?.data) {
         console.log("[Cart] Order processed:", orderResult.data.orderNumber);
 
-        // Step 3: Clear cart and redirect
+        // Step 3: Apply voucher if selected (best effort - don't block order)
+        if (appliedVoucher && appliedVoucher.redemptionId.startsWith("preview_")) {
+          try {
+            console.log("[Cart] Applying voucher:", appliedVoucher.code);
+            const voucherResult = await voucherApi.applyVoucherCode(
+              orderResult.data.id,
+              appliedVoucher.code
+            );
+            if (voucherResult.success && voucherResult.data) {
+              // Update with actual redemption data
+              setAppliedVoucher({
+                ...appliedVoucher,
+                redemptionId: voucherResult.data.redemptionId,
+                discountAmount: voucherResult.data.discountAmount,
+              });
+              console.log("[Cart] Voucher applied:", voucherResult.data.redemptionId);
+            }
+          } catch (voucherError: any) {
+            console.warn("[Cart] Failed to apply voucher:", voucherError.message);
+            toast.error("Không thể áp dụng voucher: " + (voucherError.message || "Lỗi không xác định"));
+          }
+        }
+
+        // Step 4: Clear cart and voucher, redirect
         clearCart();
+        clearAppliedVoucher();
         router.push(orderHref);
       } else {
         throw new Error(orderResult?.message || "Failed to process order");
@@ -249,8 +282,10 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
   const calculations = useMemo(() => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    return { subtotal, itemCount };
-  }, [cartItems]);
+    const discount = appliedVoucher?.discountAmount || 0;
+    const total = subtotal - discount;
+    return { subtotal, itemCount, discount, total };
+  }, [cartItems, appliedVoucher]);
 
   // Min order validation
   const isMinOrderMetValue = isMinOrderMet(calculations.subtotal);
@@ -354,6 +389,13 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
             ))}
           </div>
 
+          {/* Voucher Code Section */}
+          <CartVoucherSection
+            subtotal={calculations.subtotal}
+            disabled={isLoading}
+            className="mt-2"
+          />
+
           {/* Upsell Section - Top 5 Popular Items */}
           <div className="mt-4">
             <h2 className="text-base font-semibold mb-4 text-slate-900 dark:text-white">
@@ -408,6 +450,8 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
           <PricingSummaryCard
             itemCount={calculations.itemCount}
             subtotal={calculations.subtotal}
+            discount={calculations.discount}
+            appliedVoucher={appliedVoucher}
             onPlaceOrder={handlePlaceOrder}
             isLoading={isLoading}
             disabled={!isMinOrderMetValue}
@@ -415,26 +459,31 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
         </div>
       </main>
 
-      {/* Mobile Sticky Bottom Bar - Simplified with subtotal only */}
+      {/* Mobile Sticky Bottom Bar - Shows discounted total */}
       <MobileStickyBar maxWidth="6xl">
         <div className="flex gap-4 items-center">
           <div className="flex flex-col flex-1">
             <div className="flex items-center gap-1">
               <span className="text-xs text-slate-500 dark:text-slate-400">
-                {t.cart.subtotal}
+                {calculations.discount > 0 ? "Tạm tính" : t.cart.subtotal}
               </span>
-              <div className="group relative">
-                <Info className="size-3 text-slate-400 cursor-help" />
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-40 p-2 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 text-xs z-50">
-                  <p className="text-slate-500 dark:text-slate-400">
-                    Thuế, phí dịch vụ sẽ được tính khi thanh toán
-                  </p>
+              {calculations.discount > 0 && (
+                <div className="flex items-center gap-1 text-green-500">
+                  <Ticket className="size-3" />
+                  <span className="text-xs">-{formatPrice(calculations.discount)}</span>
                 </div>
-              </div>
+              )}
             </div>
-            <span className="text-xl font-bold text-emerald-500">
-              {formatPrice(calculations.subtotal)}
-            </span>
+            <div className="flex items-center gap-2">
+              {calculations.discount > 0 && (
+                <span className="text-sm text-slate-400 line-through">
+                  {formatPrice(calculations.subtotal)}
+                </span>
+              )}
+              <span className="text-xl font-bold text-emerald-500">
+                {formatPrice(calculations.total)}
+              </span>
+            </div>
           </div>
           <Button
             onClick={handlePlaceOrder}

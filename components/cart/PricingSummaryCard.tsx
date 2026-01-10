@@ -1,13 +1,16 @@
 "use client";
 
-import { ArrowRight, Info, Loader2 } from "lucide-react";
+import { ArrowRight, Info, Loader2, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
+import type { AppliedVoucher } from "@/lib/api/voucher";
 
 interface PricingSummaryCardProps {
   itemCount: number;
   subtotal: number;
+  discount?: number;
+  appliedVoucher?: AppliedVoucher | null;
   onPlaceOrder: () => void;
   isLoading?: boolean;
   disabled?: boolean;
@@ -16,12 +19,17 @@ interface PricingSummaryCardProps {
 export function PricingSummaryCard({
   itemCount,
   subtotal,
+  discount = 0,
+  appliedVoucher,
   onPlaceOrder,
   isLoading = false,
   disabled = false,
 }: PricingSummaryCardProps) {
   const { t } = useLanguage();
   const { formatPrice } = useTenantSettings();
+
+  const total = subtotal - discount;
+  const hasDiscount = discount > 0 && appliedVoucher;
 
   return (
     <div className="lg:sticky lg:top-24">
@@ -31,6 +39,7 @@ export function PricingSummaryCard({
         </h2>
 
         <div className="space-y-3 mb-6">
+          {/* Subtotal */}
           <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
             <span>
               {t.cart.subtotal} ({itemCount} {t.cart.items})
@@ -40,21 +49,42 @@ export function PricingSummaryCard({
             </span>
           </div>
 
+          {/* Voucher Discount */}
+          {hasDiscount && (
+            <div className="flex justify-between text-sm">
+              <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                <Ticket className="size-3.5" />
+                <span>{appliedVoucher.name}</span>
+              </div>
+              <span className="font-medium text-green-600 dark:text-green-400">
+                -{formatPrice(discount)}
+              </span>
+            </div>
+          )}
+
           <div className="my-4 border-t border-dashed border-gray-200 dark:border-slate-600" />
 
+          {/* Total */}
           <div className="flex justify-between items-end">
             <div className="flex flex-col gap-1">
               <span className="text-base font-bold text-slate-900 dark:text-white">
-                {t.cart.subtotal}
+                {hasDiscount ? "Tạm tính" : t.cart.subtotal}
               </span>
               <span className="text-xs text-slate-400 flex items-center gap-1">
                 <Info className="size-3" />
                 Thuế, phí sẽ tính khi thanh toán
               </span>
             </div>
-            <span className="text-2xl font-bold text-emerald-500">
-              {formatPrice(subtotal)}
-            </span>
+            <div className="text-right">
+              {hasDiscount && (
+                <span className="text-sm text-slate-400 line-through mr-2">
+                  {formatPrice(subtotal)}
+                </span>
+              )}
+              <span className="text-2xl font-bold text-emerald-500">
+                {formatPrice(total)}
+              </span>
+            </div>
           </div>
         </div>
 

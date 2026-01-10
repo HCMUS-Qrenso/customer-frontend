@@ -68,6 +68,16 @@ export interface OrderResponse {
     specialInstructions?: string;
     createdAt: string;
     updatedAt: string;
+    // Voucher fields
+    voucherCode?: string;
+    voucher?: {
+      id: string;
+      code: string;
+      name: string;
+      discountType: string;
+      percentOff?: number;
+      amountOff?: number;
+    };
   } | null;
   message?: string;
 }
