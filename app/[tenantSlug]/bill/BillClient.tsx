@@ -254,6 +254,14 @@ function BillContent({
                   <p>{formatPrice(order.taxAmount)}</p>
                 </div>
               )}
+              {order.discountAmount > 0 && (
+                <div className="flex justify-between text-sm mb-2 text-emerald-600 dark:text-emerald-400">
+                  <p className="font-medium">
+                    Giảm giá {order.voucher?.code && `(${order.voucher.code})`}
+                  </p>
+                  <p className="font-bold">-{formatPrice(order.discountAmount)}</p>
+                </div>
+              )}
               <div className="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                 <p>Tổng cộng</p>
                 <p className="text-emerald-600 dark:text-emerald-400">

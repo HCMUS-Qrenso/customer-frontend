@@ -57,15 +57,6 @@ export function BillSummaryCard({
               </span>
             </div>
           )}
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">
-              {taxLabel} ({taxRate}%)
-              {settings.tax.inclusive ? " (đã bao gồm)" : ""}
-            </span>
-            <span className="font-medium text-slate-400">
-              {settings.tax.inclusive ? "Đã bao gồm" : "--"}
-            </span>
-          </div>
           {bill.discount && bill.discount > 0 && (
             <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
               <span className="font-medium">
@@ -74,6 +65,16 @@ export function BillSummaryCard({
               <span className="font-bold">-{formatPrice(bill.discount)}</span>
             </div>
           )}
+          {/* VAT line - show tax amount when exclusive, or note when inclusive */}
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-500 dark:text-slate-400">
+              {taxLabel} ({taxRate}%)
+              {settings.tax.inclusive ? " (đã bao gồm)" : ""}
+            </span>
+            <span className="font-medium text-slate-900 dark:text-white">
+              {settings.tax.inclusive ? "Đã bao gồm" : formatPrice(bill.tax || 0)}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-end justify-between pt-1">
@@ -81,7 +82,9 @@ export function BillSummaryCard({
             <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
               {t.checkout.totalAmount}
             </span>
-            <span className="text-xs text-slate-400">{t.bill.inclTaxes}</span>
+            {settings.tax.inclusive && (
+              <span className="text-xs text-slate-400">{t.bill.inclTaxes}</span>
+            )}
           </div>
           <span className="text-2xl font-bold text-slate-900 dark:text-white">
             {formatPrice(bill.total)}
