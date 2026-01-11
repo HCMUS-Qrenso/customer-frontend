@@ -1,15 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
-
-// Import locale modules
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import vi from "./vi";
 import en from "./en";
 import fr from "./fr";
@@ -17,68 +8,76 @@ import zh from "./zh";
 
 export type Language = "vi" | "en" | "fr" | "zh";
 
-const LANGUAGE_STORAGE_KEY = "qrenso_preferred_language";
-const DEFAULT_LANGUAGE: Language = "vi";
-const SUPPORTED_LANGUAGES: Language[] = ["vi", "en", "fr", "zh"];
-
-// Build translations object from locale modules
 const translations = { vi, en, fr, zh };
 
-// Export Translations type based on vi locale structure
 export type Translations = typeof vi;
 
-interface LanguageContextType {
+const STORAGE_KEY = "customer-language";
+const DEFAULT_LANGUAGE: Language = "vi";
+
+interface LanguageContextValue {
   lang: Language;
   setLang: (lang: Language) => void;
   t: Translations;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined,
-);
+const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
-interface LanguageProviderProps {
-  children: React.ReactNode;
-  initialLang?: Language;
+/**
+ * Get stored language from localStorage (for use outside React components)
+ * Falls back to default language if not set or invalid
+ */
+export function getStoredLocale(): Language {
+  if (typeof window === "undefined") return DEFAULT_LANGUAGE;
+  
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && (stored === "vi" || stored === "en" || stored === "fr" || stored === "zh")) {
+      return stored as Language;
+    }
+  } catch {
+    // localStorage not available
+  }
+  
+  return DEFAULT_LANGUAGE;
 }
 
-export function LanguageProvider({
-  children,
-  initialLang,
-}: LanguageProviderProps) {
-  const [lang, setLangState] = useState<Language>(
-    initialLang ?? DEFAULT_LANGUAGE,
-  );
-  const [isHydrated, setIsHydrated] = useState(false);
+/**
+ * Set language in localStorage (for use outside React components)
+ */
+export function setStoredLocale(lang: Language): void {
+  if (typeof window === "undefined") return;
+  
+  try {
+    localStorage.setItem(STORAGE_KEY, lang);
+  } catch {
+    // localStorage not available
+  }
+}
 
-  // Hydrate from localStorage on mount
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [lang, setLangState] = useState<Language>(DEFAULT_LANGUAGE);
+  const [mounted, setMounted] = useState(false);
+
+  // Load language from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored && SUPPORTED_LANGUAGES.includes(stored as Language)) {
-      setLangState(stored as Language);
-    }
-    setIsHydrated(true);
+    setLangState(getStoredLocale());
+    setMounted(true);
   }, []);
 
   const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, newLang);
+    setStoredLocale(newLang);
   }, []);
 
   const t = useMemo(() => translations[lang], [lang]);
 
   const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
 
-  // Prevent hydration mismatch by rendering with default until client is ready
-  if (!isHydrated) {
+  // Prevent hydration mismatch by using default until mounted
+  if (!mounted) {
     return (
-      <LanguageContext.Provider
-        value={{
-          lang: DEFAULT_LANGUAGE,
-          setLang,
-          t: translations[DEFAULT_LANGUAGE],
-        }}
-      >
+      <LanguageContext.Provider value={{ lang: DEFAULT_LANGUAGE, setLang, t: translations[DEFAULT_LANGUAGE] }}>
         {children}
       </LanguageContext.Provider>
     );
@@ -91,9 +90,9 @@ export function LanguageProvider({
   );
 }
 
-export function useLanguage() {
+export function useLanguage(): LanguageContextValue {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;

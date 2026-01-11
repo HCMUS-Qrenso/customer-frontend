@@ -177,7 +177,7 @@ export interface GetMenuParams {
 // Customer Context
 // ============================================
 
-export type Language = "vi" | "en";
+export type Language = "vi" | "en" | "fr" | "zh";
 
 export interface CustomerContext {
   tenantSlug: string;
