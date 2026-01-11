@@ -8,6 +8,7 @@ import type {
   CreateItemReviewDTO,
   CreateOrderReviewDTO,
 } from "@/lib/types/review";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface ReviewFormProps {
   orderId: string;
@@ -24,6 +25,7 @@ export function ReviewForm({
   onSuccess,
   onCancel,
 }: ReviewFormProps) {
+  const { t } = useLanguage();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -63,7 +65,7 @@ export function ReviewForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {menuItemName && (
         <div className="text-sm text-slate-600 dark:text-slate-400">
-          Đánh giá cho:{" "}
+          {t.review?.reviewFor || "Review for"}:{" "}
           <span className="font-semibold text-slate-900 dark:text-white">
             {menuItemName}
           </span>
@@ -73,7 +75,7 @@ export function ReviewForm({
       {/* Star Rating */}
       <div>
         <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-          Đánh giá của bạn <span className="text-red-500">*</span>
+          {t.review?.yourRating || "Your Rating"} <span className="text-red-500">*</span>
         </label>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -97,11 +99,11 @@ export function ReviewForm({
         </div>
         {rating > 0 && (
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            {rating === 1 && "Rất tệ"}
-            {rating === 2 && "Tệ"}
-            {rating === 3 && "Bình thường"}
-            {rating === 4 && "Tốt"}
-            {rating === 5 && "Xuất sắc"}
+            {rating === 1 && (t.review?.rating1 || "Very Poor")}
+            {rating === 2 && (t.review?.rating2 || "Poor")}
+            {rating === 3 && (t.review?.rating3 || "Average")}
+            {rating === 4 && (t.review?.rating4 || "Good")}
+            {rating === 5 && (t.review?.rating5 || "Excellent")}
           </p>
         )}
       </div>
@@ -109,12 +111,12 @@ export function ReviewForm({
       {/* Comment */}
       <div>
         <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-          Nhận xét (không bắt buộc)
+          {t.review?.commentLabel || "Comment (optional)"}
         </label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Chia sẻ trải nghiệm của bạn..."
+          placeholder={t.review?.commentPlaceholder || "Share your experience..."}
           rows={4}
           maxLength={500}
           className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -134,15 +136,15 @@ export function ReviewForm({
           {mutation.isPending ? (
             <>
               <Loader2 className="size-4 animate-spin mr-2" />
-              Đang gửi...
+              {t.review?.submitting || "Submitting..."}
             </>
           ) : (
-            "Gửi đánh giá"
+            t.review?.submit || "Submit Review"
           )}
         </Button>
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
-            Hủy
+            {t.review?.cancel || "Cancel"}
           </Button>
         )}
       </div>

@@ -5,12 +5,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useOrderReviews } from "@/hooks/use-reviews";
 import { RatingStars } from "@/components/shared/RatingDisplay";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface OrderReviewsDisplayProps {
   orderId: string;
 }
 
 export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
+  const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
   const { data: reviews, isLoading } = useOrderReviews(orderId);
@@ -36,7 +38,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
         <div className="flex items-center gap-2">
           <Star className="size-4 fill-yellow-400 text-yellow-400" />
           <span className="text-sm font-medium text-slate-900 dark:text-white">
-            {hasReviews ? "Đánh giá của bạn" : "Chưa có đánh giá"}
+            {hasReviews ? (t.review?.yourReview || "Your Reviews") : (t.review?.noReview || "No reviews")}
           </span>
         </div>
         {hasReviews && (
@@ -61,7 +63,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
       {/* No reviews message */}
       {!hasReviews && (
         <div className="text-xs text-slate-500 dark:text-slate-400">
-          Bạn chưa đánh giá đơn hàng này
+          {t.review?.noReviewYet || "You haven't reviewed this order yet"}
         </div>
       )}
 
@@ -70,7 +72,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
         <div className="flex items-center gap-2 text-sm">
           <RatingStars rating={orderReview.rating} size="sm" />
           <span className="text-slate-600 dark:text-slate-400">
-            Đánh giá chung
+            {t.review?.overallRating || "Overall Rating"}
           </span>
         </div>
       )}
@@ -78,7 +80,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
       {/* Item Reviews Summary */}
       {itemReviews.length > 0 && !expanded && (
         <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          {itemReviews.length} món đã được đánh giá
+          {itemReviews.length} {t.review?.itemReview || "items reviewed"}
         </div>
       )}
 
@@ -89,7 +91,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
           {orderReview && orderReview.comment && (
             <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
               <div className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Đánh giá chung:
+                {t.review?.overallRating || "Overall Rating"}:
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400">
                 {orderReview.comment}
@@ -101,7 +103,7 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
           {itemReviews.length > 0 && (
             <div className="space-y-2">
               <div className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                Đánh giá món ăn:
+                {t.review?.itemReview || "Item Reviews"}:
               </div>
               {itemReviews.map((review) => (
                 <div

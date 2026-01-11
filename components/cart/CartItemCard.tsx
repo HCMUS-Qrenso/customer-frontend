@@ -104,14 +104,14 @@ export function CartItemCard({
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
                     >
                       <Check className="size-3" />
-                      Lưu
+                      {t.misc?.save || "Save"}
                     </button>
                     <button
                       onClick={handleCancelNotes}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
                     >
                       <X className="size-3" />
-                      Hủy
+                      {t.review?.cancel || "Cancel"}
                     </button>
                   </div>
                 </div>

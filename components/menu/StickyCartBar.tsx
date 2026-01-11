@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { CartSummaryDTO } from "@/lib/types/menu";
-import { Translations } from "@/lib/i18n/translations";
+import { Translations } from "@/lib/i18n/context";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface StickyCartBarProps {

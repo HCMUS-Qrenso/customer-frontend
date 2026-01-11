@@ -68,11 +68,11 @@ export function PricingSummaryCard({
           <div className="flex justify-between items-end">
             <div className="flex flex-col gap-1">
               <span className="text-base font-bold text-slate-900 dark:text-white">
-                {hasDiscount ? "Tạm tính" : t.cart.subtotal}
+                {hasDiscount ? (t.cart.subtotal) : t.cart.subtotal}
               </span>
               <span className="text-xs text-slate-400 flex items-center gap-1">
                 <Info className="size-3" />
-                Thuế, phí sẽ tính khi thanh toán
+                {t.cart?.taxNote || "Taxes & fees will be calculated at checkout"}
               </span>
             </div>
             <div className="text-right">
@@ -98,7 +98,7 @@ export function PricingSummaryCard({
             {isLoading ? (
               <>
                 <Loader2 className="size-5 animate-spin" />
-                <span>Đang xử lý...</span>
+                <span>{t.misc?.processing || "Processing..."}</span>
               </>
             ) : (
               <span>{t.cart.placeOrder}</span>

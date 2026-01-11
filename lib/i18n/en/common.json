@@ -1,0 +1,66 @@
+{
+  "header": {
+    "currentTable": "Current Table"
+  },
+  "table": {
+    "active": "Table Active",
+    "activeDescription": "Scan valid. You can start ordering immediately.",
+    "inactive": "Table Inactive",
+    "inactiveDescription": "This table is temporarily unavailable. Please ask staff.",
+    "zone": "Zone",
+    "capacity": "Capacity",
+    "maxGuests": "Max"
+  },
+  "guestCount": {
+    "title": "Number of guests",
+    "subtitle": "Help us serve you better"
+  },
+  "cta": {
+    "startOrdering": "Start ordering",
+    "loading": "Creating session...",
+    "viewOrder": "Have an order? View status",
+    "termsAgreement": "By starting, you agree to the restaurant's terms of service."
+  },
+  "errors": {
+    "invalidQr": {
+      "title": "Invalid QR Code",
+      "description": "Table not found. Please scan the QR code at your table again.",
+      "retry": "Try again"
+    },
+    "tableInactive": {
+      "title": "Table Unavailable",
+      "description": "Please contact staff for assistance."
+    },
+    "network": {
+      "title": "Connection Error",
+      "description": "Unable to connect to server. Please check your network.",
+      "retry": "Retry"
+    },
+    "sessionExpired": "Session expired. Please scan QR code again."
+  },
+  "misc": {
+    "wifiConnected": "Connected to restaurant Wi-Fi",
+    "open": "Open",
+    "closed": "Closed",
+    "nowOpen": "Now Open",
+    "nowClosed": "Now Closed",
+    "cancelled": "Cancelled",
+    "processing": "Processing...",
+    "save": "Save",
+    "used": "Used",
+    "inUse": "In Use",
+    "purchased": "Purchased",
+    "included": "Included",
+    "errorOccurred": "An error occurred",
+    "reviewsAndComments": "Reviews & Comments",
+    "minOrder": "Min order {amount}",
+    "sortNameAZ": "Name A-Z",
+    "sortNameZA": "Name Z-A",
+    "sortPriceLow": "Lowest Price",
+    "sortPriceHigh": "Highest Price",
+    "prev": "Previous",
+    "next": "Next",
+    "free": "Free",
+    "required": "Required"
+  }
+}

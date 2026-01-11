@@ -2,6 +2,7 @@ import axios, { type AxiosInstance, type AxiosError } from "axios";
 import { ApiError } from "@/lib/utils/error-handler";
 import { getQrToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { getAccessToken } from "@/lib/stores/auth-store";
+import { getStoredLocale } from "@/lib/i18n/context";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -63,6 +64,11 @@ apiClient.interceptors.request.use(
     if (qrToken && typeof qrToken === "string" && !sessionToken) {
       config.headers["x-qr-token"] = qrToken;
     }
+
+    // 4. Accept-Language: For localized API responses
+    // Uses the stored language preference from localStorage
+    const locale = getStoredLocale();
+    config.headers["Accept-Language"] = locale;
 
     return config;
   },

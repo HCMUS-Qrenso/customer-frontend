@@ -1,0 +1,66 @@
+{
+  "header": {
+    "currentTable": "Table actuelle"
+  },
+  "table": {
+    "active": "Table disponible",
+    "activeDescription": "Code QR valide. Vous pouvez commencer à commander.",
+    "inactive": "Table indisponible",
+    "inactiveDescription": "Cette table est temporairement indisponible. Veuillez demander au personnel.",
+    "zone": "Zone",
+    "capacity": "Capacité",
+    "maxGuests": "Max"
+  },
+  "guestCount": {
+    "title": "Nombre de convives",
+    "subtitle": "Aidez-nous à mieux vous servir"
+  },
+  "cta": {
+    "startOrdering": "Commencer la commande",
+    "loading": "Création de la session...",
+    "viewOrder": "Vous avez une commande? Voir le statut",
+    "termsAgreement": "En commençant, vous acceptez les conditions d'utilisation du restaurant."
+  },
+  "errors": {
+    "invalidQr": {
+      "title": "Code QR invalide",
+      "description": "Table introuvable. Veuillez scanner à nouveau le code QR de votre table.",
+      "retry": "Réessayer"
+    },
+    "tableInactive": {
+      "title": "Table non disponible",
+      "description": "Veuillez contacter le personnel pour assistance."
+    },
+    "network": {
+      "title": "Erreur de connexion",
+      "description": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion.",
+      "retry": "Réessayer"
+    },
+    "sessionExpired": "Session expirée. Veuillez scanner à nouveau le code QR."
+  },
+  "misc": {
+    "wifiConnected": "Connecté au Wi-Fi du restaurant",
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "nowOpen": "Actuellement ouvert",
+    "nowClosed": "Actuellement fermé",
+    "cancelled": "Annulé",
+    "processing": "Traitement...",
+    "save": "Enregistrer",
+    "used": "Utilisé",
+    "inUse": "En cours",
+    "purchased": "Acheté",
+    "included": "Inclus",
+    "errorOccurred": "Une erreur est survenue",
+    "reviewsAndComments": "Avis & Commentaires",
+    "minOrder": "Commande min {amount}",
+    "sortNameAZ": "Nom A-Z",
+    "sortNameZA": "Nom Z-A",
+    "sortPriceLow": "Prix le plus bas",
+    "sortPriceHigh": "Prix le plus élevé",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "free": "Gratuit",
+    "required": "Obligatoire"
+  }
+}

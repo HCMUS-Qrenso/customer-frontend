@@ -109,15 +109,15 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
   // Format status text
   const formatStatus = (status: string) => {
     const statusMap: Record<string, string> = {
-      pending: "Chờ xử lý",
-      accepted: "Đã chấp nhận",
-      in_progress: "Đang chuẩn bị",
-      ready: "Sẵn sàng",
-      served: "Đã phục vụ",
-      completed: "Hoàn thành",
-      cancelled: "Đã hủy",
-      rejected: "Từ chối",
-      abandoned: "Bỏ qua",
+      pending: t.track?.pending || "Pending",
+      accepted: t.track?.accepted || "Accepted",
+      in_progress: t.track?.cooking || "In Progress",
+      ready: t.track?.ready || "Ready",
+      served: t.track?.served || "Served",
+      completed: "Completed",
+      cancelled: "Cancelled",
+      rejected: "Rejected",
+      abandoned: "Abandoned",
     };
     return statusMap[status] || status;
   };
@@ -128,7 +128,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <PageHeader
-        title="Lịch sử đơn hàng"
+        title={t.order?.history || "Order History"}
         subtitle={tenantSlug}
         backHref={menuHref}
         rightContent={<UserAvatar />}
@@ -142,7 +142,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm kiếm theo mã đơn hàng..."
+              placeholder={t.order?.searchPlaceholder || "Search by order number..."}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -160,7 +160,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               onClick={() => setStatusFilter(undefined)}
               className="text-xs sm:text-sm"
             >
-              Tất cả
+              {t.order?.filterAll || "All"}
             </Button>
             <Button
               variant={statusFilter === "completed" ? "default" : "outline"}
@@ -171,7 +171,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               }}
               className="text-xs sm:text-sm"
             >
-              Hoàn thành
+              {t.order?.filterCompleted || "Completed"}
             </Button>
             <Button
               variant={statusFilter === "pending" ? "default" : "outline"}
@@ -182,7 +182,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               }}
               className="text-xs sm:text-sm"
             >
-              Chờ xử lý
+              {t.order?.filterPending || "Pending"}
             </Button>
             <Button
               variant={statusFilter === "cancelled" ? "default" : "outline"}
@@ -193,7 +193,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               }}
               className="text-xs sm:text-sm"
             >
-              Đã hủy
+              {t.order?.filterCancelled || "Cancelled"}
             </Button>
           </div>
         </div>
@@ -209,26 +209,26 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <AlertCircle className="size-12 text-red-500 mb-4" />
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-              Không thể tải lịch sử đơn hàng
+              {t.common?.error || "Cannot load order history"}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-              {(error as Error).message || "Đã xảy ra lỗi khi tải dữ liệu"}
+              {(error as Error).message || t.common?.error || "An error occurred"}
             </p>
             <Button onClick={() => refetch()} variant="outline">
-              Thử lại
+              {t.common?.retry || "Try again"}
             </Button>
           </div>
         ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Package className="size-16 text-slate-400 mb-4" />
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-              Chưa có đơn hàng nào
+              {t.order?.noOrders || "No orders yet"}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-              Bạn chưa đặt đơn hàng nào. Hãy bắt đầu đặt món ngay!
+              {t.order?.noOrdersDesc || "You haven't placed any orders. Start ordering now!"}
             </p>
             <Link href={`/${tenantSlug}/menu`}>
-              <Button>Xem thực đơn</Button>
+              <Button>{t.menu?.viewMenu || "View Menu"}</Button>
             </Link>
           </div>
         ) : (
@@ -255,13 +255,11 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                             {formatStatus(order.status)}
                           </Badge>
                           <Badge
-                            className={getPaymentStatusColor(
-                              order.paymentStatus,
-                            )}
+                            className={getPaymentStatusColor(order.paymentStatus)}
                           >
                             {order.paymentStatus === "paid"
-                              ? "Đã thanh toán"
-                              : "Chưa thanh toán"}
+                              ? (t.myOrder?.paid || "Paid")
+                              : (t.myOrder?.unpaid || "Unpaid")}
                           </Badge>
                         </div>
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
@@ -270,7 +268,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                             <span>{formatDate(order.createdAt)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span>Bàn {order.table.tableNumber}</span>
+                            <span>{t.checkout?.table || "Table"} {order.table.tableNumber}</span>
                             {order.table.zone && (
                               <span className="text-slate-500">
                                 · {order.table.zone.name}
@@ -284,7 +282,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                           {formatPrice(order.totalAmount)}
                         </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
-                          {order.itemCount} món
+                          {order.itemCount} {t.myOrder?.items || "items"}
                         </div>
                         <ChevronRight className="size-5 text-slate-400 group-hover:text-emerald-500 transition-colors sm:hidden" />
                       </div>
@@ -303,7 +301,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                         ))}
                         {order.items.length > 3 && (
                           <span className="text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-slate-700/50 px-2 py-1 rounded">
-                            +{order.items.length - 3} món khác
+                            +{order.items.length - 3} {t.order?.moreItems || "more"}
                           </span>
                         )}
                       </div>
@@ -331,10 +329,10 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                   disabled={page === 1}
                   className="text-xs sm:text-sm"
                 >
-                  Trước
+                  {t.order?.prev || "Previous"}
                 </Button>
                 <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[80px] text-center">
-                  Trang {page} / {meta.totalPages}
+                  {t.order?.page || "Page"} {page} / {meta.totalPages}
                 </span>
                 <Button
                   variant="outline"
@@ -345,7 +343,7 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                   disabled={page === meta.totalPages}
                   className="text-xs sm:text-sm"
                 >
-                  Sau
+                  {t.order?.next || "Next"}
                 </Button>
               </div>
             )}

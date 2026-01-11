@@ -1,0 +1,66 @@
+{
+  "header": {
+    "currentTable": "当前餐桌"
+  },
+  "table": {
+    "active": "餐桌可用",
+    "activeDescription": "二维码有效。您可以立即开始点餐。",
+    "inactive": "餐桌不可用",
+    "inactiveDescription": "此餐桌暂时不可用。请联系服务员。",
+    "zone": "区域",
+    "capacity": "容量",
+    "maxGuests": "最多"
+  },
+  "guestCount": {
+    "title": "用餐人数",
+    "subtitle": "帮助我们更好地为您服务"
+  },
+  "cta": {
+    "startOrdering": "开始点餐",
+    "loading": "创建会话中...",
+    "viewOrder": "已有订单？查看状态",
+    "termsAgreement": "开始即表示您同意餐厅的服务条款。"
+  },
+  "errors": {
+    "invalidQr": {
+      "title": "无效的二维码",
+      "description": "未找到餐桌。请重新扫描您餐桌上的二维码。",
+      "retry": "重试"
+    },
+    "tableInactive": {
+      "title": "餐桌不可用",
+      "description": "请联系服务员获取帮助。"
+    },
+    "network": {
+      "title": "连接错误",
+      "description": "无法连接到服务器。请检查您的网络。",
+      "retry": "重试"
+    },
+    "sessionExpired": "会话已过期。请重新扫描二维码。"
+  },
+  "misc": {
+    "wifiConnected": "已连接餐厅Wi-Fi",
+    "open": "营业中",
+    "closed": "已打烊",
+    "nowOpen": "正在营业",
+    "nowClosed": "已关门",
+    "cancelled": "已取消",
+    "processing": "处理中...",
+    "save": "保存",
+    "used": "已使用",
+    "inUse": "使用中",
+    "purchased": "已购买",
+    "included": "已包含",
+    "errorOccurred": "发生错误",
+    "reviewsAndComments": "评价与评论",
+    "minOrder": "最低消费 {amount}",
+    "sortNameAZ": "名称 A-Z",
+    "sortNameZA": "名称 Z-A",
+    "sortPriceLow": "价格最低",
+    "sortPriceHigh": "价格最高",
+    "prev": "上一页",
+    "next": "下一页",
+    "free": "免费",
+    "required": "必选"
+  }
+}
