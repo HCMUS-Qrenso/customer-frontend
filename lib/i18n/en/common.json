@@ -1,0 +1,43 @@
+{
+  "header": {
+    "currentTable": "Current Table"
+  },
+  "table": {
+    "active": "Table Active",
+    "activeDescription": "Scan valid. You can start ordering immediately.",
+    "inactive": "Table Inactive",
+    "inactiveDescription": "This table is temporarily unavailable. Please ask staff.",
+    "zone": "Zone",
+    "capacity": "Capacity",
+    "maxGuests": "Max"
+  },
+  "guestCount": {
+    "title": "Number of guests",
+    "subtitle": "Help us serve you better"
+  },
+  "cta": {
+    "startOrdering": "Start ordering",
+    "loading": "Creating session...",
+    "viewOrder": "Have an order? View status",
+    "termsAgreement": "By starting, you agree to the restaurant's terms of service."
+  },
+  "errors": {
+    "invalidQr": {
+      "title": "Invalid QR Code",
+      "description": "Table not found. Please scan the QR code at your table again.",
+      "retry": "Try again"
+    },
+    "tableInactive": {
+      "title": "Table Unavailable",
+      "description": "Please contact staff for assistance."
+    },
+    "network": {
+      "title": "Connection Error",
+      "description": "Unable to connect to server. Please check your network.",
+      "retry": "Retry"
+    }
+  },
+  "misc": {
+    "wifiConnected": "Connected to restaurant Wi-Fi"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "search": "Search menu...",
+  "all": "All",
+  "chefRecommendations": "Chef Recommendations",
+  "soldOut": "Sold Out",
+  "customizable": "Customizable",
+  "viewCart": "View Order",
+  "noResults": "No items found",
+  "noResultsDescription": "Try a different search term",
+  "clearSearch": "Clear search",
+  "items": "items",
+  "itemDetail": "Item Detail",
+  "subtotal": "Subtotal",
+  "addToCart": "Add to Cart",
+  "noteForKitchen": "Note for Kitchen",
+  "notePlaceholder": "e.g., No onions, less spicy..."
+}

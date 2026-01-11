@@ -1,0 +1,39 @@
+{
+  "order": {
+    "title": "Đơn hàng",
+    "live": "Trực tiếp",
+    "requestBill": "Yêu cầu hoá đơn",
+    "addMoreItems": "Thêm món",
+    "trackOrder": "Theo dõi",
+    "paymentRequested": "Yêu cầu thanh toán đã được tiếp nhận và đang xử lý. Quý khách vui lòng đợi trong giây lát !"
+  },
+  "track": {
+    "liveUpdate": "Cập nhật trực tiếp",
+    "createdAt": "Tạo lúc",
+    "pending": "Đang chờ",
+    "accepted": "Đã nhận",
+    "cooking": "Đang nấu",
+    "ready": "Sẵn sàng",
+    "served": "Đã phục vụ",
+    "batch": "Đợt",
+    "orderUpdates": "Cập nhật đơn hàng",
+    "estimatedTime": "Dự kiến",
+    "preparingMessage": "Đơn hàng của bạn đang được bếp chuẩn bị."
+  },
+  "bill": {
+    "title": "Hoá đơn",
+    "orderId": "Mã đơn hàng",
+    "dining": "Đang dùng bữa",
+    "updated": "Cập nhật",
+    "addedAt": "Thêm lúc",
+    "each": "mỗi phần",
+    "paymentSummary": "Tóm tắt thanh toán",
+    "vat": "Thuế VAT",
+    "voucher": "Voucher",
+    "inclTaxes": "Đã bao gồm thuế",
+    "billInfoText": "Hoá đơn sẽ được gửi đến email của bạn sau khi thanh toán.",
+    "payNow": "Thanh toán ngay",
+    "payCounter": "Thanh toán tại quầy",
+    "callStaff": "Gọi nhân viên"
+  }
+}

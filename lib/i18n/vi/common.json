@@ -1,0 +1,43 @@
+{
+  "header": {
+    "currentTable": "Bàn hiện tại"
+  },
+  "table": {
+    "active": "Bàn đang hoạt động",
+    "activeDescription": "Mã QR hợp lệ. Bạn có thể bắt đầu đặt món ngay.",
+    "inactive": "Bàn tạm ngưng",
+    "inactiveDescription": "Bàn tạm thời không phục vụ. Vui lòng gọi nhân viên.",
+    "zone": "Khu vực",
+    "capacity": "Sức chứa",
+    "maxGuests": "Tối đa"
+  },
+  "guestCount": {
+    "title": "Số lượng khách",
+    "subtitle": "Giúp nhà hàng phục vụ tốt hơn"
+  },
+  "cta": {
+    "startOrdering": "Bắt đầu xem menu",
+    "loading": "Đang tạo phiên...",
+    "viewOrder": "Đã có đơn? Xem trạng thái",
+    "termsAgreement": "Bằng cách bắt đầu, bạn đồng ý với điều khoản sử dụng của nhà hàng."
+  },
+  "errors": {
+    "invalidQr": {
+      "title": "Mã QR không hợp lệ",
+      "description": "Không tìm thấy thông tin bàn. Vui lòng quét lại mã QR tại bàn.",
+      "retry": "Thử lại"
+    },
+    "tableInactive": {
+      "title": "Bàn tạm ngưng phục vụ",
+      "description": "Vui lòng liên hệ nhân viên để được hỗ trợ."
+    },
+    "network": {
+      "title": "Lỗi kết nối",
+      "description": "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.",
+      "retry": "Thử lại"
+    }
+  },
+  "misc": {
+    "wifiConnected": "Đã kết nối Wi-Fi nhà hàng"
+  }
+}

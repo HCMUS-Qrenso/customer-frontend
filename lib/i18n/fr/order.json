@@ -1,0 +1,39 @@
+{
+  "order": {
+    "title": "Commande",
+    "live": "En direct",
+    "requestBill": "Demander l'addition",
+    "addMoreItems": "Ajouter des articles",
+    "trackOrder": "Suivre",
+    "paymentRequested": "Votre demande de paiement a été reçue et est en cours de traitement. Veuillez patienter!"
+  },
+  "track": {
+    "liveUpdate": "Mise à jour en direct",
+    "createdAt": "Créé le",
+    "pending": "En attente",
+    "accepted": "Accepté",
+    "cooking": "En préparation",
+    "ready": "Prêt",
+    "served": "Servi",
+    "batch": "Lot",
+    "orderUpdates": "Mises à jour de la commande",
+    "estimatedTime": "Estimé",
+    "preparingMessage": "Votre commande est en cours de préparation par la cuisine."
+  },
+  "bill": {
+    "title": "Addition",
+    "orderId": "ID de commande",
+    "dining": "En cours de repas",
+    "updated": "Mis à jour",
+    "addedAt": "Ajouté à",
+    "each": "chacun",
+    "paymentSummary": "Résumé du paiement",
+    "vat": "TVA",
+    "voucher": "Bon de réduction",
+    "inclTaxes": "Taxes incluses",
+    "billInfoText": "Votre reçu sera envoyé à votre email après le paiement.",
+    "payNow": "Payer maintenant",
+    "payCounter": "Payer au comptoir",
+    "callStaff": "Appeler le personnel"
+  }
+}

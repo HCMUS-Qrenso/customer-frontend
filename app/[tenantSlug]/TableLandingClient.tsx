@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import {
   setSessionToken,
+  getSessionToken,
+  clearSessionToken,
   getQrToken,
   getTableId,
 } from "@/lib/stores/qr-token-store";
@@ -177,6 +179,37 @@ function TableLandingContent({
   // IMPORTANT: Always call useQrToken with token/tableId (not conditional on tableContext)
   // This ensures tokens are restored from storage even when reloading page
   useQrToken(token, tableId);
+
+  // Clear stale session token on mount (silent auto-recovery for fresh QR scan)
+  // This prevents "token expired" error when user scans QR after long time
+  useEffect(() => {
+    const sessionToken = getSessionToken();
+    if (!sessionToken) return;
+
+    try {
+      // Decode JWT to check expiry
+      const base64Url = sessionToken.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      const payload = JSON.parse(jsonPayload);
+
+      // Check if token is expired
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        console.log("[TableLanding] Stale session token detected, clearing...");
+        clearSessionToken();
+        // No banner needed for fresh scan - silent recovery
+      }
+    } catch (err) {
+      // Invalid token format - clear it
+      console.log("[TableLanding] Invalid session token format, clearing...");
+      clearSessionToken();
+    }
+  }, []);
 
   // Verify token and get table context from API
   const { data: tableContext, isLoading, error } = useVerifyTokenQuery(token);

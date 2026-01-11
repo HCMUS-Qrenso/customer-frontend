@@ -1,0 +1,39 @@
+{
+  "order": {
+    "title": "Order",
+    "live": "Live",
+    "requestBill": "Request Bill",
+    "addMoreItems": "Add More Items",
+    "trackOrder": "Track Order",
+    "paymentRequested": "Your payment request has been received and is being processed. Please wait a moment!"
+  },
+  "track": {
+    "liveUpdate": "Live Update",
+    "createdAt": "Created",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "cooking": "Cooking",
+    "ready": "Ready",
+    "served": "Served",
+    "batch": "Batch",
+    "orderUpdates": "Order Updates",
+    "estimatedTime": "Estimated",
+    "preparingMessage": "Your order is being prepared by the kitchen."
+  },
+  "bill": {
+    "title": "Bill",
+    "orderId": "Order ID",
+    "dining": "Dining",
+    "updated": "Updated",
+    "addedAt": "Added at",
+    "each": "each",
+    "paymentSummary": "Payment Summary",
+    "vat": "VAT",
+    "voucher": "Voucher",
+    "inclTaxes": "Incl. taxes",
+    "billInfoText": "Your receipt will be sent to your email after payment.",
+    "payNow": "Pay Now",
+    "payCounter": "Pay at Counter",
+    "callStaff": "Call Staff"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "search": "Rechercher...",
+  "all": "Tout",
+  "chefRecommendations": "Recommandations du chef",
+  "soldOut": "Épuisé",
+  "customizable": "Personnalisable",
+  "viewCart": "Voir le panier",
+  "noResults": "Aucun article trouvé",
+  "noResultsDescription": "Essayez un autre terme de recherche",
+  "clearSearch": "Effacer la recherche",
+  "items": "articles",
+  "itemDetail": "Détail de l'article",
+  "subtotal": "Sous-total",
+  "addToCart": "Ajouter au panier",
+  "noteForKitchen": "Note pour la cuisine",
+  "notePlaceholder": "Ex: Sans oignons, moins épicé..."
+}

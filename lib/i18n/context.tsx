@@ -8,10 +8,24 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { translations, Language, Translations } from "./translations";
+
+// Import locale modules
+import vi from "./vi";
+import en from "./en";
+import fr from "./fr";
+import zh from "./zh";
+
+export type Language = "vi" | "en" | "fr" | "zh";
 
 const LANGUAGE_STORAGE_KEY = "qrenso_preferred_language";
 const DEFAULT_LANGUAGE: Language = "vi";
+const SUPPORTED_LANGUAGES: Language[] = ["vi", "en", "fr", "zh"];
+
+// Build translations object from locale modules
+const translations = { vi, en, fr, zh };
+
+// Export Translations type based on vi locale structure
+export type Translations = typeof vi;
 
 interface LanguageContextType {
   lang: Language;
@@ -40,8 +54,8 @@ export function LanguageProvider({
   // Hydrate from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored === "vi" || stored === "en") {
-      setLangState(stored);
+    if (stored && SUPPORTED_LANGUAGES.includes(stored as Language)) {
+      setLangState(stored as Language);
     }
     setIsHydrated(true);
   }, []);
