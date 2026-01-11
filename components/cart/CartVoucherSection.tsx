@@ -39,6 +39,7 @@ import {
   getApplicableVouchers,
 } from "@/lib/utils/voucher-calculator";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface CartVoucherSectionProps {
   subtotal: number;
@@ -59,6 +60,7 @@ export function CartVoucherSection({
   const [showVoucherList, setShowVoucherList] = useState(false);
   const [isLoadingVouchers, setIsLoadingVouchers] = useState(false);
   const { formatPrice } = useTenantSettings();
+  const { t } = useLanguage();
 
   const voucherCode = useVoucherCode();
   const applyingCode = useApplyingCode();
@@ -109,7 +111,7 @@ export function CartVoucherSection({
         }
       } catch (error) {
         console.error("[CartVoucher] Failed to fetch vouchers:", error);
-        setPublicVouchersError("Không thể tải danh sách mã giảm giá");
+        setPublicVouchersError(t.voucher?.loadError || "Cannot load vouchers");
       } finally {
         setIsLoadingVouchers(false);
         setPublicVouchersLoading(false);
@@ -154,7 +156,7 @@ export function CartVoucherSection({
         if (!isVoucherApplicable(voucher, subtotal)) {
           clearAppliedVoucher();
           setUserHasInteracted(true);
-          toast.error("Đơn hàng không còn đủ điều kiện áp dụng mã giảm giá");
+          toast.error(t.voucher?.notApplicable || "Voucher not applicable");
         }
       }
     }
@@ -162,7 +164,7 @@ export function CartVoucherSection({
 
   const handleApplyCode = async () => {
     if (!voucherCode.trim()) {
-      setApplyCodeError("Vui lòng nhập mã voucher");
+      setApplyCodeError(t.voucher?.invalidCode || "Invalid voucher code");
       return;
     }
 
@@ -177,14 +179,14 @@ export function CartVoucherSection({
       const voucher = findVoucherByCode(publicVouchers, voucherCode);
 
       if (!voucher) {
-        setApplyCodeError("Mã voucher không hợp lệ hoặc đã hết hiệu lực");
+        setApplyCodeError(t.voucher?.invalidCode || "Invalid voucher code");
         setApplyingCode(false);
         return;
       }
 
       // Check if already used in session
       if (voucher.isUsedInSession) {
-        setApplyCodeError("Bạn đã sử dụng mã này trong phiên hiện tại");
+        setApplyCodeError(t.voucher?.applied || "Already used in this session");
         setApplyingCode(false);
         return;
       }
@@ -200,7 +202,8 @@ export function CartVoucherSection({
       // Check if applicable
       if (!isVoucherApplicable(voucher, subtotal)) {
         setApplyCodeError(
-          `Đơn hàng tối thiểu ${formatPrice(voucher.minSubtotal || 0)} để áp dụng mã này`
+          t.voucher?.minOrder?.replace("{amount}", formatPrice(voucher.minSubtotal || 0)) || 
+          `Min order ${formatPrice(voucher.minSubtotal || 0)} to apply this voucher`
         );
         setApplyingCode(false);
         return;
@@ -213,9 +216,9 @@ export function CartVoucherSection({
       setVoucherCode("");
       setIsExpanded(false);
       setShowVoucherList(false);
-      toast.success(`Áp dụng thành công: ${voucher.name}`);
+      toast.success((t.voucher?.applied || "Applied") + ": " + voucher.name);
     } catch (error) {
-      setApplyCodeError("Không thể áp dụng mã voucher");
+      setApplyCodeError(t.voucher?.loadError || "Cannot apply voucher code");
     } finally {
       setApplyingCode(false);
     }
@@ -227,13 +230,13 @@ export function CartVoucherSection({
     setUserHasInteracted(true);
     setShowVoucherList(false);
     setIsExpanded(false);
-    toast.success(`Áp dụng thành công: ${voucher.name}`);
+    toast.success((t.voucher?.applied || "Applied") + ": " + voucher.name);
   };
 
   const handleRemoveVoucher = () => {
     clearAppliedVoucher();
     setUserHasInteracted(true);
-    toast.success("Đã gỡ voucher");
+    toast.success(t.voucher?.remove || "Voucher removed");
   };
 
   // Show applied voucher badge
@@ -254,7 +257,7 @@ export function CartVoucherSection({
                   {appliedVoucher.isAutoApplied && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 rounded-full">
                       <Sparkles className="h-3 w-3" />
-                      Tự động
+                      Auto
                     </span>
                   )}
                 </div>
@@ -318,8 +321,8 @@ export function CartVoucherSection({
           <Tag className="h-5 w-5" />
           <span className="text-sm font-medium">
             {applicableVouchers.length > 0
-              ? `${applicableVouchers.length} mã giảm giá có sẵn`
-              : "Có mã giảm giá?"}
+              ? (t.voucher?.available || "{count} vouchers available").replace("{count}", String(applicableVouchers.length))
+              : (t.voucher?.hasVoucher || "Have a voucher?")}
           </span>
         </div>
         {isLoadingVouchers ? (
@@ -342,7 +345,7 @@ export function CartVoucherSection({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
           <Tag className="h-4 w-4" />
-          <span className="text-sm font-medium">Nhập mã giảm giá</span>
+          <span className="text-sm font-medium">{t.voucher?.enterCode || "Enter voucher code"}</span>
         </div>
         <button
           onClick={() => setIsExpanded(false)}
@@ -356,7 +359,7 @@ export function CartVoucherSection({
         <Input
           value={voucherCode}
           onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-          placeholder="VD: GIAMGIA20"
+          placeholder={t.voucher?.placeholder || "e.g. DISCOUNT20"}
           className="uppercase flex-1 font-medium tracking-wide"
           disabled={disabled || applyingCode}
           onKeyDown={(e) => e.key === "Enter" && handleApplyCode()}
@@ -385,7 +388,7 @@ export function CartVoucherSection({
       {applicableVouchers.length > 0 && (
         <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">
-            Hoặc chọn mã có sẵn
+            {t.voucher?.selectAvailable || "Or select available vouchers"}
           </p>
           <VoucherList
             vouchers={applicableVouchers}
@@ -415,6 +418,7 @@ function VoucherList({
   formatPrice: (amount: number) => string;
   onSelect: (voucher: PublicVoucher) => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-2 max-h-48 overflow-y-auto">
       {vouchers.map((voucher) => {
@@ -472,12 +476,12 @@ function VoucherList({
                   )}
                   {voucher.isUsedInSession && (
                     <span className="text-[10px] px-1.5 py-0.5 bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-gray-400 rounded">
-                      Đã sử dụng
+                      {t.misc?.used || "Used"}
                     </span>
                   )}
                   {isCurrent && (
                     <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500 text-white rounded">
-                      Đang dùng
+                      {t.misc?.inUse || "In Use"}
                     </span>
                   )}
                 </div>

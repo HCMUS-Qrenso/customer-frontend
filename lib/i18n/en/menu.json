@@ -13,5 +13,21 @@
   "subtotal": "Subtotal",
   "addToCart": "Add to Cart",
   "noteForKitchen": "Note for Kitchen",
-  "notePlaceholder": "e.g., No onions, less spicy..."
+  "notePlaceholder": "e.g., No onions, less spicy...",
+  "viewMenu": "View Menu",
+  "itemNotFound": "Item Not Found",
+  "itemNotFoundDesc": "This item doesn't exist or has been removed.",
+  "backToMenu": "Back to Menu",
+  "inStock": "In Stock",
+  "outOfStock": "Out of Stock",
+  "unavailable": "Unavailable",
+  "prepTime": "{time} min",
+  "popular": "{score}% popular",
+  "addedToCart": "Added {name} to cart",
+  "selectMax": "Select up to {max}",
+  "purchased": "Purchased",
+  "sortNameAZ": "Name A-Z",
+  "sortNameZA": "Name Z-A",
+  "sortPriceLow": "Price: Low → High",
+  "sortPriceHigh": "Price: High → Low"
 }

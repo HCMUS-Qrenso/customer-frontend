@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Clock, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTenantSettings } from "@/providers/tenant-settings-context";
+import { useLanguage } from "@/lib/i18n/context";
 import type { OperatingHours, DayHours } from "@/lib/types/table";
 
 interface OperatingHoursButtonProps {
@@ -75,6 +76,7 @@ function isDayOpen(hours: DayHours | undefined): boolean {
 export function OperatingHoursButton({
   className = "",
 }: OperatingHoursButtonProps) {
+  const { t } = useLanguage();
   const { isOpenNow, getTodayHours, settings } = useTenantSettings();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -123,7 +125,7 @@ export function OperatingHoursButton({
         />
         <Clock className="size-3.5" />
         <span className="text-xs font-medium">
-          {isCurrentlyOpen ? "Mở cửa" : "Đóng cửa"}
+          {isCurrentlyOpen ? (t.misc?.open || "Open") : (t.misc?.closed || "Closed")}
         </span>
         <ChevronDown
           className={`size-3 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -148,7 +150,7 @@ export function OperatingHoursButton({
                     : "text-red-600 dark:text-red-400"
                 }`}
               >
-                {isCurrentlyOpen ? "Đang mở cửa" : "Đã đóng cửa"}
+                {isCurrentlyOpen ? (t.misc?.nowOpen || "Now Open") : (t.misc?.nowClosed || "Now Closed")}
               </span>
             </div>
             <button

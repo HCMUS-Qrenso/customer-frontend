@@ -13,5 +13,21 @@
   "subtotal": "小计",
   "addToCart": "加入购物车",
   "noteForKitchen": "厨房备注",
-  "notePlaceholder": "例如：不要洋葱，少辣..."
+  "notePlaceholder": "例如：不要洋葱，少辣...",
+  "viewMenu": "查看菜单",
+  "itemNotFound": "未找到菜品",
+  "itemNotFoundDesc": "此菜品不存在或已被删除。",
+  "backToMenu": "返回菜单",
+  "inStock": "有货",
+  "outOfStock": "缺货",
+  "unavailable": "不可用",
+  "prepTime": "{time} 分钟",
+  "popular": "{score}% 热门",
+  "addedToCart": "已将 {name} 加入购物车",
+  "selectMax": "最多选择 {max} 项",
+  "purchased": "已购买",
+  "sortNameAZ": "名称 A-Z",
+  "sortNameZA": "名称 Z-A",
+  "sortPriceLow": "价格：低 → 高",
+  "sortPriceHigh": "价格：高 → 低"
 }

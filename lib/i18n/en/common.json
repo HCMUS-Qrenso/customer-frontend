@@ -35,9 +35,32 @@
       "title": "Connection Error",
       "description": "Unable to connect to server. Please check your network.",
       "retry": "Retry"
-    }
+    },
+    "sessionExpired": "Session expired. Please scan QR code again."
   },
   "misc": {
-    "wifiConnected": "Connected to restaurant Wi-Fi"
+    "wifiConnected": "Connected to restaurant Wi-Fi",
+    "open": "Open",
+    "closed": "Closed",
+    "nowOpen": "Now Open",
+    "nowClosed": "Now Closed",
+    "cancelled": "Cancelled",
+    "processing": "Processing...",
+    "save": "Save",
+    "used": "Used",
+    "inUse": "In Use",
+    "purchased": "Purchased",
+    "included": "Included",
+    "errorOccurred": "An error occurred",
+    "reviewsAndComments": "Reviews & Comments",
+    "minOrder": "Min order {amount}",
+    "sortNameAZ": "Name A-Z",
+    "sortNameZA": "Name Z-A",
+    "sortPriceLow": "Lowest Price",
+    "sortPriceHigh": "Highest Price",
+    "prev": "Previous",
+    "next": "Next",
+    "free": "Free",
+    "required": "Required"
   }
 }

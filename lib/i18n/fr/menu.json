@@ -13,5 +13,21 @@
   "subtotal": "Sous-total",
   "addToCart": "Ajouter au panier",
   "noteForKitchen": "Note pour la cuisine",
-  "notePlaceholder": "Ex: Sans oignons, moins épicé..."
+  "notePlaceholder": "Ex: Sans oignons, moins épicé...",
+  "viewMenu": "Voir le menu",
+  "itemNotFound": "Article non trouvé",
+  "itemNotFoundDesc": "Cet article n'existe pas ou a été supprimé.",
+  "backToMenu": "Retour au menu",
+  "inStock": "En stock",
+  "outOfStock": "Rupture de stock",
+  "unavailable": "Indisponible",
+  "prepTime": "{time} min",
+  "popular": "{score}% populaire",
+  "addedToCart": "{name} ajouté au panier",
+  "selectMax": "Sélectionnez jusqu'à {max}",
+  "purchased": "Acheté",
+  "sortNameAZ": "Nom A-Z",
+  "sortNameZA": "Nom Z-A",
+  "sortPriceLow": "Prix: Bas → Haut",
+  "sortPriceHigh": "Prix: Haut → Bas"
 }

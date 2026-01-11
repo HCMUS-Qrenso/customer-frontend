@@ -103,7 +103,7 @@ function MyOrderContent({
 
   // Subtitle for header
   const headerSubtitle = tableNumber
-    ? `${tenantSlug} · Bàn ${tableNumber}`
+    ? `${tenantSlug} · ${t.checkout?.table || "Table"} ${tableNumber}`
     : tenantSlug;
 
   // Copy order number
@@ -142,12 +142,12 @@ function MyOrderContent({
       console.error("[MyOrder] Fetch error:", err);
 
       if (err.statusCode === 403 || err.message?.includes("Forbidden")) {
-        setError("Phiên làm việc đã hết hạn. Vui lòng quét lại mã QR.");
+        setError(t.errors?.sessionExpired || "Session expired. Please scan QR code again.");
       } else if (err.statusCode === 404) {
         setOrder(null);
         setBatches([]);
       } else {
-        setError(err.message || "Không thể tải thông tin đơn hàng");
+        setError(err.message || t.common?.error || "Cannot load order");
       }
     } finally {
       setIsLoading(false);
@@ -170,7 +170,7 @@ function MyOrderContent({
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
           toast.success(
-            "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
+            t.myOrder?.paymentSuccess || "Payment successful! You can rate your order now.",
             {
               duration: 5000,
             },
@@ -221,7 +221,7 @@ function MyOrderContent({
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
           toast.success(
-            "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
+            t.myOrder?.paymentSuccess || "Payment successful! You can rate your order now.",
             {
               duration: 5000,
             },
@@ -275,7 +275,7 @@ function MyOrderContent({
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
             <Button onClick={fetchOrder} variant="outline">
-              Thử lại
+              {t.common?.retry || "Try again"}
             </Button>
           </div>
         </main>
@@ -297,13 +297,13 @@ function MyOrderContent({
           <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800">
             <Receipt className="size-10 text-slate-400 dark:text-slate-500" />
           </div>
-          <h3 className="mb-2 text-xl font-bold">Chưa có đơn hàng</h3>
+          <h3 className="mb-2 text-xl font-bold">{t.order?.noOrder || "No order yet"}</h3>
           <p className="mb-8 text-sm text-slate-500 dark:text-slate-400 text-center max-w-xs">
-            Bạn chưa đặt món nào. Hãy chọn món ăn từ menu!
+            {t.order?.noOrderDesc || "You haven't ordered anything. Choose from the menu!"}
           </p>
           <Link href={menuHref}>
             <Button className="bg-emerald-500 text-white hover:bg-emerald-600">
-              Xem Menu
+              {t.menu?.viewMenu || "View Menu"}
             </Button>
           </Link>
         </main>
@@ -357,7 +357,7 @@ function MyOrderContent({
             )}
           </button>
           <span className="text-xs text-slate-400">
-            Cập nhật {formatTime(lastUpdated.toISOString())}
+            {t.myOrder?.updatedAt || "Updated"} {formatTime(lastUpdated.toISOString())}
           </span>
         </div>
 
@@ -365,25 +365,6 @@ function MyOrderContent({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Status + Items */}
           <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-            <div>
-              {/* Section Header */}
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                  Trạng thái đơn hàng
-                </h3>
-                {/* Payment Status Badge */}
-                {order.paymentStatus === "paid" && (
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                    Đã thanh toán
-                  </span>
-                )}
-              </div>
-              {/* Status Stepper */}
-              <div className="bg-white dark:bg-slate-800 rounded-xl">
-                <OrderStatusStepper currentStatus={order.status as any} />
-              </div>
-            </div>
-
             {/* Items List */}
             {batches.length > 0 && <BatchItemsList batches={batches} />}
           </div>

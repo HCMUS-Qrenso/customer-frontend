@@ -2,6 +2,7 @@
 
 import { Star } from "lucide-react";
 import { ReviewStatsDTO } from "@/lib/types/review";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface RatingStarsProps {
   rating: number;
@@ -54,12 +55,13 @@ interface RatingDistributionProps {
 }
 
 export function RatingDistribution({ stats }: RatingDistributionProps) {
+  const { t } = useLanguage();
   const { averageRating, totalReviews, ratingDistribution } = stats;
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
       <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
-        Đánh giá & Nhận xét
+        {t.misc?.reviewsAndComments || "Reviews & Comments"}
       </h3>
 
       <div className="flex items-start gap-8">
@@ -70,7 +72,7 @@ export function RatingDistribution({ stats }: RatingDistributionProps) {
           </div>
           <RatingStars rating={averageRating} size="md" />
           <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            {totalReviews} đánh giá
+            {totalReviews} {t.review?.yourReview?.toLowerCase() || "reviews"}
           </div>
         </div>
 

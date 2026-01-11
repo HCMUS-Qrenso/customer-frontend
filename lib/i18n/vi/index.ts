@@ -15,14 +15,23 @@ const vi = {
   cta: common.cta,
   errors: common.errors,
   misc: common.misc,
+  common: {
+    back: "Quay lại",
+    error: "Đã xảy ra lỗi",
+    retry: "Thử lại",
+  },
   // Feature-specific sections
   auth,
   menu,
   cart: cart.cart,
+  voucher: cart.voucher,
   checkout: cart.checkout,
   order: order.order,
+  myOrder: order.myOrder,
   track: order.track,
   bill: order.bill,
+  summary: order.summary,
+  review: order.review,
   profile,
 };
 

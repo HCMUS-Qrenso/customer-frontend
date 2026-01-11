@@ -13,5 +13,21 @@
   "subtotal": "Tạm tính",
   "addToCart": "Thêm vào giỏ hàng",
   "noteForKitchen": "Ghi chú cho bếp",
-  "notePlaceholder": "Ví dụ: Không hành, ít nước bọng..."
+  "notePlaceholder": "Ví dụ: Không hành, ít nước bọng...",
+  "viewMenu": "Xem Menu",
+  "itemNotFound": "Không tìm thấy món",
+  "itemNotFoundDesc": "Món ăn này không tồn tại hoặc đã bị xóa.",
+  "backToMenu": "Quay lại menu",
+  "inStock": "Còn hàng",
+  "outOfStock": "Hết hàng",
+  "unavailable": "Hết món",
+  "prepTime": "{time} phút",
+  "popular": "{score}% yêu thích",
+  "addedToCart": "Đã thêm {name} vào giỏ hàng",
+  "selectMax": "Chọn tối đa {max}",
+  "purchased": "Đã mua",
+  "sortNameAZ": "Tên A-Z",
+  "sortNameZA": "Tên Z-A",
+  "sortPriceLow": "Giá: Thấp → Cao",
+  "sortPriceHigh": "Giá: Cao → Thấp"
 }

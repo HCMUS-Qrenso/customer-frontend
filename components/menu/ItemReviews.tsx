@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, User, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useItemReviews } from "@/hooks/use-reviews";
+import { useLanguage } from "@/lib/i18n/context";
 import {
   RatingStars,
   RatingDistribution,
@@ -15,6 +16,7 @@ interface ItemReviewsProps {
 }
 
 export function ItemReviews({ menuItemId }: ItemReviewsProps) {
+  const { t, lang } = useLanguage();
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
@@ -39,7 +41,7 @@ export function ItemReviews({ menuItemId }: ItemReviewsProps) {
     return (
       <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center">
         <p className="text-slate-500 dark:text-slate-400">
-          Chưa có đánh giá nào cho món này
+          {t.review?.noReviewYet || "No reviews yet for this item"}
         </p>
       </div>
     );
@@ -65,17 +67,17 @@ export function ItemReviews({ menuItemId }: ItemReviewsProps) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            Trang trước
+            {t.misc?.prev || "Previous"}
           </Button>
           <span className="flex items-center px-4 text-sm text-slate-600 dark:text-slate-400">
-            Trang {page} / {totalPages}
+            {page} / {totalPages}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            Trang sau
+            {t.misc?.next || "Next"}
           </Button>
         </div>
       )}
@@ -84,9 +86,10 @@ export function ItemReviews({ menuItemId }: ItemReviewsProps) {
 }
 
 function ReviewCard({ review }: { review: ReviewResponseDTO }) {
+  const { t, lang } = useLanguage();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("vi-VN", {
+    return new Intl.DateTimeFormat(lang === "vi" ? "vi-VN" : lang === "zh" ? "zh-CN" : lang === "fr" ? "fr-FR" : "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -122,7 +125,7 @@ function ReviewCard({ review }: { review: ReviewResponseDTO }) {
                 {review.isVerifiedPurchase && (
                   <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="size-3" />
-                    <span>Đã mua</span>
+                    <span>{t.menu?.purchased || "Purchased"}</span>
                   </div>
                 )}
               </div>

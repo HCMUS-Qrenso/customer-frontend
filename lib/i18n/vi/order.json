@@ -5,7 +5,32 @@
     "requestBill": "Yêu cầu hoá đơn",
     "addMoreItems": "Thêm món",
     "trackOrder": "Theo dõi",
-    "paymentRequested": "Yêu cầu thanh toán đã được tiếp nhận và đang xử lý. Quý khách vui lòng đợi trong giây lát !"
+    "paymentRequested": "Yêu cầu thanh toán đã được tiếp nhận và đang xử lý. Quý khách vui lòng đợi trong giây lát!",
+    "noOrder": "Chưa có đơn hàng",
+    "noOrderDesc": "Bạn chưa đặt món nào. Hãy chọn món ăn từ menu!",
+    "history": "Lịch sử đơn hàng",
+    "searchPlaceholder": "Tìm kiếm theo mã đơn hàng...",
+    "filterAll": "Tất cả",
+    "filterCompleted": "Hoàn thành",
+    "filterPending": "Chờ xử lý",
+    "filterCancelled": "Đã hủy",
+    "noOrders": "Chưa có đơn hàng nào",
+    "noOrdersDesc": "Bạn chưa đặt đơn hàng nào. Hãy bắt đầu đặt món ngay!",
+    "moreItems": "món khác",
+    "prev": "Trước",
+    "next": "Sau",
+    "page": "Trang"
+  },
+  "myOrder": {
+    "orderStatus": "TRẠNG THÁI ĐƠN HÀNG",
+    "items": "MÓN",
+    "payment": "THANH TOÁN",
+    "subtotal": "Tạm tính",
+    "itemCount": "{count} món",
+    "updatedAt": "Cập nhật",
+    "paymentSuccess": "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
+    "paid": "Đã thanh toán",
+    "unpaid": "Chưa thanh toán"
   },
   "track": {
     "liveUpdate": "Cập nhật trực tiếp",
@@ -35,5 +60,39 @@
     "payNow": "Thanh toán ngay",
     "payCounter": "Thanh toán tại quầy",
     "callStaff": "Gọi nhân viên"
+  },
+  "summary": {
+    "payment": "Thanh toán",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "inclTax": "Đã gồm {tax} {rate}%"
+  },
+  "review": {
+    "title": "Đánh giá đơn hàng",
+    "alreadyReviewed": "Bạn đã đánh giá đơn hàng này",
+    "overall": "Đánh giá tổng thể",
+    "writeReview": "Viết đánh giá",
+    "itemReviews": "Đánh giá món ăn",
+    "quantity": "Số lượng",
+    "yourReview": "Đánh giá của bạn",
+    "noReview": "Chưa có đánh giá",
+    "noReviewYet": "Bạn chưa đánh giá đơn hàng này",
+    "overallRating": "Đánh giá chung",
+    "itemsReviewed": "{count} món đã được đánh giá",
+    "itemReview": "Đánh giá món ăn",
+    "reviewFor": "Đánh giá cho",
+    "yourRating": "Đánh giá của bạn",
+    "ratingRequired": "*",
+    "rating1": "Rất tệ",
+    "rating2": "Tệ",
+    "rating3": "Bình thường",
+    "rating4": "Tốt",
+    "rating5": "Xuất sắc",
+    "commentLabel": "Nhận xét (không bắt buộc)",
+    "commentPlaceholder": "Chia sẻ trải nghiệm của bạn...",
+    "submitting": "Đang gửi...",
+    "submit": "Gửi đánh giá",
+    "cancel": "Hủy"
   }
 }

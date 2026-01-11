@@ -60,11 +60,11 @@ function BillContent({
         if (result.success && result.data) {
           setOrder(result.data);
         } else {
-          toast.error("Không tìm thấy đơn hàng");
+          toast.error(t.common?.error || "Error");
         }
       } catch (err) {
         console.error("[Bill] Failed to fetch order:", err);
-        toast.error("Không thể tải thông tin đơn hàng");
+        toast.error(t.common?.error || "Error");
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ function BillContent({
   // Handle payment button click
   const handlePayment = async () => {
     if (!order?.id) {
-      toast.error("Không tìm thấy thông tin đơn hàng");
+      toast.error(t.common?.error || "Error");
       return;
     }
 
@@ -84,15 +84,15 @@ function BillContent({
       const result = await paymentApi.requestBill({
         orderId: order.id,
         notes:
-          paymentMethod === "cash" ? "Thanh toán tiền mặt" : "Thanh toán QR",
+          paymentMethod === "cash" ? t.checkout?.cash : t.checkout?.qr,
       });
 
       if (result.success) {
-        toast.success("Đã gửi yêu cầu thanh toán!", {
+        toast.success(t.checkout?.requestSent || "Payment request sent!", {
           description:
             paymentMethod === "cash"
-              ? "Nhân viên sẽ mang hóa đơn đến bàn của bạn"
-              : "Nhân viên sẽ hướng dẫn thanh toán QR",
+              ? t.checkout?.cashDesc
+              : t.checkout?.staffGuideQR,
           duration: 5000,
         });
         // Navigate back after 2 seconds
@@ -102,8 +102,8 @@ function BillContent({
       }
     } catch (err: any) {
       console.error("[Bill] Failed to request payment:", err);
-      toast.error("Không thể gửi yêu cầu", {
-        description: err.message || "Vui lòng thử lại",
+      toast.error(t.common?.error || "Cannot send request", {
+        description: err.message || "Please try again",
       });
     } finally {
       setIsProcessing(false);
@@ -115,7 +115,7 @@ function BillContent({
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400">Đang tải...</p>
+          <p className="text-slate-600 dark:text-slate-400">{t.checkout?.processing || "Loading..."}</p>
         </div>
       </div>
     );
@@ -126,9 +126,9 @@ function BillContent({
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <p className="text-slate-600 dark:text-slate-400 mb-4">
-            Không tìm thấy đơn hàng
+            {t.common?.error || "Order not found"}
           </p>
-          <Button onClick={() => router.back()}>Quay lại</Button>
+          <Button onClick={() => router.back()}>{t.common?.back || "Back"}</Button>
         </div>
       </div>
     );
@@ -139,9 +139,9 @@ function BillContent({
     return (
       <div className="relative flex min-h-screen flex-col bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
         <PageHeader
-          title="Thanh toán"
+          title={t.checkout?.title || "Payment"}
           subtitle={
-            tableNumber ? `${tenantSlug} • Bàn ${tableNumber}` : tenantSlug
+            tableNumber ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}` : tenantSlug
           }
           onBack={() => router.back()}
           rightContent={<UserAvatar />}
@@ -152,17 +152,16 @@ function BillContent({
               <CheckCircle className="size-8 text-emerald-600 dark:text-emerald-400" />
             </div>
             <h2 className="text-xl font-bold mb-2">
-              Nhân viên đã nhận yêu cầu
+              {t.checkout?.staffProcessing || "Staff received your request"}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 mb-6">
-              Nhân viên đang xử lý thanh toán của bạn. Vui lòng đợi trong giây
-              lát.
+              {t.checkout?.staffProcessing || "Staff is processing your payment. Please wait."}
             </p>
             <div className="flex flex-col gap-3">
               <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-slate-600 dark:text-slate-400">
-                    Đơn hàng
+                    {t.checkout?.orderNumber || "Order"}
                   </span>
                   <span className="font-mono font-semibold">
                     {order.orderNumber}
@@ -170,7 +169,7 @@ function BillContent({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-400">
-                    Tổng tiền
+                    {t.cart?.total || "Total"}
                   </span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">
                     {formatPrice(order.totalAmount)}
@@ -182,7 +181,7 @@ function BillContent({
                 onClick={() => router.back()}
                 className="w-full"
               >
-                Quay lại
+                {t.common?.back || "Back"}
               </Button>
             </div>
           </div>
@@ -194,9 +193,9 @@ function BillContent({
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors">
       <PageHeader
-        title="Thanh toán"
+        title={t.checkout?.title || "Payment"}
         subtitle={
-          tableNumber ? `${tenantSlug} • Bàn ${tableNumber}` : tenantSlug
+          tableNumber ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}` : tenantSlug
         }
         onBack={() => router.back()}
         rightContent={<UserAvatar />}
@@ -210,13 +209,13 @@ function BillContent({
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Đơn hàng
+                  {t.checkout?.orderNumber || "Order"}
                 </p>
                 <p className="font-bold text-lg">{order.orderNumber}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Bàn
+                  {t.checkout?.table || "Table"}
                 </p>
                 <p className="font-bold text-lg">{order.table?.tableNumber}</p>
               </div>
@@ -245,7 +244,7 @@ function BillContent({
             {/* Total */}
             <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-4">
               <div className="flex justify-between text-sm mb-2">
-                <p className="text-slate-600 dark:text-slate-400">Tạm tính</p>
+                <p className="text-slate-600 dark:text-slate-400">{t.cart?.subtotal || "Subtotal"}</p>
                 <p>{formatPrice(order.subtotal)}</p>
               </div>
               {order.taxAmount > 0 && (
@@ -257,13 +256,13 @@ function BillContent({
               {order.discountAmount > 0 && (
                 <div className="flex justify-between text-sm mb-2 text-emerald-600 dark:text-emerald-400">
                   <p className="font-medium">
-                    Giảm giá {order.voucher?.code && `(${order.voucher.code})`}
+                    {t.voucher?.title || "Discount"} {order.voucher?.code && `(${order.voucher.code})`}
                   </p>
                   <p className="font-bold">-{formatPrice(order.discountAmount)}</p>
                 </div>
               )}
               <div className="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                <p>Tổng cộng</p>
+                <p>{t.cart?.total || "Total"}</p>
                 <p className="text-emerald-600 dark:text-emerald-400">
                   {formatPrice(order.totalAmount)}
                 </p>
@@ -273,7 +272,7 @@ function BillContent({
 
           {/* Payment Method Selection */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mb-6">
-            <h3 className="font-bold text-lg mb-4">Phương thức thanh toán</h3>
+            <h3 className="font-bold text-lg mb-4">{t.checkout?.paymentMethod || "Payment Method"}</h3>
             <RadioGroup
               value={paymentMethod}
               onValueChange={(value) =>
@@ -296,9 +295,9 @@ function BillContent({
                       <DollarSign className="size-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <p className="font-medium">Tiền mặt</p>
+                      <p className="font-medium">{t.checkout?.cash || "Cash"}</p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Thanh toán bằng tiền mặt với nhân viên
+                        {t.checkout?.cashDesc || "Pay with cash to staff"}
                       </p>
                     </div>
                   </div>
@@ -319,9 +318,9 @@ function BillContent({
                       <Wallet className="size-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium">Thanh toán QR</p>
+                      <p className="font-medium">{t.checkout?.qr || "QR Payment"}</p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Quét mã QR để thanh toán qua ví điện tử
+                        {t.checkout?.qrDesc || "Scan QR code to pay via e-wallet"}
                       </p>
                     </div>
                   </div>
@@ -340,12 +339,12 @@ function BillContent({
               {isProcessing ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Đang xử lý...
+                  {t.checkout?.processing || "Processing..."}
                 </>
               ) : (
                 <>
                   <CreditCard className="size-5" />
-                  Thanh toán ngay
+                  {t.checkout?.payNow || "Pay Now"}
                 </>
               )}
             </Button>
@@ -363,12 +362,12 @@ function BillContent({
           {isProcessing ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Đang xử lý...
+              {t.checkout?.processing || "Processing..."}
             </>
           ) : (
             <>
               <CreditCard className="size-5" />
-              Thanh toán ngay
+              {t.checkout?.payNow || "Pay Now"}
             </>
           )}
         </Button>

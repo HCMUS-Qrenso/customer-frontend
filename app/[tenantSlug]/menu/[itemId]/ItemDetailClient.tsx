@@ -158,7 +158,7 @@ function ItemDetailContent({
     addToCart(cartItem);
 
     // Show success toast
-    toast.success(`Đã thêm ${item.name} vào giỏ hàng`, {
+    toast.success(t.menu?.addedToCart?.replace("{name}", item.name) || `Added ${item.name} to cart`, {
       description: `${quantity} x ${formatPrice(totalPrice)}`,
       duration: 2000,
     });
@@ -191,14 +191,14 @@ function ItemDetailContent({
           <AlertTriangle className="size-10 text-red-500" />
         </div>
         <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
-          Không tìm thấy món
+          {t.menu?.itemNotFound || "Item Not Found"}
         </h1>
         <p className="mb-8 max-w-sm text-slate-500 dark:text-slate-400">
-          Món ăn này không tồn tại hoặc đã bị xóa.
+          {t.menu?.itemNotFoundDesc || "This item doesn't exist or has been removed."}
         </p>
         <Link href={menuHref}>
           <Button className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600">
-            Quay lại menu
+            {t.menu?.backToMenu || "Back to Menu"}
           </Button>
         </Link>
       </div>
@@ -262,17 +262,17 @@ function ItemDetailContent({
                     </span>
                     {item.status === "available" && (
                       <span className="mt-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-500">
-                        Còn hàng
+                        {t.menu?.inStock || "In Stock"}
                       </span>
                     )}
                     {item.status === "sold_out" && (
                       <span className="mt-1 rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-600 dark:text-red-500">
-                        Hết hàng
+                        {t.menu?.outOfStock || "Out of Stock"}
                       </span>
                     )}
                     {item.status === "unavailable" && (
                       <span className="mt-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-500">
-                        Hết món
+                        {t.menu?.unavailable || "Unavailable"}
                       </span>
                     )}
                   </div>
@@ -291,7 +291,7 @@ function ItemDetailContent({
                     <div className="flex h-8 items-center gap-2 rounded-full bg-gray-100 dark:bg-slate-800 px-3 text-slate-700 dark:text-slate-300">
                       <Clock className="size-4" />
                       <span className="text-xs font-medium">
-                        {item.preparation_time} phút
+                        {t.menu?.prepTime?.replace("{time}", String(item.preparation_time)) || `${item.preparation_time} min`}
                       </span>
                     </div>
                   )}
@@ -310,7 +310,7 @@ function ItemDetailContent({
                     <div className="flex h-8 items-center gap-2 rounded-full bg-amber-500/10 px-3 text-amber-600 dark:text-amber-400">
                       <Flame className="size-4" />
                       <span className="text-xs font-medium">
-                        {item.popularity_score}% yêu thích
+                        {t.menu?.popular?.replace("{score}", String(item.popularity_score)) || `${item.popularity_score}% popular`}
                       </span>
                     </div>
                   )}

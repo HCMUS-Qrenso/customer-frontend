@@ -27,7 +27,7 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
       {/* Section Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-          Thanh toán
+          {t.summary?.payment || "Payment"}
         </h3>
       </div>
 
@@ -37,7 +37,7 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-slate-500 dark:text-slate-400">
-              Tạm tính ({order.items.length} món)
+              {t.summary?.subtotal || "Subtotal"} ({order.items.length} {t.cart?.items || "items"})
             </span>
             <span className="font-medium text-slate-900 dark:text-white tabular-nums">
               {formatPrice(order.subtotal)}
@@ -83,11 +83,11 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
         <div className="flex items-end justify-between">
           <div>
             <span className="text-base font-bold text-slate-900 dark:text-white">
-              Tổng cộng
+              {t.summary?.total || "Total"}
             </span>
             {settings.tax.inclusive && (
               <p className="text-xs text-slate-400">
-                Đã gồm {taxLabel} {taxRate}%
+                {t.bill?.inclTaxes || "Incl. taxes"} ({taxLabel} {taxRate}%)
               </p>
             )}
           </div>

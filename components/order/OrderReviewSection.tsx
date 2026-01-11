@@ -12,12 +12,14 @@ import { Button } from "@/components/ui/button";
 import { ReviewForm } from "@/components/order/ReviewForm";
 import { useReviewableOrders } from "@/hooks/use-reviews";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface OrderReviewSectionProps {
   orderId: string;
 }
 
 export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
+  const { t } = useLanguage();
   const { isAuthenticated } = useAuthStore();
   const [expandedOrder, setExpandedOrder] = useState(false);
   const [reviewingItem, setReviewingItem] = useState<string | null>(null);
@@ -53,7 +55,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
       <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
         <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
           <Star className="size-4 fill-yellow-400 text-yellow-400" />
-          <span>Bạn đã đánh giá đơn hàng này</span>
+          <span>{t.review?.alreadyReviewed || "You have already reviewed this order"}</span>
         </div>
       </div>
     );
@@ -64,7 +66,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
           <MessageSquarePlus className="size-5" />
-          Đánh giá đơn hàng
+          {t.review?.title || "Review Order"}
         </h3>
         <Button
           variant="ghost"
@@ -84,9 +86,9 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
           {/* Order Review */}
           {!hasOrderReview && (
             <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
-              <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3">
                 <h4 className="font-medium text-slate-900 dark:text-white">
-                  Đánh giá tổng thể
+                  {t.review?.overall || "Overall Review"}
                 </h4>
                 {!reviewingOrder && (
                   <Button
@@ -94,7 +96,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
                     variant="outline"
                     onClick={() => setReviewingOrder(true)}
                   >
-                    Viết đánh giá
+                    {t.review?.writeReview || "Write Review"}
                   </Button>
                 )}
               </div>
@@ -112,7 +114,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
           {hasReviewableItems && (
             <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
               <h4 className="font-medium text-slate-900 dark:text-white mb-3">
-                Đánh giá món ăn ({order.reviewedItems}/{order.totalItems})
+                {t.review?.itemReviews || "Item Reviews"} ({order.reviewedItems}/{order.totalItems})
               </h4>
               <div className="space-y-3">
                 {order.reviewableItems.map((item) => (
@@ -135,7 +137,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
                               {item.name}
                             </h5>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Số lượng: {item.quantity}
+                              {t.review?.quantity || "Quantity"}: {item.quantity}
                             </p>
                           </div>
                           {reviewingItem !== item.menuItemId && (
@@ -144,7 +146,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
                               variant="outline"
                               onClick={() => setReviewingItem(item.menuItemId)}
                             >
-                              Đánh giá
+                              {t.review?.writeReview || "Write Review"}
                             </Button>
                           )}
                         </div>

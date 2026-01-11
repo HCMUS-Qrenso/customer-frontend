@@ -14,14 +14,23 @@ const fr = {
   cta: common.cta,
   errors: common.errors,
   misc: common.misc,
+  common: {
+    back: "Retour",
+    error: "Une erreur est survenue",
+    retry: "Réessayer",
+  },
   // Feature-specific sections
   auth,
   menu,
   cart: cart.cart,
+  voucher: cart.voucher,
   checkout: cart.checkout,
   order: order.order,
+  myOrder: order.myOrder,
   track: order.track,
   bill: order.bill,
+  summary: order.summary,
+  review: order.review,
   profile,
 };
 

@@ -24,7 +24,7 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
       case "served":
         return { color: "bg-emerald-500", label: t.track.served };
       case "cancelled":
-        return { color: "bg-red-400", label: "Đã hủy" };
+        return { color: "bg-red-400", label: t.misc?.cancelled || "Cancelled" };
       default:
         return { color: "bg-gray-400", label: status };
     }
@@ -36,10 +36,9 @@ export function BatchItemsList({ batches }: BatchItemsListProps) {
 
   return (
     <div>
-      {/* Section Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-          Món ({totalItems})
+          {t.myOrder?.items || "Items"} ({totalItems})
         </h3>
       </div>
 

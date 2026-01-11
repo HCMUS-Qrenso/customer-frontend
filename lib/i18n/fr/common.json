@@ -35,9 +35,32 @@
       "title": "Erreur de connexion",
       "description": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion.",
       "retry": "Réessayer"
-    }
+    },
+    "sessionExpired": "Session expirée. Veuillez scanner à nouveau le code QR."
   },
   "misc": {
-    "wifiConnected": "Connecté au Wi-Fi du restaurant"
+    "wifiConnected": "Connecté au Wi-Fi du restaurant",
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "nowOpen": "Actuellement ouvert",
+    "nowClosed": "Actuellement fermé",
+    "cancelled": "Annulé",
+    "processing": "Traitement...",
+    "save": "Enregistrer",
+    "used": "Utilisé",
+    "inUse": "En cours",
+    "purchased": "Acheté",
+    "included": "Inclus",
+    "errorOccurred": "Une erreur est survenue",
+    "reviewsAndComments": "Avis & Commentaires",
+    "minOrder": "Commande min {amount}",
+    "sortNameAZ": "Nom A-Z",
+    "sortNameZA": "Nom Z-A",
+    "sortPriceLow": "Prix le plus bas",
+    "sortPriceHigh": "Prix le plus élevé",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "free": "Gratuit",
+    "required": "Obligatoire"
   }
 }
