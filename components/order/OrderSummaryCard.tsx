@@ -63,6 +63,17 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
               </span>
             </div>
           )}
+          {/* VAT line - show when tax is exclusive (not included in price) */}
+          {!settings.tax.inclusive && order.tax > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 dark:text-slate-400">
+                {taxLabel} ({taxRate}%)
+              </span>
+              <span className="font-medium text-slate-900 dark:text-white tabular-nums">
+                {formatPrice(order.tax)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Divider */}
@@ -74,11 +85,11 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             <span className="text-base font-bold text-slate-900 dark:text-white">
               Tổng cộng
             </span>
-            <p className="text-xs text-slate-400">
-              {settings.tax.inclusive
-                ? `Đã gồm ${taxLabel} ${taxRate}%`
-                : `Chưa gồm ${taxLabel}`}
-            </p>
+            {settings.tax.inclusive && (
+              <p className="text-xs text-slate-400">
+                Đã gồm {taxLabel} {taxRate}%
+              </p>
+            )}
           </div>
           <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
             {formatPrice(order.total)}

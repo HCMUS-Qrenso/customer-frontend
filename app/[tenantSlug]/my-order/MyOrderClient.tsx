@@ -61,6 +61,7 @@ function transformOrderResponse(
     serviceCharge: serviceChargeCalculator(data.subtotal),
     tax: data.taxAmount,
     discount: data.discountAmount > 0 ? data.discountAmount : undefined,
+    voucherCode: data.voucherCode || data.voucher?.code,
     total: data.totalAmount,
     createdAt: data.createdAt,
   };
