@@ -101,6 +101,8 @@ export function useOrderSocket(
   } = options;
 
   const socketRef = useRef<Socket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sessionTokenRef = useRef<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const reconnectCountRef = useRef(0);
@@ -172,6 +174,20 @@ export function useOrderSocket(
 
   const connect = useCallback(() => {
     const sessionToken = getSessionToken();
+
+    // Track token changes
+    if (
+      sessionToken !== sessionTokenRef.current &&
+      socketRef.current?.connected
+    ) {
+      console.log("[OrderSocket] Session token changed, reconnecting...");
+      sessionTokenRef.current = sessionToken;
+      // Force reconnect with new token
+      disconnect();
+      // Continue to reconnect below after disconnect
+    }
+
+    sessionTokenRef.current = sessionToken;
 
     // Don't connect if disabled or no session token
     if (!enabled || !sessionToken) {
@@ -274,6 +290,12 @@ export function useOrderSocket(
   }, [orderId, enabled, syncOnReconnect, syncOrderState]);
 
   const disconnect = useCallback(() => {
+    // Clear any pending reconnect timeout
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+
     if (socketRef.current) {
       console.log("[OrderSocket] Disconnecting");
       socketRef.current.disconnect();
@@ -285,20 +307,20 @@ export function useOrderSocket(
   const reconnect = useCallback(() => {
     disconnect();
     // Small delay before reconnecting
-    setTimeout(() => {
+    reconnectTimeoutRef.current = setTimeout(() => {
       connect();
     }, 100);
   }, [disconnect, connect]);
 
   // Connect on mount, disconnect on unmount
-  // Only re-run when orderId, enabled, or syncOnReconnect changes
+  // Only re-run when connect or disconnect functions change
   useEffect(() => {
     reconnectCountRef.current = 0; // Reset reconnect count
     connect();
     return () => {
       disconnect();
     };
-  }, [orderId, enabled, syncOnReconnect]);
+  }, [connect, disconnect]);
 
   // Join order room when orderId changes
   useEffect(() => {

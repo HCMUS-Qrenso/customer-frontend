@@ -69,10 +69,14 @@ export function BillSummaryCard({
           <div className="flex justify-between text-sm">
             <span className="text-slate-500 dark:text-slate-400">
               {taxLabel} ({taxRate}%)
-              {settings.tax.inclusive ? ` (${t.misc?.included?.toLowerCase() || "included"})` : ""}
+              {settings.tax.inclusive
+                ? ` (${t.misc?.included?.toLowerCase() || "included"})`
+                : ""}
             </span>
             <span className="font-medium text-slate-900 dark:text-white">
-              {settings.tax.inclusive ? (t.misc?.included || "Included") : formatPrice(bill.tax || 0)}
+              {settings.tax.inclusive
+                ? t.misc?.included || "Included"
+                : formatPrice(bill.tax || 0)}
             </span>
           </div>
         </div>

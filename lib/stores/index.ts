@@ -27,4 +27,3 @@ export {
   useApplyCodeError,
   useUserHasInteracted,
 } from "./voucher-store";
-

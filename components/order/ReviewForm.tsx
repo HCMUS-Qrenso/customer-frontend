@@ -75,7 +75,8 @@ export function ReviewForm({
       {/* Star Rating */}
       <div>
         <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-          {t.review?.yourRating || "Your Rating"} <span className="text-red-500">*</span>
+          {t.review?.yourRating || "Your Rating"}{" "}
+          <span className="text-red-500">*</span>
         </label>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -116,7 +117,9 @@ export function ReviewForm({
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder={t.review?.commentPlaceholder || "Share your experience..."}
+          placeholder={
+            t.review?.commentPlaceholder || "Share your experience..."
+          }
           rows={4}
           maxLength={500}
           className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"

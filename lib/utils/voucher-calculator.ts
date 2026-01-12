@@ -4,15 +4,22 @@
  * Mirrors backend logic for preview before order creation
  */
 
-import type { PublicVoucher, AppliedVoucher, DiscountType } from "@/lib/api/voucher";
+import type {
+  PublicVoucher,
+  AppliedVoucher,
+  DiscountType,
+} from "@/lib/api/voucher";
 
 /**
  * Calculate discount amount for a voucher
  * Matches backend VouchersService.calculateDiscount logic
  */
 export function calculateVoucherDiscount(
-  voucher: Pick<PublicVoucher, "discountType" | "percentOff" | "amountOff" | "maxDiscountAmount">,
-  subtotal: number
+  voucher: Pick<
+    PublicVoucher,
+    "discountType" | "percentOff" | "amountOff" | "maxDiscountAmount"
+  >,
+  subtotal: number,
 ): number {
   let discount = 0;
 
@@ -36,7 +43,7 @@ export function calculateVoucherDiscount(
  */
 export function isVoucherApplicable(
   voucher: Pick<PublicVoucher, "minSubtotal">,
-  subtotal: number
+  subtotal: number,
 ): boolean {
   if (voucher.minSubtotal && subtotal < voucher.minSubtotal) {
     return false;
@@ -50,7 +57,7 @@ export function isVoucherApplicable(
  */
 export function getVoucherValidationError(
   voucher: PublicVoucher,
-  subtotal: number
+  subtotal: number,
 ): string | null {
   // Check minimum subtotal
   if (voucher.minSubtotal && subtotal < voucher.minSubtotal) {
@@ -80,7 +87,10 @@ export function getVoucherValidationError(
  * Format voucher discount description for display
  */
 export function formatVoucherDescription(
-  voucher: Pick<PublicVoucher, "discountType" | "percentOff" | "amountOff" | "maxDiscountAmount">
+  voucher: Pick<
+    PublicVoucher,
+    "discountType" | "percentOff" | "amountOff" | "maxDiscountAmount"
+  >,
 ): string {
   if (voucher.discountType === "percent" && voucher.percentOff) {
     let description = `Giảm ${voucher.percentOff}%`;
@@ -112,12 +122,10 @@ function formatCurrency(amount: number): string {
  */
 export function findVoucherByCode(
   vouchers: PublicVoucher[],
-  code: string
+  code: string,
 ): PublicVoucher | undefined {
   const normalizedCode = code.trim().toUpperCase();
-  return vouchers.find(
-    (v) => v.code.toUpperCase() === normalizedCode
-  );
+  return vouchers.find((v) => v.code.toUpperCase() === normalizedCode);
 }
 
 /**
@@ -126,7 +134,7 @@ export function findVoucherByCode(
 export function createAppliedVoucher(
   voucher: PublicVoucher,
   discountAmount: number,
-  isAutoApplied: boolean = false
+  isAutoApplied: boolean = false,
 ): AppliedVoucher {
   return {
     redemptionId: `preview_${voucher.id}`, // Placeholder for preview
@@ -147,7 +155,7 @@ export function createAppliedVoucher(
  */
 export function findBestAutoApplyVoucher(
   vouchers: PublicVoucher[],
-  subtotal: number
+  subtotal: number,
 ): PublicVoucher | null {
   // Filter to auto-apply vouchers that meet minimum requirements and are valid
   const eligible = vouchers
@@ -167,7 +175,7 @@ export function findBestAutoApplyVoucher(
  */
 export function sortVouchersByPriorityAndDiscount(
   vouchers: PublicVoucher[],
-  subtotal: number
+  subtotal: number,
 ): PublicVoucher[] {
   return [...vouchers].sort((a, b) => {
     // Priority first
@@ -175,7 +183,10 @@ export function sortVouchersByPriorityAndDiscount(
     if (priorityDiff !== 0) return priorityDiff;
 
     // Then by discount amount
-    return calculateVoucherDiscount(b, subtotal) - calculateVoucherDiscount(a, subtotal);
+    return (
+      calculateVoucherDiscount(b, subtotal) -
+      calculateVoucherDiscount(a, subtotal)
+    );
   });
 }
 
@@ -184,7 +195,7 @@ export function sortVouchersByPriorityAndDiscount(
  */
 export function getApplicableVouchers(
   vouchers: PublicVoucher[],
-  subtotal: number
+  subtotal: number,
 ): PublicVoucher[] {
   return vouchers.filter((v) => {
     if (!isVoucherApplicable(v, subtotal)) return false;
@@ -192,4 +203,3 @@ export function getApplicableVouchers(
     return true;
   });
 }
-

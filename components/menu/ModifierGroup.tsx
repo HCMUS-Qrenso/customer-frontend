@@ -47,7 +47,10 @@ export function ModifierGroup({
           </span>
         ) : (
           <span className="text-xs text-slate-500 dark:text-slate-400">
-            {t.menu?.selectMax?.replace("{max}", String(group.max_selections || "∞")) || `Select up to ${group.max_selections || "∞"}`}
+            {t.menu?.selectMax?.replace(
+              "{max}",
+              String(group.max_selections || "∞"),
+            ) || `Select up to ${group.max_selections || "∞"}`}
           </span>
         )}
       </div>
@@ -102,7 +105,7 @@ export function ModifierGroup({
                 }`}
               >
                 {isDisabled
-                  ? (t.menu?.outOfStock || "Out of Stock")
+                  ? t.menu?.outOfStock || "Out of Stock"
                   : formatPriceAdjustment(modifier.price_adjustment)}
               </span>
             </label>

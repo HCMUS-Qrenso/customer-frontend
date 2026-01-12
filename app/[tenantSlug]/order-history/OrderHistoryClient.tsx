@@ -142,7 +142,9 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
             <input
               type="text"
-              placeholder={t.order?.searchPlaceholder || "Search by order number..."}
+              placeholder={
+                t.order?.searchPlaceholder || "Search by order number..."
+              }
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -212,7 +214,9 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               {t.common?.error || "Cannot load order history"}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-              {(error as Error).message || t.common?.error || "An error occurred"}
+              {(error as Error).message ||
+                t.common?.error ||
+                "An error occurred"}
             </p>
             <Button onClick={() => refetch()} variant="outline">
               {t.common?.retry || "Try again"}
@@ -225,7 +229,8 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
               {t.order?.noOrders || "No orders yet"}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-              {t.order?.noOrdersDesc || "You haven't placed any orders. Start ordering now!"}
+              {t.order?.noOrdersDesc ||
+                "You haven't placed any orders. Start ordering now!"}
             </p>
             <Link href={`/${tenantSlug}/menu`}>
               <Button>{t.menu?.viewMenu || "View Menu"}</Button>
@@ -255,11 +260,13 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                             {formatStatus(order.status)}
                           </Badge>
                           <Badge
-                            className={getPaymentStatusColor(order.paymentStatus)}
+                            className={getPaymentStatusColor(
+                              order.paymentStatus,
+                            )}
                           >
                             {order.paymentStatus === "paid"
-                              ? (t.myOrder?.paid || "Paid")
-                              : (t.myOrder?.unpaid || "Unpaid")}
+                              ? t.myOrder?.paid || "Paid"
+                              : t.myOrder?.unpaid || "Unpaid"}
                           </Badge>
                         </div>
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
@@ -268,7 +275,10 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                             <span>{formatDate(order.createdAt)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span>{t.checkout?.table || "Table"} {order.table.tableNumber}</span>
+                            <span>
+                              {t.checkout?.table || "Table"}{" "}
+                              {order.table.tableNumber}
+                            </span>
                             {order.table.zone && (
                               <span className="text-slate-500">
                                 · {order.table.zone.name}
@@ -301,7 +311,8 @@ function OrderHistoryContent({ tenantSlug }: OrderHistoryClientProps) {
                         ))}
                         {order.items.length > 3 && (
                           <span className="text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-slate-700/50 px-2 py-1 rounded">
-                            +{order.items.length - 3} {t.order?.moreItems || "more"}
+                            +{order.items.length - 3}{" "}
+                            {t.order?.moreItems || "more"}
                           </span>
                         )}
                       </div>

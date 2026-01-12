@@ -85,7 +85,7 @@ export function CartVoucherSection({
   const applicableVouchers = useMemo(() => {
     return sortVouchersByPriorityAndDiscount(
       getApplicableVouchers(publicVouchers, subtotal),
-      subtotal
+      subtotal,
     );
   }, [publicVouchers, subtotal]);
 
@@ -129,7 +129,9 @@ export function CartVoucherSection({
     }
 
     // Find best auto-apply voucher (exclude already used in this session)
-    const availableForAutoApply = publicVouchers.filter(v => !v.isUsedInSession);
+    const availableForAutoApply = publicVouchers.filter(
+      (v) => !v.isUsedInSession,
+    );
     const bestAuto = findBestAutoApplyVoucher(availableForAutoApply, subtotal);
     if (bestAuto) {
       const discount = calculateVoucherDiscount(bestAuto, subtotal);
@@ -142,7 +144,9 @@ export function CartVoucherSection({
   useEffect(() => {
     if (appliedVoucher && appliedVoucher.redemptionId.startsWith("preview_")) {
       // Find the original voucher to recalculate
-      const voucher = publicVouchers.find((v) => v.id === appliedVoucher.voucherId);
+      const voucher = publicVouchers.find(
+        (v) => v.id === appliedVoucher.voucherId,
+      );
       if (voucher) {
         const newDiscount = calculateVoucherDiscount(voucher, subtotal);
         if (newDiscount !== appliedVoucher.discountAmount) {
@@ -202,8 +206,11 @@ export function CartVoucherSection({
       // Check if applicable
       if (!isVoucherApplicable(voucher, subtotal)) {
         setApplyCodeError(
-          t.voucher?.minOrder?.replace("{amount}", formatPrice(voucher.minSubtotal || 0)) || 
-          `Min order ${formatPrice(voucher.minSubtotal || 0)} to apply this voucher`
+          t.voucher?.minOrder?.replace(
+            "{amount}",
+            formatPrice(voucher.minSubtotal || 0),
+          ) ||
+            `Min order ${formatPrice(voucher.minSubtotal || 0)} to apply this voucher`,
         );
         setApplyingCode(false);
         return;
@@ -262,7 +269,8 @@ export function CartVoucherSection({
                   )}
                 </div>
                 <p className="text-xs text-green-600 dark:text-green-400">
-                  Mã: {appliedVoucher.code} • Giảm {formatPrice(appliedVoucher.discountAmount)}
+                  Mã: {appliedVoucher.code} • Giảm{" "}
+                  {formatPrice(appliedVoucher.discountAmount)}
                 </p>
               </div>
             </div>
@@ -285,7 +293,12 @@ export function CartVoucherSection({
             className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300"
           >
             <span>Chọn mã khác ({applicableVouchers.length - 1} mã)</span>
-            <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", showVoucherList && "rotate-180")} />
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform",
+                showVoucherList && "rotate-180",
+              )}
+            />
           </button>
         )}
 
@@ -314,15 +327,18 @@ export function CartVoucherSection({
           "border-gray-300 dark:border-gray-600 hover:border-emerald-500 dark:hover:border-emerald-400",
           "bg-white dark:bg-slate-800/50 transition-colors",
           "disabled:opacity-50 disabled:cursor-not-allowed",
-          className
+          className,
         )}
       >
         <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
           <Tag className="h-5 w-5" />
           <span className="text-sm font-medium">
             {applicableVouchers.length > 0
-              ? (t.voucher?.available || "{count} vouchers available").replace("{count}", String(applicableVouchers.length))
-              : (t.voucher?.hasVoucher || "Have a voucher?")}
+              ? (t.voucher?.available || "{count} vouchers available").replace(
+                  "{count}",
+                  String(applicableVouchers.length),
+                )
+              : t.voucher?.hasVoucher || "Have a voucher?"}
           </span>
         </div>
         {isLoadingVouchers ? (
@@ -339,13 +355,15 @@ export function CartVoucherSection({
     <div
       className={cn(
         "bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-gray-200 dark:border-slate-700 space-y-4",
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
           <Tag className="h-4 w-4" />
-          <span className="text-sm font-medium">{t.voucher?.enterCode || "Enter voucher code"}</span>
+          <span className="text-sm font-medium">
+            {t.voucher?.enterCode || "Enter voucher code"}
+          </span>
         </div>
         <button
           onClick={() => setIsExpanded(false)}
@@ -428,15 +446,17 @@ function VoucherList({
         return (
           <button
             key={voucher.id}
-            onClick={() => !isCurrent && !voucher.isUsedInSession && onSelect(voucher)}
+            onClick={() =>
+              !isCurrent && !voucher.isUsedInSession && onSelect(voucher)
+            }
             disabled={isCurrent || voucher.isUsedInSession}
             className={cn(
               "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-colors",
               isCurrent
                 ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
                 : voucher.isUsedInSession
-                ? "border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 opacity-60 cursor-not-allowed"
-                : "border-gray-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-400"
+                  ? "border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 opacity-60 cursor-not-allowed"
+                  : "border-gray-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-400",
             )}
           >
             <div className="flex items-center gap-3">
@@ -445,7 +465,7 @@ function VoucherList({
                   "p-1.5 rounded-lg",
                   isCurrent
                     ? "bg-emerald-100 dark:bg-emerald-800/40"
-                    : "bg-gray-100 dark:bg-slate-700"
+                    : "bg-gray-100 dark:bg-slate-700",
                 )}
               >
                 <Ticket
@@ -453,7 +473,7 @@ function VoucherList({
                     "h-4 w-4",
                     isCurrent
                       ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-gray-500 dark:text-gray-400"
+                      : "text-gray-500 dark:text-gray-400",
                   )}
                 />
               </div>
@@ -465,8 +485,8 @@ function VoucherList({
                       isCurrent
                         ? "text-emerald-800 dark:text-emerald-200"
                         : voucher.isUsedInSession
-                        ? "text-gray-500 dark:text-gray-400"
-                        : "text-gray-800 dark:text-gray-200"
+                          ? "text-gray-500 dark:text-gray-400"
+                          : "text-gray-800 dark:text-gray-200",
                     )}
                   >
                     {voucher.code}
@@ -497,8 +517,8 @@ function VoucherList({
                   isCurrent
                     ? "text-emerald-600 dark:text-emerald-400"
                     : voucher.isUsedInSession
-                    ? "text-gray-400 dark:text-gray-500"
-                    : "text-gray-800 dark:text-gray-200"
+                      ? "text-gray-400 dark:text-gray-500"
+                      : "text-gray-800 dark:text-gray-200",
                 )}
               >
                 -{formatPrice(discount)}

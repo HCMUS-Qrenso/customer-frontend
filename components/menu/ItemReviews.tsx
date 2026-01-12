@@ -89,11 +89,20 @@ function ReviewCard({ review }: { review: ReviewResponseDTO }) {
   const { t, lang } = useLanguage();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat(lang === "vi" ? "vi-VN" : lang === "zh" ? "zh-CN" : lang === "fr" ? "fr-FR" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
+    return new Intl.DateTimeFormat(
+      lang === "vi"
+        ? "vi-VN"
+        : lang === "zh"
+          ? "zh-CN"
+          : lang === "fr"
+            ? "fr-FR"
+            : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      },
+    ).format(date);
   };
 
   return (

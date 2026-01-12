@@ -68,11 +68,12 @@ export function PricingSummaryCard({
           <div className="flex justify-between items-end">
             <div className="flex flex-col gap-1">
               <span className="text-base font-bold text-slate-900 dark:text-white">
-                {hasDiscount ? (t.cart.subtotal) : t.cart.subtotal}
+                {hasDiscount ? t.cart.subtotal : t.cart.subtotal}
               </span>
               <span className="text-xs text-slate-400 flex items-center gap-1">
                 <Info className="size-3" />
-                {t.cart?.taxNote || "Taxes & fees will be calculated at checkout"}
+                {t.cart?.taxNote ||
+                  "Taxes & fees will be calculated at checkout"}
               </span>
             </div>
             <div className="text-right">

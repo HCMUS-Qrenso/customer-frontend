@@ -158,10 +158,14 @@ function ItemDetailContent({
     addToCart(cartItem);
 
     // Show success toast
-    toast.success(t.menu?.addedToCart?.replace("{name}", item.name) || `Added ${item.name} to cart`, {
-      description: `${quantity} x ${formatPrice(totalPrice)}`,
-      duration: 2000,
-    });
+    toast.success(
+      t.menu?.addedToCart?.replace("{name}", item.name) ||
+        `Added ${item.name} to cart`,
+      {
+        description: `${quantity} x ${formatPrice(totalPrice)}`,
+        duration: 2000,
+      },
+    );
 
     // Reset form after adding
     setQuantity(1);
@@ -194,7 +198,8 @@ function ItemDetailContent({
           {t.menu?.itemNotFound || "Item Not Found"}
         </h1>
         <p className="mb-8 max-w-sm text-slate-500 dark:text-slate-400">
-          {t.menu?.itemNotFoundDesc || "This item doesn't exist or has been removed."}
+          {t.menu?.itemNotFoundDesc ||
+            "This item doesn't exist or has been removed."}
         </p>
         <Link href={menuHref}>
           <Button className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600">
@@ -291,7 +296,10 @@ function ItemDetailContent({
                     <div className="flex h-8 items-center gap-2 rounded-full bg-gray-100 dark:bg-slate-800 px-3 text-slate-700 dark:text-slate-300">
                       <Clock className="size-4" />
                       <span className="text-xs font-medium">
-                        {t.menu?.prepTime?.replace("{time}", String(item.preparation_time)) || `${item.preparation_time} min`}
+                        {t.menu?.prepTime?.replace(
+                          "{time}",
+                          String(item.preparation_time),
+                        ) || `${item.preparation_time} min`}
                       </span>
                     </div>
                   )}
@@ -310,7 +318,10 @@ function ItemDetailContent({
                     <div className="flex h-8 items-center gap-2 rounded-full bg-amber-500/10 px-3 text-amber-600 dark:text-amber-400">
                       <Flame className="size-4" />
                       <span className="text-xs font-medium">
-                        {t.menu?.popular?.replace("{score}", String(item.popularity_score)) || `${item.popularity_score}% popular`}
+                        {t.menu?.popular?.replace(
+                          "{score}",
+                          String(item.popularity_score),
+                        ) || `${item.popularity_score}% popular`}
                       </span>
                     </div>
                   )}

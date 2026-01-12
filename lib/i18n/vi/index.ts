@@ -1,9 +1,9 @@
-import common from './common.json';
-import auth from './auth.json';
-import menu from './menu.json';
-import cart from './cart.json';
-import order from './order.json';
-import profile from './profile.json';
+import common from "./common.json";
+import auth from "./auth.json";
+import menu from "./menu.json";
+import cart from "./cart.json";
+import order from "./order.json";
+import profile from "./profile.json";
 
 // Flatten structure to maintain backward compatibility with existing code
 // e.g., t.cta.termsAgreement instead of t.common.cta.termsAgreement

@@ -38,7 +38,9 @@ export function OrderReviewsDisplay({ orderId }: OrderReviewsDisplayProps) {
         <div className="flex items-center gap-2">
           <Star className="size-4 fill-yellow-400 text-yellow-400" />
           <span className="text-sm font-medium text-slate-900 dark:text-white">
-            {hasReviews ? (t.review?.yourReview || "Your Reviews") : (t.review?.noReview || "No reviews")}
+            {hasReviews
+              ? t.review?.yourReview || "Your Reviews"
+              : t.review?.noReview || "No reviews"}
           </span>
         </div>
         {hasReviews && (

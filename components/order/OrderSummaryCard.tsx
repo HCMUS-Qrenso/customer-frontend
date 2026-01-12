@@ -37,7 +37,8 @@ export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-slate-500 dark:text-slate-400">
-              {t.summary?.subtotal || "Subtotal"} ({order.items.length} {t.cart?.items || "items"})
+              {t.summary?.subtotal || "Subtotal"} ({order.items.length}{" "}
+              {t.cart?.items || "items"})
             </span>
             <span className="font-medium text-slate-900 dark:text-white tabular-nums">
               {formatPrice(order.subtotal)}

@@ -55,7 +55,10 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
       <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
         <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
           <Star className="size-4 fill-yellow-400 text-yellow-400" />
-          <span>{t.review?.alreadyReviewed || "You have already reviewed this order"}</span>
+          <span>
+            {t.review?.alreadyReviewed ||
+              "You have already reviewed this order"}
+          </span>
         </div>
       </div>
     );
@@ -86,7 +89,7 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
           {/* Order Review */}
           {!hasOrderReview && (
             <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
-            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3">
                 <h4 className="font-medium text-slate-900 dark:text-white">
                   {t.review?.overall || "Overall Review"}
                 </h4>
@@ -114,7 +117,8 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
           {hasReviewableItems && (
             <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
               <h4 className="font-medium text-slate-900 dark:text-white mb-3">
-                {t.review?.itemReviews || "Item Reviews"} ({order.reviewedItems}/{order.totalItems})
+                {t.review?.itemReviews || "Item Reviews"} ({order.reviewedItems}
+                /{order.totalItems})
               </h4>
               <div className="space-y-3">
                 {order.reviewableItems.map((item) => (
@@ -137,7 +141,8 @@ export function OrderReviewSection({ orderId }: OrderReviewSectionProps) {
                               {item.name}
                             </h5>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
-                              {t.review?.quantity || "Quantity"}: {item.quantity}
+                              {t.review?.quantity || "Quantity"}:{" "}
+                              {item.quantity}
                             </p>
                           </div>
                           {reviewingItem !== item.menuItemId && (

@@ -80,7 +80,8 @@ export const useVoucherStore = create<VoucherStore>()(
       clearAppliedVoucher: () =>
         set({ appliedVoucher: null, voucherCode: "", applyCodeError: null }),
 
-      setVoucherCode: (code) => set({ voucherCode: code, applyCodeError: null }),
+      setVoucherCode: (code) =>
+        set({ voucherCode: code, applyCodeError: null }),
 
       setApplyingCode: (applying) => set({ applyingCode: applying }),
 
@@ -100,8 +101,8 @@ export const useVoucherStore = create<VoucherStore>()(
         appliedVoucher: state.appliedVoucher,
         userHasInteracted: state.userHasInteracted,
       }),
-    }
-  )
+    },
+  ),
 );
 
 // ============================================

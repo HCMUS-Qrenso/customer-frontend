@@ -83,8 +83,7 @@ function BillContent({
       setIsProcessing(true);
       const result = await paymentApi.requestBill({
         orderId: order.id,
-        notes:
-          paymentMethod === "cash" ? t.checkout?.cash : t.checkout?.qr,
+        notes: paymentMethod === "cash" ? t.checkout?.cash : t.checkout?.qr,
       });
 
       if (result.success) {
@@ -115,7 +114,9 @@ function BillContent({
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400">{t.checkout?.processing || "Loading..."}</p>
+          <p className="text-slate-600 dark:text-slate-400">
+            {t.checkout?.processing || "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -128,7 +129,9 @@ function BillContent({
           <p className="text-slate-600 dark:text-slate-400 mb-4">
             {t.common?.error || "Order not found"}
           </p>
-          <Button onClick={() => router.back()}>{t.common?.back || "Back"}</Button>
+          <Button onClick={() => router.back()}>
+            {t.common?.back || "Back"}
+          </Button>
         </div>
       </div>
     );
@@ -141,7 +144,9 @@ function BillContent({
         <PageHeader
           title={t.checkout?.title || "Payment"}
           subtitle={
-            tableNumber ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}` : tenantSlug
+            tableNumber
+              ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}`
+              : tenantSlug
           }
           onBack={() => router.back()}
           rightContent={<UserAvatar />}
@@ -155,7 +160,8 @@ function BillContent({
               {t.checkout?.staffProcessing || "Staff received your request"}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 mb-6">
-              {t.checkout?.staffProcessing || "Staff is processing your payment. Please wait."}
+              {t.checkout?.staffProcessing ||
+                "Staff is processing your payment. Please wait."}
             </p>
             <div className="flex flex-col gap-3">
               <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
@@ -195,7 +201,9 @@ function BillContent({
       <PageHeader
         title={t.checkout?.title || "Payment"}
         subtitle={
-          tableNumber ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}` : tenantSlug
+          tableNumber
+            ? `${tenantSlug} • ${t.checkout?.table || "Table"} ${tableNumber}`
+            : tenantSlug
         }
         onBack={() => router.back()}
         rightContent={<UserAvatar />}
@@ -244,7 +252,9 @@ function BillContent({
             {/* Total */}
             <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-4">
               <div className="flex justify-between text-sm mb-2">
-                <p className="text-slate-600 dark:text-slate-400">{t.cart?.subtotal || "Subtotal"}</p>
+                <p className="text-slate-600 dark:text-slate-400">
+                  {t.cart?.subtotal || "Subtotal"}
+                </p>
                 <p>{formatPrice(order.subtotal)}</p>
               </div>
               {order.taxAmount > 0 && (
@@ -256,9 +266,12 @@ function BillContent({
               {order.discountAmount > 0 && (
                 <div className="flex justify-between text-sm mb-2 text-emerald-600 dark:text-emerald-400">
                   <p className="font-medium">
-                    {t.voucher?.title || "Discount"} {order.voucher?.code && `(${order.voucher.code})`}
+                    {t.voucher?.title || "Discount"}{" "}
+                    {order.voucher?.code && `(${order.voucher.code})`}
                   </p>
-                  <p className="font-bold">-{formatPrice(order.discountAmount)}</p>
+                  <p className="font-bold">
+                    -{formatPrice(order.discountAmount)}
+                  </p>
                 </div>
               )}
               <div className="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
@@ -272,7 +285,9 @@ function BillContent({
 
           {/* Payment Method Selection */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mb-6">
-            <h3 className="font-bold text-lg mb-4">{t.checkout?.paymentMethod || "Payment Method"}</h3>
+            <h3 className="font-bold text-lg mb-4">
+              {t.checkout?.paymentMethod || "Payment Method"}
+            </h3>
             <RadioGroup
               value={paymentMethod}
               onValueChange={(value) =>
@@ -295,7 +310,9 @@ function BillContent({
                       <DollarSign className="size-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{t.checkout?.cash || "Cash"}</p>
+                      <p className="font-medium">
+                        {t.checkout?.cash || "Cash"}
+                      </p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
                         {t.checkout?.cashDesc || "Pay with cash to staff"}
                       </p>
@@ -318,9 +335,12 @@ function BillContent({
                       <Wallet className="size-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{t.checkout?.qr || "QR Payment"}</p>
+                      <p className="font-medium">
+                        {t.checkout?.qr || "QR Payment"}
+                      </p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {t.checkout?.qrDesc || "Scan QR code to pay via e-wallet"}
+                        {t.checkout?.qrDesc ||
+                          "Scan QR code to pay via e-wallet"}
                       </p>
                     </div>
                   </div>

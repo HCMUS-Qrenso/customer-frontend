@@ -125,7 +125,9 @@ export function OperatingHoursButton({
         />
         <Clock className="size-3.5" />
         <span className="text-xs font-medium">
-          {isCurrentlyOpen ? (t.misc?.open || "Open") : (t.misc?.closed || "Closed")}
+          {isCurrentlyOpen
+            ? t.misc?.open || "Open"
+            : t.misc?.closed || "Closed"}
         </span>
         <ChevronDown
           className={`size-3 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -150,7 +152,9 @@ export function OperatingHoursButton({
                     : "text-red-600 dark:text-red-400"
                 }`}
               >
-                {isCurrentlyOpen ? (t.misc?.nowOpen || "Now Open") : (t.misc?.nowClosed || "Now Closed")}
+                {isCurrentlyOpen
+                  ? t.misc?.nowOpen || "Now Open"
+                  : t.misc?.nowClosed || "Now Closed"}
               </span>
             </div>
             <button

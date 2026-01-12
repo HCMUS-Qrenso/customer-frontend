@@ -81,7 +81,7 @@ export const voucherApi = {
    */
   getPublicVouchers: async (): Promise<VoucherListResponse> => {
     const { data } = await apiClient.get<VoucherListResponse>(
-      "/customer/vouchers/available"
+      "/vouchers/customer-available",
     );
     return data;
   },
@@ -93,11 +93,11 @@ export const voucherApi = {
    */
   applyVoucherCode: async (
     orderId: string,
-    code: string
+    code: string,
   ): Promise<ApplyVoucherResponse> => {
     const { data } = await apiClient.post<ApplyVoucherResponse>(
       `/orders/${orderId}/vouchers/apply-code`,
-      { code }
+      { code },
     );
     return data;
   },
@@ -109,11 +109,11 @@ export const voucherApi = {
    */
   removeVoucher: async (
     orderId: string,
-    redemptionId: string
+    redemptionId: string,
   ): Promise<{ success: boolean; message?: string }> => {
     const { data } = await apiClient.delete(
       `/orders/${orderId}/vouchers/${redemptionId}`,
-      { data: { reason: "Customer removed voucher" } }
+      { data: { reason: "Customer removed voucher" } },
     );
     return data;
   },

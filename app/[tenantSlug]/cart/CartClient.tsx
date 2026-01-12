@@ -241,12 +241,15 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
         console.log("[Cart] Order processed:", orderResult.data.orderNumber);
 
         // Step 3: Apply voucher if selected (best effort - don't block order)
-        if (appliedVoucher && appliedVoucher.redemptionId.startsWith("preview_")) {
+        if (
+          appliedVoucher &&
+          appliedVoucher.redemptionId.startsWith("preview_")
+        ) {
           try {
             console.log("[Cart] Applying voucher:", appliedVoucher.code);
             const voucherResult = await voucherApi.applyVoucherCode(
               orderResult.data.id,
-              appliedVoucher.code
+              appliedVoucher.code,
             );
             if (voucherResult.success && voucherResult.data) {
               // Update with actual redemption data
@@ -255,11 +258,20 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
                 redemptionId: voucherResult.data.redemptionId,
                 discountAmount: voucherResult.data.discountAmount,
               });
-              console.log("[Cart] Voucher applied:", voucherResult.data.redemptionId);
+              console.log(
+                "[Cart] Voucher applied:",
+                voucherResult.data.redemptionId,
+              );
             }
           } catch (voucherError: any) {
-            console.warn("[Cart] Failed to apply voucher:", voucherError.message);
-            toast.error("Không thể áp dụng voucher: " + (voucherError.message || "Lỗi không xác định"));
+            console.warn(
+              "[Cart] Failed to apply voucher:",
+              voucherError.message,
+            );
+            toast.error(
+              "Không thể áp dụng voucher: " +
+                (voucherError.message || "Lỗi không xác định"),
+            );
           }
         }
 
@@ -470,7 +482,9 @@ function CartContent({ tenantSlug, tableId, token }: CartClientProps) {
               {calculations.discount > 0 && (
                 <div className="flex items-center gap-1 text-green-500">
                   <Ticket className="size-3" />
-                  <span className="text-xs">-{formatPrice(calculations.discount)}</span>
+                  <span className="text-xs">
+                    -{formatPrice(calculations.discount)}
+                  </span>
                 </div>
               )}
             </div>

@@ -142,7 +142,10 @@ function MyOrderContent({
       console.error("[MyOrder] Fetch error:", err);
 
       if (err.statusCode === 403 || err.message?.includes("Forbidden")) {
-        setError(t.errors?.sessionExpired || "Session expired. Please scan QR code again.");
+        setError(
+          t.errors?.sessionExpired ||
+            "Session expired. Please scan QR code again.",
+        );
       } else if (err.statusCode === 404) {
         setOrder(null);
         setBatches([]);
@@ -170,7 +173,8 @@ function MyOrderContent({
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
           toast.success(
-            t.myOrder?.paymentSuccess || "Payment successful! You can rate your order now.",
+            t.myOrder?.paymentSuccess ||
+              "Payment successful! You can rate your order now.",
             {
               duration: 5000,
             },
@@ -221,7 +225,8 @@ function MyOrderContent({
         // Check if payment just completed
         if (prevPaymentStatus === "unpaid" && newPaymentStatus === "paid") {
           toast.success(
-            t.myOrder?.paymentSuccess || "Payment successful! You can rate your order now.",
+            t.myOrder?.paymentSuccess ||
+              "Payment successful! You can rate your order now.",
             {
               duration: 5000,
             },
@@ -297,9 +302,12 @@ function MyOrderContent({
           <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800">
             <Receipt className="size-10 text-slate-400 dark:text-slate-500" />
           </div>
-          <h3 className="mb-2 text-xl font-bold">{t.order?.noOrder || "No order yet"}</h3>
+          <h3 className="mb-2 text-xl font-bold">
+            {t.order?.noOrder || "No order yet"}
+          </h3>
           <p className="mb-8 text-sm text-slate-500 dark:text-slate-400 text-center max-w-xs">
-            {t.order?.noOrderDesc || "You haven't ordered anything. Choose from the menu!"}
+            {t.order?.noOrderDesc ||
+              "You haven't ordered anything. Choose from the menu!"}
           </p>
           <Link href={menuHref}>
             <Button className="bg-emerald-500 text-white hover:bg-emerald-600">
@@ -357,14 +365,35 @@ function MyOrderContent({
             )}
           </button>
           <span className="text-xs text-slate-400">
-            {t.myOrder?.updatedAt || "Updated"} {formatTime(lastUpdated.toISOString())}
+            {t.myOrder?.updatedAt || "Updated"}{" "}
+            {formatTime(lastUpdated.toISOString())}
           </span>
         </div>
 
         {/* Grid layout: single column mobile, 2 columns laptop */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Status + Items */}
+
           <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+            <div>
+              {/* Section Header */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                  {t.myOrder?.orderStatus || "Order Status"}
+                </h3>
+                {/* Payment Status Badge */}
+                {order.paymentStatus === "paid" && (
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    {t.myOrder?.paid || "Paid"}
+                  </span>
+                )}
+              </div>
+              {/* Status Stepper */}
+              <div className="bg-white dark:bg-slate-800 rounded-xl">
+                <OrderStatusStepper currentStatus={order.status as any} />
+              </div>
+            </div>
+
             {/* Items List */}
             {batches.length > 0 && <BatchItemsList batches={batches} />}
           </div>

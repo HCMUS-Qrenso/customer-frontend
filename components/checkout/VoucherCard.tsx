@@ -1,6 +1,13 @@
 "use client";
 
-import { Ticket, Percent, DollarSign, Clock, Users, ShoppingBag } from "lucide-react";
+import {
+  Ticket,
+  Percent,
+  DollarSign,
+  Clock,
+  Users,
+  ShoppingBag,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PublicVoucher } from "@/lib/api/voucher";
 
@@ -13,7 +20,11 @@ interface VoucherCardProps {
 /**
  * Card displaying a public voucher with discount info and eligibility
  */
-export function VoucherCard({ voucher, isEligible = true, className }: VoucherCardProps) {
+export function VoucherCard({
+  voucher,
+  isEligible = true,
+  className,
+}: VoucherCardProps) {
   const formatDiscount = () => {
     if (voucher.discountType === "percent") {
       let text = `${voucher.percentOff}%`;
@@ -30,14 +41,16 @@ export function VoucherCard({ voucher, isEligible = true, className }: VoucherCa
 
   const formatConditions = () => {
     const conditions: string[] = [];
-    
+
     if (voucher.minSubtotal) {
-      conditions.push(`Đơn từ ${new Intl.NumberFormat("vi-VN").format(voucher.minSubtotal)}₫`);
+      conditions.push(
+        `Đơn từ ${new Intl.NumberFormat("vi-VN").format(voucher.minSubtotal)}₫`,
+      );
     }
     if (voucher.minParty) {
       conditions.push(`Từ ${voucher.minParty} khách`);
     }
-    
+
     return conditions;
   };
 
@@ -47,10 +60,10 @@ export function VoucherCard({ voucher, isEligible = true, className }: VoucherCa
     <div
       className={cn(
         "relative overflow-hidden rounded-lg border",
-        isEligible 
+        isEligible
           ? "border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-800"
           : "border-gray-200 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700 opacity-60",
-        className
+        className,
       )}
     >
       {/* Decorative circles */}
@@ -59,16 +72,28 @@ export function VoucherCard({ voucher, isEligible = true, className }: VoucherCa
 
       <div className="px-4 py-3 flex items-center gap-3">
         {/* Icon */}
-        <div className={cn(
-          "p-2 rounded-lg shrink-0",
-          isEligible 
-            ? "bg-green-100 dark:bg-green-800/40" 
-            : "bg-gray-200 dark:bg-gray-700"
-        )}>
+        <div
+          className={cn(
+            "p-2 rounded-lg shrink-0",
+            isEligible
+              ? "bg-green-100 dark:bg-green-800/40"
+              : "bg-gray-200 dark:bg-gray-700",
+          )}
+        >
           {voucher.discountType === "percent" ? (
-            <Percent className={cn("h-5 w-5", isEligible ? "text-green-600" : "text-gray-500")} />
+            <Percent
+              className={cn(
+                "h-5 w-5",
+                isEligible ? "text-green-600" : "text-gray-500",
+              )}
+            />
           ) : (
-            <Ticket className={cn("h-5 w-5", isEligible ? "text-green-600" : "text-gray-500")} />
+            <Ticket
+              className={cn(
+                "h-5 w-5",
+                isEligible ? "text-green-600" : "text-gray-500",
+              )}
+            />
           )}
         </div>
 
@@ -76,22 +101,28 @@ export function VoucherCard({ voucher, isEligible = true, className }: VoucherCa
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className={cn(
-                "text-sm font-semibold",
-                isEligible ? "text-green-700 dark:text-green-300" : "text-gray-600 dark:text-gray-400"
-              )}>
+              <p
+                className={cn(
+                  "text-sm font-semibold",
+                  isEligible
+                    ? "text-green-700 dark:text-green-300"
+                    : "text-gray-600 dark:text-gray-400",
+                )}
+              >
                 Giảm {formatDiscount()}
               </p>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 truncate">
                 {voucher.name}
               </p>
             </div>
-            <span className={cn(
-              "text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0",
-              isEligible 
-                ? "bg-green-100 text-green-700 dark:bg-green-800/40 dark:text-green-300"
-                : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
-            )}>
+            <span
+              className={cn(
+                "text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0",
+                isEligible
+                  ? "bg-green-100 text-green-700 dark:bg-green-800/40 dark:text-green-300"
+                  : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400",
+              )}
+            >
               {voucher.code}
             </span>
           </div>
@@ -100,7 +131,7 @@ export function VoucherCard({ voucher, isEligible = true, className }: VoucherCa
           {conditions.length > 0 && (
             <div className="flex items-center gap-2 mt-1.5">
               {conditions.map((condition, index) => (
-                <span 
+                <span
                   key={index}
                   className="inline-flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400"
                 >
