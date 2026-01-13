@@ -61,6 +61,11 @@ function LoginContent() {
     }
   }, [returnUrl]);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Login | Qrenso";
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

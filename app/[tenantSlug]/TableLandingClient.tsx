@@ -222,6 +222,8 @@ function TableLandingContent({
 
   // Save session token and tenant settings when received from verify response
   useEffect(() => {
+    // if (isSessionExpired) return; // Don't overwrite on session expired
+
     if (tableContext?.session_token) {
       setSessionToken(tableContext.session_token);
       console.log(

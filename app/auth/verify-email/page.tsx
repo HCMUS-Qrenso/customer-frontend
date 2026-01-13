@@ -19,6 +19,11 @@ function VerifyEmailContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Verify Email | Qrenso";
+  }, []);
+
   useEffect(() => {
     const handleVerification = async () => {
       try {

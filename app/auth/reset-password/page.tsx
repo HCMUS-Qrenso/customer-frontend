@@ -33,6 +33,11 @@ function ResetPasswordContent() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isInvalidToken, setIsInvalidToken] = useState(false);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Reset Password | Qrenso";
+  }, []);
+
   // Check if token exists on mount
   useEffect(() => {
     if (!token) {
@@ -84,9 +89,7 @@ function ResetPasswordContent() {
       ) {
         setIsInvalidToken(true);
       } else {
-        setError(
-          err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.",
-        );
+        setError(err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.");
       }
     } finally {
       setIsLoading(false);
@@ -143,7 +146,6 @@ function ResetPasswordContent() {
   // Success State
   if (isSuccess) {
     // set return url for login
-        
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 py-8">
@@ -251,9 +253,7 @@ function ResetPasswordContent() {
                 />
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   {showConfirmPassword ? (

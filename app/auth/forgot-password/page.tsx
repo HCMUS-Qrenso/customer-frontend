@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Mail, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,11 @@ function ForgotPasswordContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Set page title
+  useEffect(() => {
+    document.title = "Forgot Password | Qrenso";
+  }, []);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,9 +47,7 @@ function ForgotPasswordContent() {
       setIsSubmitted(true);
     } catch (err: any) {
       console.error("Forgot password error:", err);
-      setError(
-        err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.",
-      );
+      setError(err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
     }

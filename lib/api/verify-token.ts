@@ -10,12 +10,9 @@ export const verifyTokenApi = {
    * Verify a QR code token
    * Used to validate scanned QR codes
    */
-  verifyToken: async (token: string): Promise<VerifyTokenResponse> => {
+  verifyToken: async (): Promise<VerifyTokenResponse> => {
     const { data } = await apiClient.post<VerifyTokenResponse>(
-      "/tables/verify-token",
-      {
-        token,
-      },
+      "/tables/qr/verify-token",
     );
     return data;
   },

@@ -39,6 +39,11 @@ function RegisterContent() {
 
   const returnUrl = searchParams.get("returnUrl") || "/";
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Register | Qrenso";
+  }, []);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
