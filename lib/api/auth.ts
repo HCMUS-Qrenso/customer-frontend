@@ -143,14 +143,12 @@ export const authApi = {
    */
   resetPassword: async (
     token: string,
-    email: string,
     newPassword: string,
   ): Promise<MessageResponse> => {
     const { data } = await apiClient.post<MessageResponse>(
       "/auth/reset-password",
       {
         token,
-        email,
         newPassword,
       },
     );

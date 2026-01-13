@@ -3,6 +3,7 @@ import { ApiError } from "@/lib/utils/error-handler";
 import { getQrToken, getSessionToken } from "@/lib/stores/qr-token-store";
 import { getAccessToken } from "@/lib/stores/auth-store";
 import { getStoredLocale } from "@/lib/i18n/context";
+import { clearSessionToken } from "@/lib/stores/qr-token-store";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -96,14 +97,12 @@ apiClient.interceptors.response.use(
         errorCode === "SESSION_EXPIRED" ||
         errorCode === "SESSION_NOT_FOUND"
       ) {
-        // Clear session token from storage
-        const { clearSessionToken } =
-          await import("@/lib/stores/qr-token-store");
-        clearSessionToken();
-
         // Redirect to landing page with session_expired flag
         // Only redirect if we're in the browser
         if (typeof window !== "undefined") {
+          // Clear session token from storage
+          clearSessionToken();
+
           const pathParts = window.location.pathname.split("/");
           const tenantSlug = pathParts[1]; // /{tenantSlug}/...
           if (tenantSlug) {

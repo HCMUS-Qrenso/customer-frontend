@@ -7,7 +7,7 @@ import type { VerifyTokenResponse } from "@/lib/types/table";
  * Used when customer scans a QR code to validate it
  */
 export function useVerifyTokenMutation() {
-  return useMutation<VerifyTokenResponse, Error, string>({
-    mutationFn: (token) => verifyTokenApi.verifyToken(token),
+  return useMutation<VerifyTokenResponse, Error, void>({
+    mutationFn: () => verifyTokenApi.verifyToken(),
   });
 }

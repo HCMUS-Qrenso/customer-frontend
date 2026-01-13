@@ -16,6 +16,11 @@ function AuthCallbackContent() {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Authentication | Qrenso";
+  }, []);
+
   useEffect(() => {
     const handleCallback = async () => {
       try {
