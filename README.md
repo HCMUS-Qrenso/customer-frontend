@@ -82,8 +82,22 @@ cp .env.example .env.local
 ### Environment Variables
 
 ```env
+# Backend API URL
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
+
+# Customer Site URL (for QR codes)
+NEXT_PUBLIC_CUSTOMER_SITE_URL=http://localhost:3002
+
+# Application Name
+NEXT_PUBLIC_APP_NAME=Qrenso
 ```
+
+**Required Variables:**
+- `NEXT_PUBLIC_API_URL` - Backend API endpoint
+- `NEXT_PUBLIC_CUSTOMER_SITE_URL` - Base URL for customer-facing site
+
+**Optional Variables:**
+- `NEXT_PUBLIC_APP_NAME` - Application display name (default: "Qrenso")
 
 ### Development
 
@@ -104,15 +118,63 @@ npm run build
 npm start
 ```
 
+## User Flow
+
+### 1. QR Code Scanning
+1. Customer scans QR code at their table
+2. Redirected to tenant-specific landing page (`/[tenantSlug]`)
+3. JWT token decoded to verify table and session
+4. Table information displayed (number, capacity, zone)
+
+### 2. Session Creation
+1. Enter number of guests (optional based on restaurant settings)
+2. Click "Start Session" button
+3. Session created via API with guest count
+4. Redirected to menu page (`/[tenantSlug]/menu`)
+
+### 3. Menu Browsing
+1. View categories horizontally scrollable at top
+2. Browse menu items in infinite scroll feed
+3. Filter by category selection
+4. Search menu items by name
+5. View featured "Chef Recommendations" carousel
+
+### 4. Item Selection
+1. Click on menu item card
+2. Modal/sheet opens with item details
+3. Select quantity with +/- buttons
+4. Choose modifiers (size, extras, etc.)
+5. Add special instructions (if allowed)
+6. Click "Add to Cart" to confirm
+
+### 5. Cart Management
+1. View cart icon with badge showing item count
+2. Navigate to cart page (`/[tenantSlug]/cart`)
+3. Review all items, quantities, and prices
+4. Remove items or adjust quantities
+5. See order summary (subtotal, tax, total)
+6. Proceed to checkout
+
+### 6. Order Placement
+1. Review order details
+2. Confirm special instructions
+3. Submit order to kitchen
+4. Receive order confirmation
+5. View order status updates
+
 ## API Integration
 
 The app connects to the Qrenso Backend API for:
 
-- **Menu Data** - Categories, items, modifiers
-- **Session Management** - Table sessions, guest count
-- **Cart Operations** - Add/remove items, checkout
+- **QR Validation** - `POST /auth/qr/validate` - Verify QR token and table
+- **Menu Data** - `GET /menu/items` - Fetch menu items with categories and modifiers
+- **Session Management** - `POST /table-sessions` - Create and manage table sessions
+- **Cart Operations** - Submit orders, track status
+- **Profile Management** - View order history, update preferences
 
-Authentication is handled via JWT tokens encoded in QR codes.
+Authentication is handled via JWT tokens encoded in QR codes. All API requests include:
+- `Authorization: Bearer <token>` header
+- `X-Tenant-Id: <tenantId>` header for multi-tenant isolation
 
 ## Theming
 
@@ -142,6 +204,103 @@ Translations are managed in `lib/i18n/translations.ts`.
 | `npm run build` | Create production build  |
 | `npm run start` | Start production server  |
 | `npm run lint`  | Run ESLint               |
+
+## State Management
+
+### Zustand Stores
+
+- **Cart Store** (`lib/stores/cart-store.ts`)
+  - Add/remove items from cart
+  - Update quantities and modifiers
+  - Calculate totals with tax
+  - Persist cart across page refreshes
+
+- **Session Store** (`lib/stores/session-store.ts`)
+  - Manage table session state
+  - Store guest count
+  - Track session expiry
+
+### React Query
+
+Used for server state management:
+- Menu items caching
+- Real-time order status updates
+- Automatic background refetching
+- Optimistic UI updates
+
+## Key Components
+
+### Table Landing Page
+- `TableHeroCard` - Display table info with gradient background
+- `GuestCountStepper` - Number input for guest count
+- `StartSessionButton` - Initiate table session
+
+### Menu Browsing
+- `MenuCategoryTabs` - Horizontal scrollable category filter
+- `MenuItemCard` - Menu item display with image, price, description
+- `MenuItemSheet` - Bottom sheet for item details and customization
+- `ChefRecommendations` - Carousel of featured items
+
+### Cart & Checkout
+- `CartItemCard` - Item in cart with quantity controls
+- `OrderSummary` - Subtotal, tax, and total calculation
+- `CheckoutButton` - Submit order action
+
+### UI Components (shadcn/ui)
+- `Button`, `Card`, `Badge`
+- `Sheet`, `Dialog`, `Drawer`
+- `Input`, `Select`, `Checkbox`
+- `Tabs`, `Separator`, `Skeleton`
+
+## Mobile-First Design
+
+- Responsive breakpoints: `sm:640px`, `md:768px`, `lg:1024px`
+- Touch-optimized interactions
+- Bottom sheets for mobile modals
+- Sticky header and floating cart button
+- Swipe gestures for navigation
+
+## Performance Optimizations
+
+- **Next.js 16 App Router** - Server-side rendering for fast initial load
+- **Image Optimization** - Next.js `Image` component with lazy loading
+- **Code Splitting** - Automatic route-based splitting
+- **React 19** - Concurrent rendering and transitions
+- **Infinite Scroll** - Load menu items progressively
+- **Memoization** - React.memo for expensive components
+
+## Deployment
+
+### Vercel (Recommended)
+
+```bash
+# Deploy to Vercel
+vercel
+
+# Or connect GitHub repo for automatic deployments
+```
+
+### Docker
+
+```bash
+# Build Docker image
+docker build -t customer-frontend .
+
+# Run container
+docker run -p 3000:3000 customer-frontend
+```
+
+### Self-Hosted
+
+```bash
+# Build production bundle
+npm run build
+
+# Start production server
+npm start
+```
+
+**Environment Variables** must be set in your deployment platform.
 
 ## License
 
