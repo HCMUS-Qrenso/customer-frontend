@@ -16,36 +16,50 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { LiveIndicator } from "@/components/shared/LiveIndicator";
 import { ImageCarousel } from "@/components/shared/ImageCarousel";
 import { NutritionalInfo } from "@/components/menu/NutritionalInfo";
+import { ItemReviews } from "@/components/menu/ItemReviews";
 import { LanguageProvider, useLanguage } from "@/lib/i18n/context";
 import { ModifierGroup } from "@/components/menu/ModifierGroup";
-import { formatVND } from "@/lib/format";
-import { customerHref } from "@/lib/customer/context";
 import { useMenuItemQuery } from "@/hooks/use-menu-query";
-import { setQrToken } from "@/lib/stores/qr-token-store";
-import type { ModifierGroupDTO, CartSummaryDTO } from "@/lib/types/menu";
+import { getQrToken, getTableId } from "@/lib/stores/qr-token-store";
+import { useQrToken } from "@/hooks/use-qr-token";
+import { useCartStore } from "@/lib/stores/cart-store";
+import { toast } from "sonner";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
+import type { ModifierGroupDTO, CartItemDTO } from "@/lib/types/menu";
 
 interface ItemDetailClientProps {
   tenantSlug: string;
   itemId: string;
-  ctx: { table: string; token: string };
+  tableId?: string;
+  token?: string;
 }
 
-function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
+function ItemDetailContent({
+  tenantSlug,
+  itemId,
+  tableId: propsTableId,
+  token: propsToken,
+}: ItemDetailClientProps) {
   const { t, lang } = useLanguage();
+  const { formatPrice, allowSpecialInstructions } = useTenantSettings();
 
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<
     Record<string, string[]>
   >({});
   const [notes, setNotes] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
-  // Mock cart state (would be from context/store in production)
-  const [cart] = useState<CartSummaryDTO>({ count: 2, subtotal: 178000 });
+  // Use props or fallback to persisted values from sessionStorage
+  const tableId = propsTableId || getTableId() || undefined;
+  const token = propsToken || getQrToken() || undefined;
 
-  // Set QR token for API requests
-  useEffect(() => {
-    setQrToken(ctx.token);
-  }, [ctx.token]);
+  // Store QR token and tableId for API requests
+  useQrToken(token, tableId);
+
+  // Cart state from Zustand store (shared across all pages)
+  const addToCart = useCartStore((state) => state.addItem);
+  const cartItemCount = useCartStore((state) => state.getItemCount());
 
   // Fetch menu item detail
   const { data: item, isLoading, error } = useMenuItemQuery(itemId);
@@ -103,8 +117,75 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
       );
   }, [item, selectedModifiers]);
 
-  const menuHref = customerHref(tenantSlug, "menu", ctx);
-  const cartHref = customerHref(tenantSlug, "cart", ctx);
+  // Handle add to cart with toast notification
+  const handleAddToCart = useCallback(() => {
+    if (!item || !isValid || isAdding) return;
+
+    setIsAdding(true);
+
+    // Build selected modifiers for CartItemDTO
+    const cartModifiers: CartItemDTO["selectedModifiers"] = [];
+    item.modifier_groups?.forEach((group) => {
+      const selected = selectedModifiers[group.id] || [];
+      selected.forEach((modifierId) => {
+        const modifier = group.modifiers.find((m) => m.id === modifierId);
+        if (modifier) {
+          cartModifiers.push({
+            groupId: group.id,
+            groupName: group.name,
+            modifierId: modifier.id,
+            modifierName: modifier.name,
+            price: parseInt(modifier.price_adjustment, 10) || 0,
+          });
+        }
+      });
+    });
+
+    const cartItem: CartItemDTO = {
+      menuItemId: item.id,
+      menuItemName: item.name,
+      quantity,
+      basePrice:
+        typeof item.base_price === "string"
+          ? parseInt(item.base_price, 10)
+          : item.base_price,
+      image: item.images?.[0]?.image_url,
+      selectedModifiers: cartModifiers,
+      notes: notes || undefined,
+      totalPrice: totalPrice,
+    };
+
+    addToCart(cartItem);
+
+    // Show success toast
+    toast.success(
+      t.menu?.addedToCart?.replace("{name}", item.name) ||
+        `Added ${item.name} to cart`,
+      {
+        description: `${quantity} x ${formatPrice(totalPrice)}`,
+        duration: 2000,
+      },
+    );
+
+    // Reset form after adding
+    setQuantity(1);
+    setSelectedModifiers({});
+    setNotes("");
+    setIsAdding(false);
+  }, [
+    item,
+    isValid,
+    isAdding,
+    quantity,
+    selectedModifiers,
+    notes,
+    totalPrice,
+    addToCart,
+  ]);
+
+  // URLs (no need to include table/token params - they're in storage)
+  const menuHref = `/${tenantSlug}/menu`;
+  const cartHref = `/${tenantSlug}/cart`;
 
   // Error state
   if (error) {
@@ -114,14 +195,15 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
           <AlertTriangle className="size-10 text-red-500" />
         </div>
         <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
-          Không tìm thấy món
+          {t.menu?.itemNotFound || "Item Not Found"}
         </h1>
         <p className="mb-8 max-w-sm text-slate-500 dark:text-slate-400">
-          Món ăn này không tồn tại hoặc đã bị xóa.
+          {t.menu?.itemNotFoundDesc ||
+            "This item doesn't exist or has been removed."}
         </p>
         <Link href={menuHref}>
           <Button className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600">
-            Quay lại menu
+            {t.menu?.backToMenu || "Back to Menu"}
           </Button>
         </Link>
       </div>
@@ -140,7 +222,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
             className="relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
           >
             <ShoppingCart className="size-5" />
-            {cart.count > 0 && (
+            {cartItemCount > 0 && (
               <LiveIndicator size="sm" className="absolute right-1 top-1" />
             )}
           </Link>
@@ -181,21 +263,21 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                   </h2>
                   <div className="flex flex-col items-end">
                     <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 md:text-2xl">
-                      {formatVND(item.base_price)}
+                      {formatPrice(item.base_price)}
                     </span>
                     {item.status === "available" && (
                       <span className="mt-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-500">
-                        Còn hàng
+                        {t.menu?.inStock || "In Stock"}
                       </span>
                     )}
                     {item.status === "sold_out" && (
                       <span className="mt-1 rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-600 dark:text-red-500">
-                        Hết hàng
+                        {t.menu?.outOfStock || "Out of Stock"}
                       </span>
                     )}
                     {item.status === "unavailable" && (
                       <span className="mt-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-500">
-                        Hết món
+                        {t.menu?.unavailable || "Unavailable"}
                       </span>
                     )}
                   </div>
@@ -214,7 +296,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                     <div className="flex h-8 items-center gap-2 rounded-full bg-gray-100 dark:bg-slate-800 px-3 text-slate-700 dark:text-slate-300">
                       <Clock className="size-4" />
                       <span className="text-xs font-medium">
-                        {item.preparation_time} phút
+                        {t.menu?.prepTime?.replace(
+                          "{time}",
+                          String(item.preparation_time),
+                        ) || `${item.preparation_time} min`}
                       </span>
                     </div>
                   )}
@@ -233,7 +318,10 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                     <div className="flex h-8 items-center gap-2 rounded-full bg-amber-500/10 px-3 text-amber-600 dark:text-amber-400">
                       <Flame className="size-4" />
                       <span className="text-xs font-medium">
-                        {item.popularity_score}% yêu thích
+                        {t.menu?.popular?.replace(
+                          "{score}",
+                          String(item.popularity_score),
+                        ) || `${item.popularity_score}% popular`}
                       </span>
                     </div>
                   )}
@@ -268,24 +356,31 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                 />
               ))}
 
-              {/* Notes */}
-              <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
-                  {t.menu.noteForKitchen}
-                </h3>
-                <div className="relative">
-                  <textarea
-                    className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                    placeholder={t.menu.notePlaceholder}
-                    rows={3}
-                    maxLength={100}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                  <div className="absolute bottom-2 right-2 text-[10px] text-slate-400 dark:text-slate-500">
-                    {notes.length}/100
+              {/* Notes - Only show if allow_special_instructions is enabled */}
+              {allowSpecialInstructions && (
+                <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                  <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+                    {t.menu.noteForKitchen}
+                  </h3>
+                  <div className="relative">
+                    <textarea
+                      className="w-full resize-none rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 p-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      placeholder={t.menu.notePlaceholder}
+                      rows={3}
+                      maxLength={100}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                    />
+                    <div className="absolute bottom-2 right-2 text-[10px] text-slate-400 dark:text-slate-500">
+                      {notes.length}/100
+                    </div>
                   </div>
                 </div>
+              )}
+
+              {/* Reviews Section */}
+              <div className="mt-8">
+                <ItemReviews menuItemId={itemId} />
               </div>
             </div>
           </div>
@@ -323,15 +418,17 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
                   {t.menu.subtotal}
                 </span>
                 <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatVND(totalPrice)}
+                  {formatPrice(totalPrice)}
                 </span>
               </div>
             </div>
 
             {/* Add to Cart Button */}
             <Button
+              onClick={handleAddToCart}
               disabled={
                 !isValid ||
+                isAdding ||
                 item.status === "unavailable" ||
                 item.status === "sold_out"
               }
@@ -348,7 +445,7 @@ function ItemDetailContent({ tenantSlug, itemId, ctx }: ItemDetailClientProps) {
             >
               <span className="text-sm md:text-base">{t.menu.addToCart}</span>
               <span className="hidden border-l border-emerald-950/10 pl-4 md:block">
-                {formatVND(totalPrice)}
+                {formatPrice(totalPrice)}
               </span>
             </Button>
           </div>

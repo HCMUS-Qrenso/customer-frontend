@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { CartSummaryDTO } from "@/lib/types/menu";
-import { Translations } from "@/lib/i18n/translations";
-import { formatUSD } from "@/lib/format";
+import { Translations } from "@/lib/i18n/context";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface StickyCartBarProps {
   cart: CartSummaryDTO;
@@ -14,6 +14,7 @@ interface StickyCartBarProps {
 }
 
 export function StickyCartBar({ cart, href, t }: StickyCartBarProps) {
+  const { formatPrice } = useTenantSettings();
   if (cart.count === 0) return null;
 
   return (
@@ -24,7 +25,7 @@ export function StickyCartBar({ cart, href, t }: StickyCartBarProps) {
             <span className="flex size-7 items-center justify-center rounded-full bg-emerald-950/20 text-sm font-bold">
               {cart.count}
             </span>
-            <span className="font-bold">{formatUSD(cart.subtotal)}</span>
+            <span className="font-bold">{formatPrice(cart.subtotal)}</span>
           </div>
 
           <div className="flex items-center gap-2 font-bold">

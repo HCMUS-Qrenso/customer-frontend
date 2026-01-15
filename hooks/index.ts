@@ -14,3 +14,28 @@ export {
   useMenuItemQuery,
   menuQueryKeys,
 } from "./use-menu-query";
+
+export { useOrderSocket, type UseOrderSocketOptions } from "./use-order-socket";
+
+export { useSessionGuard } from "./use-session-guard";
+
+export { useQrToken } from "./use-qr-token";
+
+export { useTenantData } from "./use-tenant-data";
+
+export {
+  useProfileQuery,
+  useUpdateProfileMutation,
+  profileQueryKeys,
+} from "./use-profile";
+
+export { useUploadFiles } from "./use-uploads";
+
+export {
+  useItemReviews,
+  useOrderReviews,
+  useMyReviews,
+  useReviewableOrders,
+  useCreateItemReview,
+  useCreateOrderReview,
+} from "./use-reviews";

@@ -34,7 +34,8 @@ export function useVerifyTokenQuery(
     queryKey: tableContextQueryKeys.verifyToken(token || ""),
     queryFn: () => tableContextApi.verifyToken(token!),
     enabled: enabled && Boolean(token),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Always refetch - prevents stale table data when URL changes
+    gcTime: 0, // Don't cache - each table URL should fetch fresh data
     retry: 1, // Only retry once for token verification
   });
 }

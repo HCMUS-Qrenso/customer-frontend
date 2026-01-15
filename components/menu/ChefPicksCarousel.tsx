@@ -2,25 +2,22 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Star } from "lucide-react";
 import { MenuItemDTO } from "@/lib/types/menu";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatUSD } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface ChefPicksCarouselProps {
   items: MenuItemDTO[];
   tenantSlug: string;
-  tableCode: string;
-  token: string;
 }
 
 export function ChefPicksCarousel({
   items,
   tenantSlug,
-  tableCode,
-  token,
 }: ChefPicksCarouselProps) {
   const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   if (items.length === 0) return null;
 
@@ -47,7 +44,7 @@ export function ChefPicksCarousel({
           return (
             <div key={item.id} className="relative">
               {isDisabled ? (
-                <div className="flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm opacity-70 md:w-72">
+                <div className="flex w-64 shrink-0 h-full snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm opacity-70 md:w-72">
                   <div className="relative h-40 w-full overflow-hidden">
                     {hasImage ? (
                       <div
@@ -85,7 +82,7 @@ export function ChefPicksCarousel({
                     <div className="absolute right-2 top-2">
                       <div className="rounded-lg bg-slate-500 px-2.5 py-1 shadow-md">
                         <span className="text-sm font-bold text-white">
-                          {formatUSD(item.base_price)}
+                          {formatPrice(Number(item.base_price))}
                         </span>
                       </div>
                     </div>
@@ -102,12 +99,25 @@ export function ChefPicksCarousel({
                     <p className="line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                       {item.description}
                     </p>
+                    {item.average_rating &&
+                    item.review_count &&
+                    item.review_count > 0 ? (
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                        <Star className="size-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">
+                          {item.average_rating.toFixed(1)}
+                        </span>
+                        <span className="text-slate-400 dark:text-slate-500">
+                          ({item.review_count})
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ) : (
                 <Link
-                  href={`/${tenantSlug}/menu/${item.id}?table=${tableCode}&token=${token}`}
-                  className="group flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
+                  href={`/${tenantSlug}/menu/${item.id}`}
+                  className="group flex w-64 shrink-0 h-full snap-start flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-shadow md:w-72 active:opacity-90"
                 >
                   <div className="relative h-40 w-full overflow-hidden">
                     {hasImage ? (
@@ -146,7 +156,7 @@ export function ChefPicksCarousel({
                     <div className="absolute right-2 top-2">
                       <div className="rounded-lg bg-emerald-500 px-2.5 py-1 shadow-md">
                         <span className="text-sm font-bold text-white">
-                          {formatUSD(item.base_price)}
+                          {formatPrice(Number(item.base_price))}
                         </span>
                       </div>
                     </div>
@@ -163,6 +173,19 @@ export function ChefPicksCarousel({
                     <p className="line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                       {item.description}
                     </p>
+                    {item.average_rating &&
+                    item.review_count &&
+                    item.review_count > 0 ? (
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                        <Star className="size-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">
+                          {item.average_rating.toFixed(1)}
+                        </span>
+                        <span className="text-slate-400 dark:text-slate-500">
+                          ({item.review_count})
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 </Link>
               )}

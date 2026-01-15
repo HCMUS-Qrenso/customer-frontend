@@ -1,7 +1,8 @@
 "use client";
 
 import type { ModifierGroupDTO, Language } from "@/lib/types/menu";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface ModifierGroupProps {
   group: ModifierGroupDTO;
@@ -16,6 +17,8 @@ export function ModifierGroup({
   onChange,
   language,
 }: ModifierGroupProps) {
+  const { t } = useLanguage();
+  const { formatPrice } = useTenantSettings();
   const isRadio = group.type === "single_choice";
 
   // Helper to get price from price_adjustment string
@@ -26,9 +29,9 @@ export function ModifierGroup({
   // Helper to format price display
   const formatPriceAdjustment = (priceAdjustment: string): string => {
     const price = getPrice(priceAdjustment);
-    if (price === 0) return "Miễn phí";
-    if (price > 0) return `+${formatVND(price)}`;
-    return formatVND(price); // Negative numbers already have minus sign
+    if (price === 0) return t.misc?.free || "Free";
+    if (price > 0) return `+${formatPrice(price)}`;
+    return formatPrice(price); // Negative numbers already have minus sign
   };
 
   return (
@@ -40,11 +43,14 @@ export function ModifierGroup({
         </h3>
         {group.is_required ? (
           <span className="rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
-            Bắt buộc
+            {t.misc?.required || "Required"}
           </span>
         ) : (
           <span className="text-xs text-slate-500 dark:text-slate-400">
-            Chọn tối đa {group.max_selections || "∞"}
+            {t.menu?.selectMax?.replace(
+              "{max}",
+              String(group.max_selections || "∞"),
+            ) || `Select up to ${group.max_selections || "∞"}`}
           </span>
         )}
       </div>
@@ -99,7 +105,7 @@ export function ModifierGroup({
                 }`}
               >
                 {isDisabled
-                  ? "Hết hàng"
+                  ? t.menu?.outOfStock || "Out of Stock"
                   : formatPriceAdjustment(modifier.price_adjustment)}
               </span>
             </label>

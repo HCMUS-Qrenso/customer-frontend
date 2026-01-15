@@ -1,8 +1,8 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { Clock, UtensilsCrossed } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderItemDTO } from "@/lib/types/order";
 
 interface OrderItemGroupListProps {
@@ -11,6 +11,7 @@ interface OrderItemGroupListProps {
 
 export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
   const { t, lang } = useLanguage();
+  const { formatPrice } = useTenantSettings();
 
   return (
     <div className="flex flex-col gap-6">
@@ -24,26 +25,29 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
           </div>
 
           {items.map((item) => {
-            const name = lang === "en" && item.nameEn ? item.nameEn : item.name;
-
             return (
               <div
                 key={item.id}
                 className="group relative flex flex-col gap-4 rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm border border-gray-200 dark:border-slate-700 transition hover:shadow-md sm:flex-row sm:items-start"
               >
-                {item.image && (
-                  <div className="relative aspect-square size-[80px] shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-slate-700 sm:size-[90px]">
+                {/* Image or Placeholder */}
+                <div className="relative aspect-square size-[80px] shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-slate-700 sm:size-[90px]">
+                  {item.image ? (
                     <div
                       className="h-full w-full bg-cover bg-center"
                       style={{ backgroundImage: `url('${item.image}')` }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center">
+                      <UtensilsCrossed className="size-8 text-gray-300 dark:text-slate-500" />
+                    </div>
+                  )}
+                </div>
                 <div className="flex flex-1 flex-col justify-between gap-2 sm:gap-1">
                   <div className="flex justify-between items-start gap-4">
                     <div>
                       <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                        {name}
+                        {item.name}
                       </h4>
                       {item.modifiers && (
                         <div className="mt-1 flex flex-wrap gap-2">
@@ -57,15 +61,10 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                           ))}
                         </div>
                       )}
-                      {item.note && (
-                        <p className="mt-2 text-sm italic text-gray-400">
-                          &quot;{item.note}&quot;
-                        </p>
-                      )}
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-base font-bold text-slate-900 dark:text-white">
-                        {formatVND(item.price * item.quantity)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -74,7 +73,7 @@ export function OrderItemGroupList({ groupedItems }: OrderItemGroupListProps) {
                       x{item.quantity} {t.cart.items}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {formatVND(item.price)} / {t.bill.each}
+                      {formatPrice(item.price)} / {t.bill.each}
                     </p>
                   </div>
                 </div>

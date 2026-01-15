@@ -1,85 +1,100 @@
 "use client";
 
-import Link from "next/link";
-import { Receipt } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatVND } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 import type { OrderDTO } from "@/lib/types/order";
 
 interface OrderSummaryCardProps {
   order: OrderDTO;
-  billHref: string;
-  menuHref: string;
 }
 
-export function OrderSummaryCard({
-  order,
-  billHref,
-  menuHref,
-}: OrderSummaryCardProps) {
+export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   const { t } = useLanguage();
+  const {
+    formatPrice,
+    getServiceChargeRate,
+    getTaxLabel,
+    getTaxRate,
+    isServiceChargeEnabled,
+    settings,
+  } = useTenantSettings();
+  const scRate = getServiceChargeRate();
+  const taxLabel = getTaxLabel();
+  const taxRate = getTaxRate();
 
   return (
-    <div className="lg:sticky lg:top-24 flex flex-col gap-6">
-      <div className="flex flex-col gap-4 rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-gray-200 dark:border-slate-700">
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-          {t.bill.paymentSummary}
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+          {t.summary?.payment || "Payment"}
         </h3>
+      </div>
 
-        <div className="flex flex-col gap-3 border-b border-dashed border-gray-200 dark:border-slate-600 pb-4">
-          <div className="flex justify-between text-sm">
+      {/* Summary Content */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
+        {/* Line items */}
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
             <span className="text-slate-500 dark:text-slate-400">
-              {t.cart.subtotal} ({order.items.length} {t.cart.items})
+              {t.summary?.subtotal || "Subtotal"} ({order.items.length}{" "}
+              {t.cart?.items || "items"})
             </span>
-            <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(order.subtotal)}
+            <span className="font-medium text-slate-900 dark:text-white tabular-nums">
+              {formatPrice(order.subtotal)}
             </span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">
-              {t.cart.serviceCharge} (5%)
-            </span>
-            <span className="font-medium text-slate-900 dark:text-white">
-              {formatVND(order.serviceCharge)}
-            </span>
-          </div>
-          {order.discount && order.discount > 0 && (
-            <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
-              <span className="font-medium">
-                {t.bill.voucher} ({order.voucherCode})
+          {isServiceChargeEnabled() && order.serviceCharge > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 dark:text-slate-400">
+                {t.cart.serviceCharge} ({scRate}%)
               </span>
-              <span className="font-bold">-{formatVND(order.discount)}</span>
+              <span className="font-medium text-slate-900 dark:text-white tabular-nums">
+                {formatPrice(order.serviceCharge)}
+              </span>
+            </div>
+          )}
+          {order.discount && order.discount > 0 && (
+            <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+              <span className="font-medium">
+                Giảm giá {order.voucherCode && `(${order.voucherCode})`}
+              </span>
+              <span className="font-bold tabular-nums">
+                -{formatPrice(order.discount)}
+              </span>
+            </div>
+          )}
+          {/* VAT line - show when tax is exclusive (not included in price) */}
+          {!settings.tax.inclusive && order.tax > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 dark:text-slate-400">
+                {taxLabel} ({taxRate}%)
+              </span>
+              <span className="font-medium text-slate-900 dark:text-white tabular-nums">
+                {formatPrice(order.tax)}
+              </span>
             </div>
           )}
         </div>
 
-        <div className="flex items-end justify-between pt-1">
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-              {t.checkout.totalAmount}
-            </span>
-            <span className="text-xs text-slate-400">{t.bill.inclTaxes}</span>
-          </div>
-          <span className="text-2xl font-bold text-slate-900 dark:text-white">
-            {formatVND(order.total)}
-          </span>
-        </div>
+        {/* Divider */}
+        <div className="my-3 border-t border-dashed border-gray-200 dark:border-slate-700" />
 
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex flex-col gap-3 mt-2">
-          <Link href={billHref}>
-            <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2 shadow-sm">
-              <Receipt className="size-5" />
-              {t.order.requestBill}
-            </Button>
-          </Link>
-          <Link
-            href={menuHref}
-            className="mt-2 text-center text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-          >
-            {t.order.addMoreItems}
-          </Link>
+        {/* Total */}
+        <div className="flex items-end justify-between">
+          <div>
+            <span className="text-base font-bold text-slate-900 dark:text-white">
+              {t.summary?.total || "Total"}
+            </span>
+            {settings.tax.inclusive && (
+              <p className="text-xs text-slate-400">
+                {t.bill?.inclTaxes || "Incl. taxes"} ({taxLabel} {taxRate}%)
+              </p>
+            )}
+          </div>
+          <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
+            {formatPrice(order.total)}
+          </span>
         </div>
       </div>
     </div>

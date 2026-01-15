@@ -1,10 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { MenuItemDTO } from "@/lib/types/menu";
-import { formatUSD } from "@/lib/format";
+import { useTenantSettings } from "@/providers/tenant-settings-context";
 
 interface MenuItemCardProps {
   item: MenuItemDTO;
@@ -13,6 +14,8 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
+  const router = useRouter();
+  const { formatPrice } = useTenantSettings();
   const isUnavailable = item.status === "unavailable";
   const isSoldOut = item.status === "sold_out";
   const isDisabled = isUnavailable || isSoldOut;
@@ -22,11 +25,22 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
     item.images?.find((img) => img.is_primary) || item.images?.[0];
   const imageUrl = primaryImage?.image_url;
 
+  // Check if item has any required modifier groups
+  const hasRequiredModifiers = item.modifier_groups?.some(
+    (mg) => mg.is_required,
+  );
+
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isDisabled && onQuickAdd) {
-      onQuickAdd(item);
+    if (!isDisabled) {
+      if (hasRequiredModifiers) {
+        // Navigate to detail page if item has required modifiers
+        router.push(href);
+      } else if (onQuickAdd) {
+        // Quick add directly if no required modifiers
+        onQuickAdd(item);
+      }
     }
   };
 
@@ -95,6 +109,20 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
                 {item.description}
               </p>
             )}
+            {/* Rating Display */}
+            {item.average_rating !== undefined &&
+              item.review_count !== undefined &&
+              item.review_count > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="size-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                    {item.average_rating.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    ({item.review_count})
+                  </span>
+                </div>
+              )}
           </div>
 
           <div className="flex items-end justify-between mt-auto">
@@ -102,7 +130,7 @@ export function MenuItemCard({ item, href, onQuickAdd }: MenuItemCardProps) {
               <span
                 className={`font-bold ${isDisabled ? "text-slate-400 dark:text-slate-500" : "text-emerald-600 dark:text-emerald-400"}`}
               >
-                {formatUSD(item.base_price)}
+                {formatPrice(Number(item.base_price))}
               </span>
               {/* Show category name as a hint */}
               {item.category?.name && (

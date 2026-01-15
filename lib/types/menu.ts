@@ -66,11 +66,15 @@ export interface MenuItemDTO {
   allergens?: string[];
   category: MenuItemCategoryDTO;
   images: MenuItemImageDTO[];
+  modifier_groups?: { id: string; is_required: boolean }[];
   created_at: string;
   updated_at: string;
   // Display fields
   isChefRecommendation?: boolean;
   badges?: string[];
+  // Review fields (from API)
+  average_rating?: number;
+  review_count?: number;
 }
 
 // Nutritional info from API
@@ -173,7 +177,7 @@ export interface GetMenuParams {
 // Customer Context
 // ============================================
 
-export type Language = "vi" | "en";
+export type Language = "vi" | "en" | "fr" | "zh";
 
 export interface CustomerContext {
   tenantSlug: string;

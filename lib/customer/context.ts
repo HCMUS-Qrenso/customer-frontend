@@ -1,4 +1,5 @@
 import type { CustomerContext, CustomerContextError } from "@/lib/types/menu";
+import { getTableId, getQrToken } from "@/lib/stores/qr-token-store";
 
 interface GetCustomerContextParams {
   tenantSlug: string;
@@ -15,14 +16,17 @@ type CustomerContextResult =
 
 /**
  * Validates and extracts customer context from URL params
- * Used by customer-facing pages to ensure valid session
+ * Falls back to sessionStorage if URL params are missing
  */
 export function getCustomerContext(
   params: GetCustomerContextParams,
   searchParams: GetCustomerContextSearchParams,
 ): CustomerContextResult {
   const { tenantSlug } = params;
-  const { table, token } = searchParams;
+
+  // Try URL params first, then fallback to sessionStorage
+  const table = searchParams.table || getTableId();
+  const token = searchParams.token || getQrToken();
 
   // Check required params
   if (!table || !token) {
@@ -46,28 +50,34 @@ export function getCustomerContext(
   };
 }
 
+interface CustomerHrefCtx {
+  table?: string;
+  token?: string;
+}
+
 /**
- * Builds a URL with customer context params
+ * Builds a URL without customer context params
+ * Table/token are stored in sessionStorage and don't need to be in URL
+ * This keeps URLs clean and secure (tokens are removed from URL anyway)
  */
 export function customerHref(
   tenantSlug: string,
   path: "menu" | "cart" | "item",
-  ctx: { table: string; token: string },
+  _ctx?: CustomerHrefCtx, // Unused - kept for backward compatibility
   itemId?: string,
 ): string {
   const base = `/${tenantSlug}`;
-  const params = `?table=${ctx.table}&token=${ctx.token}`;
 
+  // No need to add table/token params - they're in storage
+  // Pages will fallback to storage if URL params are missing
   switch (path) {
     case "menu":
-      return `${base}/menu${params}`;
+      return `${base}/menu`;
     case "cart":
-      return `${base}/cart${params}`;
+      return `${base}/cart`;
     case "item":
-      return itemId
-        ? `${base}/menu/${itemId}${params}`
-        : `${base}/menu${params}`;
+      return itemId ? `${base}/menu/${itemId}` : `${base}/menu`;
     default:
-      return `${base}${params}`;
+      return `${base}`;
   }
 }
