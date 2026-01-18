@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CookingPot, Bell, CheckCircle } from "lucide-react";
+import { Check, CookingPot, Bell, CheckCircle, XCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
 
 // Order status from API
@@ -64,11 +64,45 @@ export function OrderStatusStepper({ currentStatus }: OrderStatusStepperProps) {
       case "served":
       case "completed":
         return t.track.served;
+      case "cancelled":
+      case "rejected":
+        return t.track.cancelled;
       default:
         return "";
     }
   };
 
+  // Check if order is cancelled
+  const isCancelled =
+    currentStatus === "cancelled" || currentStatus === "rejected";
+
+  // If cancelled, show special UI
+  if (isCancelled) {
+    return (
+      <div className="py-6">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900/30">
+            <XCircle
+              className="size-10 text-red-600 dark:text-red-400"
+              strokeWidth={2}
+            />
+          </div>
+          <div className="text-center">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-red-100 dark:bg-red-900/30">
+              <span className="text-base font-bold text-red-600 dark:text-red-400 uppercase tracking-wide">
+                {getStatusLabel(currentStatus)}
+              </span>
+            </span>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              {t.myOrder?.orderCancelledDesc || "This order has been cancelled"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal order flow
   const stepperStatus = getStepperStatus(currentStatus);
   const statusOrder = ["pending", "accepted", "preparing", "ready", "served"];
   const currentIndex = statusOrder.indexOf(stepperStatus);

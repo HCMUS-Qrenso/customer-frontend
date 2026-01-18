@@ -19,7 +19,8 @@
     "moreItems": "autres",
     "prev": "Précédent",
     "next": "Suivant",
-    "page": "Page"
+    "page": "Page",
+    "orderCancelled": "Cette commande a été annulée. Si vous avez des questions, veuillez contacter le personnel."
   },
   "myOrder": {
     "orderStatus": "STATUT DE LA COMMANDE",
@@ -30,7 +31,8 @@
     "updatedAt": "Mis à jour",
     "paymentSuccess": "Paiement réussi! Vous pouvez maintenant évaluer votre commande.",
     "paid": "Payé",
-    "unpaid": "Non payé"
+    "unpaid": "Non payé",
+    "orderCancelledDesc": "Cette commande a été annulée"
   },
   "track": {
     "liveUpdate": "Mise à jour en direct",
@@ -40,6 +42,7 @@
     "cooking": "En préparation",
     "ready": "Prêt",
     "served": "Servi",
+    "cancelled": "Annulé",
     "batch": "Lot",
     "orderUpdates": "Mises à jour",
     "estimatedTime": "Estimé",

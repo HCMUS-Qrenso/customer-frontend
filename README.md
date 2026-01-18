@@ -93,10 +93,12 @@ NEXT_PUBLIC_APP_NAME=Qrenso
 ```
 
 **Required Variables:**
+
 - `NEXT_PUBLIC_API_URL` - Backend API endpoint
 - `NEXT_PUBLIC_CUSTOMER_SITE_URL` - Base URL for customer-facing site
 
 **Optional Variables:**
+
 - `NEXT_PUBLIC_APP_NAME` - Application display name (default: "Qrenso")
 
 ### Development
@@ -121,18 +123,21 @@ npm start
 ## User Flow
 
 ### 1. QR Code Scanning
+
 1. Customer scans QR code at their table
 2. Redirected to tenant-specific landing page (`/[tenantSlug]`)
 3. JWT token decoded to verify table and session
 4. Table information displayed (number, capacity, zone)
 
 ### 2. Session Creation
+
 1. Enter number of guests (optional based on restaurant settings)
 2. Click "Start Session" button
 3. Session created via API with guest count
 4. Redirected to menu page (`/[tenantSlug]/menu`)
 
 ### 3. Menu Browsing
+
 1. View categories horizontally scrollable at top
 2. Browse menu items in infinite scroll feed
 3. Filter by category selection
@@ -140,6 +145,7 @@ npm start
 5. View featured "Chef Recommendations" carousel
 
 ### 4. Item Selection
+
 1. Click on menu item card
 2. Modal/sheet opens with item details
 3. Select quantity with +/- buttons
@@ -148,6 +154,7 @@ npm start
 6. Click "Add to Cart" to confirm
 
 ### 5. Cart Management
+
 1. View cart icon with badge showing item count
 2. Navigate to cart page (`/[tenantSlug]/cart`)
 3. Review all items, quantities, and prices
@@ -156,6 +163,7 @@ npm start
 6. Proceed to checkout
 
 ### 6. Order Placement
+
 1. Review order details
 2. Confirm special instructions
 3. Submit order to kitchen
@@ -173,6 +181,7 @@ The app connects to the Qrenso Backend API for:
 - **Profile Management** - View order history, update preferences
 
 Authentication is handled via JWT tokens encoded in QR codes. All API requests include:
+
 - `Authorization: Bearer <token>` header
 - `X-Tenant-Id: <tenantId>` header for multi-tenant isolation
 
@@ -223,6 +232,7 @@ Translations are managed in `lib/i18n/translations.ts`.
 ### React Query
 
 Used for server state management:
+
 - Menu items caching
 - Real-time order status updates
 - Automatic background refetching
@@ -231,22 +241,26 @@ Used for server state management:
 ## Key Components
 
 ### Table Landing Page
+
 - `TableHeroCard` - Display table info with gradient background
 - `GuestCountStepper` - Number input for guest count
 - `StartSessionButton` - Initiate table session
 
 ### Menu Browsing
+
 - `MenuCategoryTabs` - Horizontal scrollable category filter
 - `MenuItemCard` - Menu item display with image, price, description
 - `MenuItemSheet` - Bottom sheet for item details and customization
 - `ChefRecommendations` - Carousel of featured items
 
 ### Cart & Checkout
+
 - `CartItemCard` - Item in cart with quantity controls
 - `OrderSummary` - Subtotal, tax, and total calculation
 - `CheckoutButton` - Submit order action
 
 ### UI Components (shadcn/ui)
+
 - `Button`, `Card`, `Badge`
 - `Sheet`, `Dialog`, `Drawer`
 - `Input`, `Select`, `Checkbox`
