@@ -319,6 +319,9 @@ function MyOrderContent({
     );
   }
 
+  // Check if order is cancelled
+  const isCancelled = order.status === "cancelled";
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-white">
       {/* Header */}
@@ -404,22 +407,34 @@ function MyOrderContent({
               <OrderSummaryCard order={order} />
 
               {/* Review Section - Show for history orders or when payment is complete */}
-              {order.paymentStatus === "paid" && (
+              {order.paymentStatus === "paid" && !isCancelled && (
                 <OrderReviewSection orderId={orderId || order.id} />
               )}
 
               {/* Alert that staff is processing payment request */}
               {order.status === "completed" &&
-                order.paymentStatus !== "paid" && (
+                order.paymentStatus !== "paid" &&
+                !isCancelled && (
                   <div className="bg-emerald-50 relative dark:bg-emerald-900/30 rounded-xl p-4 mb-6 text-emerald-700 dark:text-emerald-400">
                     {t.order.paymentRequested}
                   </div>
                 )}
 
+              {/* Cancelled Order Notice */}
+              {isCancelled && (
+                <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 text-red-700 dark:text-red-400">
+                  <p className="text-sm font-medium">
+                    {t.order.orderCancelled ||
+                      "This order has been cancelled. If you have any questions, please contact the staff."}
+                  </p>
+                </div>
+              )}
+
               {/* Request Bill Button - Desktop only, for served orders */}
               {!orderId &&
                 order.paymentStatus !== "paid" &&
-                order.status === "served" && (
+                order.status === "served" &&
+                !isCancelled && (
                   <div className="hidden lg:block">
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
                       <Link href={billHref}>
@@ -436,10 +451,11 @@ function MyOrderContent({
         </div>
       </main>
 
-      {/* Sticky CTA - Only show for served orders */}
+      {/* Sticky CTA - Only show for served orders that are not cancelled */}
       {!orderId &&
         order.paymentStatus !== "paid" &&
-        order.status === "served" && (
+        order.status === "served" &&
+        !isCancelled && (
           <MobileStickyBar>
             <Link href={billHref} className="w-full">
               <Button className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center gap-2">

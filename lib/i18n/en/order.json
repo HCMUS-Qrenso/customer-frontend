@@ -19,7 +19,8 @@
     "moreItems": "more",
     "prev": "Previous",
     "next": "Next",
-    "page": "Page"
+    "page": "Page",
+    "orderCancelled": "This order has been cancelled. If you have any questions, please contact the staff."
   },
   "myOrder": {
     "orderStatus": "ORDER STATUS",
@@ -30,7 +31,8 @@
     "updatedAt": "Updated at",
     "paymentSuccess": "Payment successful! You can rate your order now.",
     "paid": "Paid",
-    "unpaid": "Unpaid"
+    "unpaid": "Unpaid",
+    "orderCancelledDesc": "This order has been cancelled"
   },
   "track": {
     "liveUpdate": "Live Update",
@@ -40,6 +42,7 @@
     "cooking": "Cooking",
     "ready": "Ready",
     "served": "Served",
+    "cancelled": "Cancelled",
     "batch": "Batch",
     "orderUpdates": "Order Updates",
     "estimatedTime": "Estimated",

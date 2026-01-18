@@ -19,7 +19,8 @@
     "moreItems": "món khác",
     "prev": "Trước",
     "next": "Sau",
-    "page": "Trang"
+    "page": "Trang",
+    "orderCancelled": "Đơn hàng này đã bị hủy. Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ nhân viên."
   },
   "myOrder": {
     "orderStatus": "TRẠNG THÁI ĐƠN HÀNG",
@@ -30,7 +31,8 @@
     "updatedAt": "Cập nhật",
     "paymentSuccess": "Thanh toán thành công! Bạn có thể đánh giá đơn hàng ngay bây giờ.",
     "paid": "Đã thanh toán",
-    "unpaid": "Chưa thanh toán"
+    "unpaid": "Chưa thanh toán",
+    "orderCancelledDesc": "Đơn hàng này đã bị hủy"
   },
   "track": {
     "liveUpdate": "Cập nhật trực tiếp",
@@ -40,6 +42,7 @@
     "cooking": "Đang nấu",
     "ready": "Sẵn sàng",
     "served": "Đã phục vụ",
+    "cancelled": "Đã hủy",
     "batch": "Đợt",
     "orderUpdates": "Cập nhật đơn hàng",
     "estimatedTime": "Dự kiến",
